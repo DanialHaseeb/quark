@@ -1,18 +1,17 @@
 use std::fs;
-use std::iter::Peekable;
 use anyhow::Result;
 
 pub fn compile(file: String) -> Result<()>
 {
 	let source = fs::read_to_string(file)?;
-	let stream = source.chars().peekable();
+	let stream = source.chars();
 	let tokens = lex(stream)?;
 	let syntax = parse(tokens)?;
 	let target = translate(syntax);
 	Ok(println!("{target}"))
 }
 
-enum Token
+struct Token
 {
 
 }
@@ -22,9 +21,9 @@ struct Tree
 
 }
 
-fn lex<T>(stream: Peekable<T>) -> Result<Vec<Token>>
-where T: Iterator<Item = char>
+fn lex(stream: impl Iterator<Item = char>) -> Result<Vec<Token>>
 {
+	let mut stream = stream.enumerate().peekable();
 	unimplemented!()
 }
 
