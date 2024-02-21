@@ -51,9 +51,9 @@ impl Identifier {
         match lexeme.as_str() {
             "while" => Keyword(While),
             "for" => Keyword(For),
-            "in" => Keyword(In),
             "break" => Keyword(Break),
             "continue" => Keyword(Continue),
+            "in" => Keyword(In),
             "if" => Keyword(If),
             "else" => Keyword(Else),
             "true" => Keyword(True),

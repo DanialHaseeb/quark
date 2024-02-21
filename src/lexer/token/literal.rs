@@ -1,13 +1,13 @@
-use self::Number::*;
 use std::iter::Peekable;
-use std::string::String;
-use Literal::*;
 
 #[derive(Debug, PartialEq)]
 pub enum Literal {
     Number(Number),
-    String(String),
+    String(QuarkString),
 }
+
+#[derive(Debug, PartialEq)]
+pub struct QuarkString(String);
 
 #[derive(Debug, PartialEq)]
 pub enum Number {
@@ -16,14 +16,21 @@ pub enum Number {
     Real(f64),
 }
 
-trait Lex {
-    fn lex<T>(stream: &mut Peekable<T>) -> Self
+impl Literal {
+    pub fn new<T>(stream: &mut Peekable<T>) -> Self
     where
-        T: Iterator<Item = char>;
+        T: Iterator<Item = char>,
+    {
+        match stream.peek() {
+            Some(&'"') => Self::String(QuarkString::new(stream)),
+            Some(&symbol) if symbol.is_numeric() => Self::Number(Number::new(stream)),
+            _ => unreachable!(),
+        }
+    }
 }
 
-impl Lex for String {
-    fn lex<T>(stream: &mut Peekable<T>) -> Self
+impl QuarkString {
+    fn new<T>(stream: &mut Peekable<T>) -> Self
     where
         T: Iterator<Item = char>,
     {
@@ -40,20 +47,7 @@ impl Lex for String {
             }
         }
 
-        string
-    }
-}
-
-impl Literal {
-    pub fn new<T>(stream: &mut Peekable<T>) -> Self
-    where
-        T: Iterator<Item = char>,
-    {
-        match stream.peek() {
-            Some(&'"') => String(String::lex(stream)),
-            Some(&symbol) if symbol.is_numeric() => Number(Number::new(stream)),
-            _ => unreachable!(),
-        }
+        QuarkString(string)
     }
 }
 
@@ -72,10 +66,10 @@ impl Number {
         }
 
         match number.parse::<u64>() {
-            Ok(natural) => Natural(natural),
+            Ok(natural) => Self::Natural(natural),
             Err(_) => match number.parse::<i64>() {
-                Ok(integer) => Integer(integer),
-                Err(_) => Real(number.parse::<f64>().unwrap()),
+                Ok(integer) => Self::Integer(integer),
+                Err(_) => Self::Real(number.parse::<f64>().unwrap()),
             },
         }
     }
