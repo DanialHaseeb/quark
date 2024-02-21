@@ -20,6 +20,7 @@ impl Operator {
     where
         T: Iterator<Item = char>,
     {
+        // TODO: implement two-character operators like '==' and '!='
         match stream.next().unwrap() {
             '+' => Plus,
             '-' => Minus,

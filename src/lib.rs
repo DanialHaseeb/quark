@@ -1,7 +1,6 @@
 use crate::lexer::token::Token;
 use anyhow::Result;
 use std::fs;
-
 pub mod lexer;
 pub mod parser;
 
