@@ -20,6 +20,10 @@ pub enum Keyword {
     True,
     False,
     Return,
+    And,
+    Or,
+    Xor,
+    Not,
 }
 
 pub trait IdentifierSymbol {
@@ -59,6 +63,10 @@ impl Identifier {
             "true" => Keyword(True),
             "false" => Keyword(False),
             "return" => Keyword(Return),
+            "and" => Keyword(And),
+            "or" => Keyword(Or),
+            "xor" => Keyword(Xor),
+            "not" => Keyword(Not),
             _ => Variable(lexeme),
         }
     }

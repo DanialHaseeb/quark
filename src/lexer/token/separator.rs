@@ -22,16 +22,16 @@ impl Separator {
     where
         T: Iterator<Item = char>,
     {
-        match stream.next() {
-            Some('(') => Left(Parenthesis),
-            Some(')') => Right(Parenthesis),
-            Some('[') => Left(Bracket),
-            Some(']') => Right(Bracket),
-            Some('{') => Left(Brace),
-            Some('}') => Right(Brace),
-            Some(',') => Comma,
-            Some('.') => Dot,
-            Some(';') => Semicolon,
+        match stream.next().unwrap() {
+            '(' => Left(Parenthesis),
+            ')' => Right(Parenthesis),
+            '[' => Left(Bracket),
+            ']' => Right(Bracket),
+            '{' => Left(Brace),
+            '}' => Right(Brace),
+            ',' => Comma,
+            '.' => Dot,
+            ';' => Semicolon,
             _ => unreachable!(),
         }
     }
