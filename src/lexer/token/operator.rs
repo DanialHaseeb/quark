@@ -13,9 +13,9 @@ pub enum Operator {
 pub enum SingleCharOperator {
     Plus,
     Minus,
-    Asterisk,
-    Slash,
-    Percent,
+    Multiply,
+    Divide,
+    Mod,
     Equal,
     Less,
     Greater,
@@ -30,19 +30,19 @@ pub enum DoubleCharOperator {
     MinusEquals,
     MultiplyEquals,
     NotEquals,
-    DividEquals,
+    DivideEquals,
     ModEquals,
     EqualEquals,
 }
 
-pub trait MatchTrait<T>
+pub trait Match<T>
 where
     T: Iterator<Item = char>,
 {
     fn next_if_matches(&mut self, c: char) -> bool;
 }
 
-impl<T> MatchTrait<T> for Peekable<T>
+impl<T> Match<T> for Peekable<T>
 where
     T: Iterator<Item = char>,
 {
@@ -67,7 +67,7 @@ impl Operator {
             '-' if stream.next_if_matches('=') => DoubleChar(MinusEquals),
             '*' if stream.next_if_matches('=') => DoubleChar(MultiplyEquals),
             '!' if stream.next_if_matches('=') => DoubleChar(NotEquals),
-            '/' if stream.next_if_matches('=') => DoubleChar(DividEquals),
+            '/' if stream.next_if_matches('=') => DoubleChar(DivideEquals),
             '%' if stream.next_if_matches('=') => DoubleChar(ModEquals),
             '=' if stream.next_if_matches('=') => DoubleChar(EqualEquals),
 
@@ -76,7 +76,7 @@ impl Operator {
             '*' => SingleChar(Multiply),
             '!' => SingleChar(Not),
             '/' => SingleChar(Divide),
-            '%' => SingleChar(Percent),
+            '%' => SingleChar(Mod),
             '=' => SingleChar(Equal),
 
             '<' => SingleChar(Less),
