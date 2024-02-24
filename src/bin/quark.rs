@@ -1,7 +1,7 @@
 use std::{env, process};
 
 fn main() {
-    let file = env::args().skip(1).next().unwrap_or_else(|| {
+    let file = env::args().nth(1).unwrap_or_else(|| {
         eprintln!("No file provided");
         process::exit(1);
     });

@@ -13,8 +13,8 @@ pub enum Operator {
 pub enum SingleCharOperator {
     Plus,
     Minus,
-    Multiply,
-    Divide,
+    Asterisk,
+    Slash,
     Percent,
     Equal,
     Less,
