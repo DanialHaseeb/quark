@@ -4,8 +4,8 @@ use Operator::*;
 pub enum Operator {
     Plus,
     Minus,
-    Multiply,
-    Divide,
+    Asterisk,
+    Slash,
     Percent,
     Equal,
     Less,
@@ -24,8 +24,8 @@ impl Operator {
         match stream.next().unwrap() {
             '+' => Plus,
             '-' => Minus,
-            '*' => Multiply,
-            '/' => Divide,
+            '*' => Asterisk,
+            '/' => Slash,
             '%' => Percent,
             '=' => Equal,
             '<' => Less,
