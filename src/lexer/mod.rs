@@ -26,7 +26,6 @@ where
                 Operator(Operator::new(&mut stream))
             }
 
-            // TODO: What about negative numbers?
             '"' => Literal(Literal::new(&mut stream)),
             _ if symbol.is_ascii_digit() => Literal(Literal::new(&mut stream)),
             _ => bail!("Unexpected symbol: {symbol}"),
