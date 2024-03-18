@@ -7,24 +7,14 @@ pub enum Literal {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct QuarkString(String);
-
-#[derive(Debug, PartialEq)]
 pub enum Number {
     Natural(u64),
     Integer(i64),
     Real(f64),
 }
 
-pub trait PeekNext<I: Iterator> {
-    fn peek_next(&mut self) -> Option<&I::Item>;
-}
-
-impl<I: Iterator> PeekNext<I> for PeekNth<I> {
-    fn peek_next(&mut self) -> Option<&<I as Iterator>::Item> {
-        self.peek_nth(1)
-    }
-}
+#[derive(Debug, PartialEq)]
+pub struct QuarkString(String);
 
 impl Literal {
     pub fn new<T>(stream: &mut PeekNth<T>) -> Self
@@ -48,13 +38,11 @@ impl QuarkString {
         stream.next(); // consume the opening quote
 
         while let Some(&symbol) = stream.peek() {
-            match symbol {
-                '"' => {
-                    stream.next();
-                    break;
-                }
-                _ => string.push(stream.next().unwrap()),
+            if symbol == '"' {
+                stream.next();
+                break;
             }
+            string.push(stream.next().unwrap());
         }
         QuarkString(string)
     }
@@ -68,18 +56,32 @@ impl Number {
         let mut number = String::new();
 
         while let Some(&symbol) = stream.peek() {
-            match symbol {
-                _ if symbol.is_numeric() => number.push(stream.next().unwrap()),
-                _ => break,
+            if !symbol.is_numeric() {
+                break;
             }
+            number.push(stream.next().unwrap());
         }
 
-        match number.parse::<u64>() {
-            Ok(natural) => Self::Natural(natural),
-            Err(_) => match number.parse::<i64>() {
-                Ok(integer) => Self::Integer(integer),
-                Err(_) => Self::Real(number.parse::<f64>().unwrap()),
-            },
+        if let Ok(natural) = number.parse::<u64>() {
+            Number::Natural(natural)
+        } else if let Ok(integer) = number.parse::<i64>() {
+            Number::Integer(integer)
+        } else if let Ok(real) = number.parse::<f64>() {
+            Number::Real(real)
+        } else {
+            panic!("Failed to parse number")
         }
+    }
+}
+
+// PeekNext Utils
+
+trait PeekNext<I: Iterator> {
+    fn peek_next(&mut self) -> Option<&I::Item>;
+}
+
+impl<I: Iterator> PeekNext<I> for PeekNth<I> {
+    fn peek_next(&mut self) -> Option<&<I as Iterator>::Item> {
+        self.peek_nth(1)
     }
 }
