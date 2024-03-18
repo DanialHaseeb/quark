@@ -1,4 +1,4 @@
-use std::iter::Peekable;
+use itertools::structs::PeekNth;
 
 #[derive(Debug, PartialEq)]
 pub enum Literal {
@@ -16,8 +16,18 @@ pub enum Number {
     Real(f64),
 }
 
+pub trait PeekNext<I: Iterator> {
+    fn peek_next(&mut self) -> Option<&I::Item>;
+}
+
+impl<I: Iterator> PeekNext<I> for PeekNth<I> {
+    fn peek_next(&mut self) -> Option<&<I as Iterator>::Item> {
+        self.peek_nth(1)
+    }
+}
+
 impl Literal {
-    pub fn new<T>(stream: &mut Peekable<T>) -> Self
+    pub fn new<T>(stream: &mut PeekNth<T>) -> Self
     where
         T: Iterator<Item = char>,
     {
@@ -30,7 +40,7 @@ impl Literal {
 }
 
 impl QuarkString {
-    fn new<T>(stream: &mut Peekable<T>) -> Self
+    fn new<T>(stream: &mut PeekNth<T>) -> Self
     where
         T: Iterator<Item = char>,
     {
@@ -51,7 +61,7 @@ impl QuarkString {
 }
 
 impl Number {
-    pub fn new<T>(stream: &mut Peekable<T>) -> Self
+    pub fn new<T>(stream: &mut PeekNth<T>) -> Self
     where
         T: Iterator<Item = char>,
     {
