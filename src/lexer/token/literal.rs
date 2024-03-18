@@ -1,6 +1,4 @@
-use itertools::{structs::PeekNth, PeekingNext};
-
-use crate::Tree;
+use itertools::structs::PeekNth;
 
 #[derive(Debug, PartialEq)]
 pub enum Literal {
