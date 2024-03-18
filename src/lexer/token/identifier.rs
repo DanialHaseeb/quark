@@ -1,5 +1,5 @@
 use self::Keyword::*;
-use std::iter::Peekable;
+use itertools::PeekNth;
 use Identifier::*;
 
 #[derive(Debug, PartialEq)]
@@ -37,7 +37,7 @@ impl IdentifierSymbol for char {
 }
 
 impl Identifier {
-    pub fn new<T>(stream: &mut Peekable<T>) -> Self
+    pub fn new<T>(stream: &mut PeekNth<T>) -> Self
     where
         T: Iterator<Item = char>,
     {

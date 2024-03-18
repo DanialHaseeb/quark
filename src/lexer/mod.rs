@@ -1,5 +1,5 @@
 use anyhow::{bail, Result};
-use std::iter::Peekable;
+use itertools::structs::PeekNth;
 use token::identifier::{Identifier, IdentifierSymbol};
 use token::literal::Literal;
 use token::operator::Operator;
@@ -8,7 +8,7 @@ use token::{Kind::*, Token};
 
 pub mod token;
 
-pub fn scan<T>(mut stream: Peekable<T>) -> Result<Vec<Token>>
+pub fn scan<T>(mut stream: PeekNth<T>) -> Result<Vec<Token>>
 where
     T: Iterator<Item = char>,
 {
@@ -26,7 +26,6 @@ where
                 Operator(Operator::new(&mut stream))
             }
 
-            // TODO: What about negative numbers?
             '"' => Literal(Literal::new(&mut stream)),
             _ if symbol.is_ascii_digit() => Literal(Literal::new(&mut stream)),
             _ => bail!("Unexpected symbol: {symbol}"),

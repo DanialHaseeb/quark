@@ -1,4 +1,4 @@
-use std::iter::Peekable;
+use itertools::PeekNth;
 use DoubleCharOperator::*;
 use Operator::*;
 use SingleCharOperator::*;
@@ -44,7 +44,7 @@ where
     fn next_if_matches(&mut self, c: char) -> bool;
 }
 
-impl<T> Match<T> for Peekable<T>
+impl<T> Match<T> for PeekNth<T>
 where
     T: Iterator<Item = char>,
 {
@@ -60,7 +60,7 @@ where
 }
 
 impl Operator {
-    pub fn new<T>(stream: &mut Peekable<T>) -> Self
+    pub fn new<T>(stream: &mut PeekNth<T>) -> Self
     where
         T: Iterator<Item = char>,
     {
