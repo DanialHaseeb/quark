@@ -35,7 +35,7 @@ impl QuarkString {
         T: Iterator<Item = char>,
     {
         let mut string = String::new();
-        stream.next();
+        stream.next(); // consume the opening quote
 
         while let Some(&symbol) = stream.peek() {
             match symbol {
@@ -46,7 +46,6 @@ impl QuarkString {
                 _ => string.push(stream.next().unwrap()),
             }
         }
-
         QuarkString(string)
     }
 }
