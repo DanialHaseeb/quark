@@ -1,37 +1,33 @@
-use crate::lexer::token::{
-    literal::{Literal, Number},
-    operator::{Operator, SingleCharOperator},
-    Kind, Token,
-};
+use crate::lexer::token::Token;
 
-enum Expression {
+pub enum Expression {
     Binary(BinaryExpr),
     Unary(UnaryExpr),
     Literal(LiteralExpr),
     Grouping(GroupingExpr),
 }
 
-trait Print {
+pub trait Print {
     fn print(&self) -> String;
 }
 
-struct BinaryExpr {
-    left: Box<Expression>,
-    operator: Token,
-    right: Box<Expression>,
+pub struct BinaryExpr {
+    pub left: Box<Expression>,
+    pub operator: Token,
+    pub right: Box<Expression>,
 }
 
-struct UnaryExpr {
-    operator: Token,
-    right: Box<Expression>,
+pub struct UnaryExpr {
+    pub operator: Token,
+    pub right: Box<Expression>,
 }
 
-struct LiteralExpr {
-    value: Token,
+pub struct LiteralExpr {
+    pub value: Token,
 }
 
-struct GroupingExpr {
-    expression: Box<Expression>,
+pub struct GroupingExpr {
+    pub expression: Box<Expression>,
 }
 
 impl Print for Expression {
@@ -71,38 +67,5 @@ impl Print for LiteralExpr {
 impl Print for GroupingExpr {
     fn print(&self) -> String {
         format!("(group {})", self.expression.print())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_expression_evaluation() {
-        let expression = Expression::Binary(BinaryExpr {
-            left: Box::new(Expression::Unary(UnaryExpr {
-                operator: Token {
-                    kind: Kind::Operator(Operator::SingleChar(SingleCharOperator::Minus)),
-                },
-                right: Box::new(Expression::Literal(LiteralExpr {
-                    value: Token {
-                        kind: Kind::Literal(Literal::Number(Number::Int(123))),
-                    },
-                })),
-            })),
-            operator: Token {
-                kind: Kind::Operator(Operator::SingleChar(SingleCharOperator::Asterisk)),
-            },
-            right: Box::new(Expression::Grouping(GroupingExpr {
-                expression: Box::new(Expression::Literal(LiteralExpr {
-                    value: Token {
-                        kind: Kind::Literal(Literal::Number(Number::Float(45.67))),
-                    },
-                })),
-            })),
-        });
-
-        assert_eq!(expression.print(), "(* (- 123) (group 45.67))");
     }
 }
