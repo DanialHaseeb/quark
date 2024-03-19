@@ -1,14 +1,11 @@
 use crate::lexer::token::Token;
+use std::fmt;
 
 pub enum Expression {
     Binary(BinaryExpr),
     Unary(UnaryExpr),
     Literal(LiteralExpr),
     Grouping(GroupingExpr),
-}
-
-pub trait Print {
-    fn print(&self) -> String;
 }
 
 pub struct BinaryExpr {
@@ -30,42 +27,37 @@ pub struct GroupingExpr {
     pub expression: Box<Expression>,
 }
 
-impl Print for Expression {
-    fn print(&self) -> String {
+impl fmt::Display for Expression {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Expression::Binary(expr) => expr.print(),
-            Expression::Unary(expr) => expr.print(),
-            Expression::Literal(expr) => expr.print(),
-            Expression::Grouping(expr) => expr.print(),
+            Expression::Binary(expr) => write!(f, "{}", expr),
+            Expression::Unary(expr) => write!(f, "{}", expr),
+            Expression::Literal(expr) => write!(f, "{}", expr),
+            Expression::Grouping(expr) => write!(f, "{}", expr),
         }
     }
 }
 
-impl Print for BinaryExpr {
-    fn print(&self) -> String {
-        format!(
-            "({} {} {})",
-            self.operator,
-            self.left.print(),
-            self.right.print()
-        )
+impl fmt::Display for BinaryExpr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({} {} {})", self.operator, self.left, self.right)
     }
 }
 
-impl Print for UnaryExpr {
-    fn print(&self) -> String {
-        format!("({} {})", self.operator, self.right.print())
+impl fmt::Display for UnaryExpr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({} {})", self.operator, self.right)
     }
 }
 
-impl Print for LiteralExpr {
-    fn print(&self) -> String {
-        format!("{}", self.value)
+impl fmt::Display for LiteralExpr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.value)
     }
 }
 
-impl Print for GroupingExpr {
-    fn print(&self) -> String {
-        format!("(group {})", self.expression.print())
+impl fmt::Display for GroupingExpr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "(group {})", self.expression)
     }
 }

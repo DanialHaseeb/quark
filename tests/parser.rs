@@ -4,7 +4,7 @@ use quark::{
         operator::{Operator, SingleCharOperator},
         Kind, Token,
     },
-    parser::expression::{BinaryExpr, Expression, GroupingExpr, LiteralExpr, Print, UnaryExpr},
+    parser::expression::{BinaryExpr, Expression, GroupingExpr, LiteralExpr, UnaryExpr},
 };
 
 #[test]
@@ -32,5 +32,5 @@ fn test_expression_printing() {
         })),
     });
 
-    assert_eq!(expression.print(), "(* (- 123) (group 45.67))");
+    assert_eq!(format!("{}", expression), "(* (- 123) (group 45.67))");
 }
