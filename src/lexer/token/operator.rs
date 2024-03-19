@@ -1,4 +1,5 @@
 use itertools::PeekNth;
+use std::fmt;
 use DoubleCharOperator::*;
 use Operator::*;
 use SingleCharOperator::*;
@@ -88,5 +89,51 @@ impl Operator {
             '|' => SingleChar(Pipe),
             _ => unreachable!(),
         }
+    }
+}
+
+impl fmt::Display for Operator {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Operator::SingleChar(op) => write!(f, "{}", op),
+            Operator::DoubleChar(op) => write!(f, "{}", op),
+        }
+    }
+}
+
+impl fmt::Display for SingleCharOperator {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let symbol = match self {
+            SingleCharOperator::Plus => "+",
+            SingleCharOperator::Minus => "-",
+            SingleCharOperator::Asterisk => "*",
+            SingleCharOperator::Slash => "/",
+            SingleCharOperator::Percent => "%",
+            SingleCharOperator::Hash => "#",
+            SingleCharOperator::Equal => "=",
+            SingleCharOperator::Less => "<",
+            SingleCharOperator::Greater => ">",
+            SingleCharOperator::Ampersand => "&",
+            SingleCharOperator::Pipe => "|",
+            SingleCharOperator::Bang => "!",
+        };
+        write!(f, "{}", symbol)
+    }
+}
+
+impl fmt::Display for DoubleCharOperator {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let symbol = match self {
+            DoubleCharOperator::PlusEqual => "+=",
+            DoubleCharOperator::MinusEqual => "-=",
+            DoubleCharOperator::AsteriskEqual => "*=",
+            DoubleCharOperator::BangEqual => "!=",
+            DoubleCharOperator::SlashEqual => "/=",
+            DoubleCharOperator::PercentEqual => "%=",
+            DoubleCharOperator::EqualEqual => "==",
+            DoubleCharOperator::SlashSlash => "//",
+        };
+
+        write!(f, "{}", symbol)
     }
 }

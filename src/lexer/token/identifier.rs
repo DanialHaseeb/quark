@@ -1,5 +1,6 @@
 use self::Keyword::*;
 use itertools::PeekNth;
+use std::fmt;
 use Identifier::*;
 
 #[derive(Debug, PartialEq)]
@@ -68,6 +69,36 @@ impl Identifier {
             "xor" => Keyword(Xor),
             "not" => Keyword(Not),
             _ => Variable(lexeme),
+        }
+    }
+}
+
+impl fmt::Display for Identifier {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Identifier::Variable(name) => write!(f, "Variable({})", name),
+            Identifier::Keyword(keyword) => write!(f, "{}", keyword),
+        }
+    }
+}
+
+impl fmt::Display for Keyword {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Keyword::While => write!(f, "While"),
+            Keyword::For => write!(f, "For"),
+            Keyword::In => write!(f, "In"),
+            Keyword::Break => write!(f, "Break"),
+            Keyword::Continue => write!(f, "Continue"),
+            Keyword::If => write!(f, "If"),
+            Keyword::Else => write!(f, "Else"),
+            Keyword::True => write!(f, "True"),
+            Keyword::False => write!(f, "False"),
+            Keyword::Return => write!(f, "Return"),
+            Keyword::And => write!(f, "And"),
+            Keyword::Or => write!(f, "Or"),
+            Keyword::Xor => write!(f, "Xor"),
+            Keyword::Not => write!(f, "Not"),
         }
     }
 }

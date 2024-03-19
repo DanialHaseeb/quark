@@ -1,3 +1,4 @@
+use super::fmt;
 use itertools::structs::PeekNth;
 
 #[derive(Debug, PartialEq)]
@@ -10,8 +11,8 @@ pub enum Literal {
 pub enum Number {
     Int(i64),
     Float(f64),
-    ComplexInt(i64),
-    ComplexFloat(f64),
+    ImgInt(i64),
+    ImgFloat(f64),
 }
 
 #[derive(Debug, PartialEq)]
@@ -95,12 +96,12 @@ impl Number {
 
 fn parse_number(number: &str, num_type: NumberIs) -> Number {
     match num_type {
-        NumberIs::ComplexInt => Number::ComplexInt(
+        NumberIs::ComplexInt => Number::ImgInt(
             number
                 .parse::<i64>()
                 .unwrap_or_else(|_| panic!("Failed to parse complex integer")),
         ),
-        NumberIs::ComplexFloat => Number::ComplexFloat(
+        NumberIs::ComplexFloat => Number::ImgFloat(
             number
                 .parse::<f64>()
                 .unwrap_or_else(|_| panic!("Failed to parse complex float")),
@@ -146,5 +147,31 @@ where
             }
             number.push(self.next().unwrap());
         }
+    }
+}
+
+impl fmt::Display for Literal {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Literal::Number(number) => write!(f, "{}", number),
+            Literal::String(string) => write!(f, "{}", string),
+        }
+    }
+}
+
+impl fmt::Display for Number {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Number::Int(num) => write!(f, "{}", num),
+            Number::Float(num) => write!(f, "{}", num),
+            Number::ImgInt(num) => write!(f, "{}i", num),
+            Number::ImgFloat(num) => write!(f, "{}i", num),
+        }
+    }
+}
+
+impl fmt::Display for QuarkString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "\"{}\"", self.0)
     }
 }
