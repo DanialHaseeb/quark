@@ -3,41 +3,43 @@ pub mod literal;
 pub mod operator;
 pub mod separator;
 
-use std::fmt::{self, Display, Formatter};
+use std::fmt;
 
-use identifier::Identifier;
-use literal::Literal;
-use operator::Operator;
-use separator::Separator;
+use identifier::IdentifierKind;
+use literal::LiteralKind;
+use operator::OperatorKind;
+use separator::SeparatorKind;
 
 #[derive(Debug, PartialEq)]
 pub struct Token {
-    pub kind: Kind,
+    pub token_kind: TokenKind,
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Kind {
+pub enum TokenKind {
     Whitespace,
-    Identifier(Identifier),
-    Separator(Separator),
-    Operator(Operator),
-    Literal(Literal),
+    Identifier(IdentifierKind),
+    Separator(SeparatorKind),
+    Operator(OperatorKind),
+    Literal(LiteralKind),
 }
 
 impl Token {
-    pub fn new(kind: Kind) -> Self {
-        Self { kind }
+    pub fn new(token_type: TokenKind) -> Self {
+        Self {
+            token_kind: token_type,
+        }
     }
 }
 
 impl fmt::Display for Token {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.kind {
-            Kind::Whitespace => write!(f, "Whitespace"),
-            Kind::Identifier(identifier) => write!(f, "{}", identifier),
-            Kind::Separator(separator) => write!(f, "{}", separator),
-            Kind::Operator(operator) => write!(f, "{}", operator),
-            Kind::Literal(literal) => write!(f, "{}", literal),
+        match &self.token_kind {
+            TokenKind::Whitespace => write!(f, "Whitespace"),
+            TokenKind::Identifier(identifier) => write!(f, "{}", identifier),
+            TokenKind::Separator(separator) => write!(f, "{}", separator),
+            TokenKind::Operator(operator) => write!(f, "{}", operator),
+            TokenKind::Literal(literal) => write!(f, "{}", literal),
         }
     }
 }

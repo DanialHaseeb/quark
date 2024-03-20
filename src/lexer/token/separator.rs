@@ -1,9 +1,9 @@
 use std::fmt;
 use Delimiter::*;
-use Separator::*;
+use SeparatorKind::*;
 
 #[derive(Debug, PartialEq)]
-pub enum Separator {
+pub enum SeparatorKind {
     Left(Delimiter),
     Right(Delimiter),
     Comma,
@@ -18,7 +18,7 @@ pub enum Delimiter {
     Brace,
 }
 
-impl Separator {
+impl SeparatorKind {
     pub fn new<T>(stream: &mut T) -> Self
     where
         T: Iterator<Item = char>,
@@ -38,14 +38,14 @@ impl Separator {
     }
 }
 
-impl fmt::Display for Separator {
+impl fmt::Display for SeparatorKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Separator::Left(delimiter) => write!(f, "Left({})", delimiter),
-            Separator::Right(delimiter) => write!(f, "Right({})", delimiter),
-            Separator::Comma => write!(f, "Comma"),
-            Separator::Dot => write!(f, "Dot"),
-            Separator::Semicolon => write!(f, "Semicolon"),
+            SeparatorKind::Left(delimiter) => write!(f, "Left({})", delimiter),
+            SeparatorKind::Right(delimiter) => write!(f, "Right({})", delimiter),
+            SeparatorKind::Comma => write!(f, "Comma"),
+            SeparatorKind::Dot => write!(f, "Dot"),
+            SeparatorKind::Semicolon => write!(f, "Semicolon"),
         }
     }
 }

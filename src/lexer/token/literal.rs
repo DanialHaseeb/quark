@@ -2,13 +2,13 @@ use super::fmt;
 use itertools::structs::PeekNth;
 
 #[derive(Debug, PartialEq)]
-pub enum Literal {
-    Number(Number),
+pub enum LiteralKind {
+    Number(NumberKind),
     String(QuarkString),
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Number {
+pub enum NumberKind {
     Int(i64),
     Float(f64),
     ImgInt(i64),
@@ -18,14 +18,14 @@ pub enum Number {
 #[derive(Debug, PartialEq)]
 pub struct QuarkString(String);
 
-impl Literal {
+impl LiteralKind {
     pub fn new<T>(stream: &mut PeekNth<T>) -> Self
     where
         T: Iterator<Item = char>,
     {
         match stream.peek() {
             Some(&'"') => Self::String(QuarkString::new(stream)),
-            Some(&symbol) if symbol.is_numeric() => Self::Number(Number::new(stream)),
+            Some(&symbol) if symbol.is_numeric() => Self::Number(NumberKind::new(stream)),
             _ => unreachable!(),
         }
     }
@@ -57,7 +57,7 @@ enum NumberIs {
     Float,
 }
 
-impl Number {
+impl NumberKind {
     pub fn new<T>(stream: &mut PeekNth<T>) -> Self
     where
         T: Iterator<Item = char>,
@@ -94,24 +94,24 @@ impl Number {
     }
 }
 
-fn parse_number(number: &str, num_type: NumberIs) -> Number {
+fn parse_number(number: &str, num_type: NumberIs) -> NumberKind {
     match num_type {
-        NumberIs::ComplexInt => Number::ImgInt(
+        NumberIs::ComplexInt => NumberKind::ImgInt(
             number
                 .parse::<i64>()
                 .unwrap_or_else(|_| panic!("Failed to parse complex integer")),
         ),
-        NumberIs::ComplexFloat => Number::ImgFloat(
+        NumberIs::ComplexFloat => NumberKind::ImgFloat(
             number
                 .parse::<f64>()
                 .unwrap_or_else(|_| panic!("Failed to parse complex float")),
         ),
-        NumberIs::Int => Number::Int(
+        NumberIs::Int => NumberKind::Int(
             number
                 .parse::<i64>()
                 .unwrap_or_else(|_| panic!("Failed to parse integer")),
         ),
-        NumberIs::Float => Number::Float(
+        NumberIs::Float => NumberKind::Float(
             number
                 .parse::<f64>()
                 .unwrap_or_else(|_| panic!("Failed to parse float")),
@@ -150,22 +150,22 @@ where
     }
 }
 
-impl fmt::Display for Literal {
+impl fmt::Display for LiteralKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Literal::Number(number) => write!(f, "{}", number),
-            Literal::String(string) => write!(f, "{}", string),
+            LiteralKind::Number(number) => write!(f, "{}", number),
+            LiteralKind::String(string) => write!(f, "{}", string),
         }
     }
 }
 
-impl fmt::Display for Number {
+impl fmt::Display for NumberKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Number::Int(num) => write!(f, "{}", num),
-            Number::Float(num) => write!(f, "{}", num),
-            Number::ImgInt(num) => write!(f, "{}i", num),
-            Number::ImgFloat(num) => write!(f, "{}i", num),
+            NumberKind::Int(num) => write!(f, "{}", num),
+            NumberKind::Float(num) => write!(f, "{}", num),
+            NumberKind::ImgInt(num) => write!(f, "{}i", num),
+            NumberKind::ImgFloat(num) => write!(f, "{}i", num),
         }
     }
 }

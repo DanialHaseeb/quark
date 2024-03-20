@@ -14,6 +14,16 @@ pub struct BinaryExpr {
     pub right: Box<Expression>,
 }
 
+impl BinaryExpr {
+    pub fn new(left: Box<Expression>, operator: Token, right: Box<Expression>) -> Self {
+        Self {
+            left,
+            operator,
+            right,
+        }
+    }
+}
+
 pub struct UnaryExpr {
     pub operator: Token,
     pub right: Box<Expression>,
