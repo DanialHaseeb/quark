@@ -10,12 +10,12 @@ use literal::LiteralKind;
 use operator::OperatorKind;
 use separator::SeparatorKind;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Token {
     pub token_kind: TokenKind,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum TokenKind {
     Whitespace,
     Identifier(IdentifierKind),

@@ -3,7 +3,7 @@ use crate::lexer::token::operator::OperatorKind::*;
 use crate::lexer::token::{Token, TokenKind::*};
 use anyhow::Result;
 use expression::BinaryExpr;
-use util::GoBackIterator;
+use util::LookbackIterator;
 
 use self::expression::Expression;
 
@@ -20,28 +20,27 @@ pub struct Tree {
 }
 
 pub fn generate(tokens: Vec<Token>) -> Result<Tree> {
-    let traveler = GoBackIterator::new(tokens);
+    let iterator = LookbackIterator::new(tokens);
 
     Ok(Tree {
         node: Node { children: vec![] },
     })
 }
 
-fn expression(traveler: &GoBackIterator) -> Expression {
-    equality(&traveler)
+fn expression(iterator: &LookbackIterator) -> Expression {
+    equality(iterator)
 }
 
-fn equality(traveler: &GoBackIterator) -> Expression {
+fn equality(iterator: &LookbackIterator) -> Expression {
     let mut expr = comparison();
 
-    loop {
-        match traveler.peek().unwrap().token_kind {
-            Operator(DoubleChar(BangEqual)) | Operator(DoubleChar(EqualEqual)) => {
-                let operator = *traveler.peek_prev().unwrap().clone();
-                let right = comparison();
-                let expr = BinaryExpr::new(Box::new(expr), operator, Box::new(right));
-            }
-            _ => break,
+    while let Operator(DoubleChar(BangEqual)) | Operator(DoubleChar(EqualEqual)) =
+        iterator.peek().unwrap().token_kind
+    {
+        {
+            let operator = iterator.peek_prev().unwrap().clone();
+            let right = comparison();
+            expr = Expression::Binary(BinaryExpr::new(Box::new(expr), operator, Box::new(right)));
         }
     }
     expr

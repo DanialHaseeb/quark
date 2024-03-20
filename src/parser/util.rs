@@ -1,11 +1,11 @@
 use crate::lexer::token::Token;
 
-pub struct GoBackIterator {
+pub struct LookbackIterator {
     current: usize,
     tokens: Vec<Token>,
 }
 
-impl GoBackIterator {
+impl LookbackIterator {
     pub fn new(tokens: Vec<Token>) -> Self {
         Self { current: 0, tokens }
     }

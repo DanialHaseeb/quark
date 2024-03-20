@@ -4,13 +4,13 @@ use DoubleCharKind::*;
 use OperatorKind::*;
 use SingleCharKind::*;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum OperatorKind {
     SingleChar(SingleCharKind),
     DoubleChar(DoubleCharKind),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum SingleCharKind {
     Plus,
     Minus,
@@ -26,7 +26,7 @@ pub enum SingleCharKind {
     Bang,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum DoubleCharKind {
     PlusEqual,
     MinusEqual,

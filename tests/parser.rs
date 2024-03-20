@@ -1,6 +1,6 @@
 use quark::{
     lexer::token::{
-        literal::NumberKind,
+        literal::{LiteralKind, NumberKind},
         operator::{OperatorKind, SingleCharKind},
         Token, TokenKind,
     },
@@ -16,7 +16,7 @@ fn test_expression_printing() {
             },
             right: Box::new(Expression::Literal(LiteralExpr {
                 value: Token {
-                    token_kind: TokenKind::Literal(LiteralType::Number(NumberKind::Int(123))),
+                    token_kind: TokenKind::Literal(LiteralKind::Number(NumberKind::Int(123))),
                 },
             })),
         })),
@@ -26,7 +26,7 @@ fn test_expression_printing() {
         right: Box::new(Expression::Grouping(GroupingExpr {
             expression: Box::new(Expression::Literal(LiteralExpr {
                 value: Token {
-                    token_kind: TokenKind::Literal(LiteralType::Number(NumberKind::Float(45.67))),
+                    token_kind: TokenKind::Literal(LiteralKind::Number(NumberKind::Float(45.67))),
                 },
             })),
         })),

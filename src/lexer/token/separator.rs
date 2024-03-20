@@ -2,7 +2,7 @@ use std::fmt;
 use Delimiter::*;
 use SeparatorKind::*;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum SeparatorKind {
     Left(Delimiter),
     Right(Delimiter),
@@ -11,7 +11,7 @@ pub enum SeparatorKind {
     Semicolon,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Delimiter {
     Parenthesis,
     Bracket,
