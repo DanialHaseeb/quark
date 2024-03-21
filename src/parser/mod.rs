@@ -7,6 +7,7 @@ use crate::lexer::token::operator::SingleCharKind::*;
 use crate::lexer::token::separator::Delimiter::*;
 use crate::lexer::token::separator::SeparatorKind::*;
 use crate::lexer::token::{Token, TokenKind::*};
+use anyhow::bail;
 use anyhow::Result;
 use expression::BinaryExpr;
 use util::Peekback;
@@ -150,23 +151,23 @@ fn unary(tokens_iter: &mut Peekback) -> Expression {
 fn primary(tokens_iter: &mut Peekback) -> Expression {
     let token_kind = tokens_iter.peek().unwrap().token_kind.clone();
 
-    if let Identifier(Keyword(True))
-    | Identifier(Keyword(False))
+    if let Literal(Number(_))
     | Literal(String(_))
-    | Literal(Number(_)) = token_kind
+    | Identifier(Keyword(True))
+    | Identifier(Keyword(False)) = token_kind
     {
         Expression::Literal(LiteralExpr {
             value: Token { token_kind },
         })
     } else if let Separator(Left(Parenthesis)) = token_kind {
         let expression = Box::new(expression(tokens_iter));
-        consume(tokens_iter, Separator(Right(Parenthesis)));
+
+        tokens_iter
+            .consume(Token::new(Separator(Right(Parenthesis))))
+            .expect("Expected ')' after expression on {line_number}"); // TODO: Add line number to Token struct so we can display it here as the error message
+
         Expression::Grouping(GroupingExpr { expression })
     } else {
         panic!("Unexpected token: {:?}", token_kind)
     }
-}
-
-fn consume(tokens_iter: &mut Peekback, parenthesis: crate::lexer::token::TokenKind) {
-    todo!()
 }

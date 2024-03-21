@@ -6,6 +6,8 @@ pub struct Peekback {
     tokens: Vec<Token>,
 }
 
+// TODO: Remove Peekback and move Peeknth utils from lexer to here
+
 impl Peekback {
     pub fn new(tokens: Vec<Token>) -> Self {
         Self { current: 0, tokens }
@@ -20,6 +22,15 @@ impl Peekback {
         if !self.is_at_end() {
             self.current += 1;
             Some(self.tokens.get(self.current - 1).unwrap())
+        } else {
+            None
+        }
+    }
+    pub fn consume(&mut self, token: Token) -> Option<Token> {
+        if self.peek() == Some(&token) {
+            self.next();
+            // TODO: might need to rethink returning this when line numbers are added
+            Some(token)
         } else {
             None
         }
