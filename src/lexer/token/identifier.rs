@@ -1,16 +1,16 @@
-use self::Keyword::*;
 use itertools::PeekNth;
 use std::fmt;
-use Identifier::*;
+use IdentifierKind::*;
+use KeywordKind::*;
 
-#[derive(Debug, PartialEq)]
-pub enum Identifier {
+#[derive(Debug, PartialEq, Clone)]
+pub enum IdentifierKind {
     Variable(String),
-    Keyword(Keyword),
+    Keyword(KeywordKind),
 }
 
-#[derive(Debug, PartialEq)]
-pub enum Keyword {
+#[derive(Debug, PartialEq, Clone)]
+pub enum KeywordKind {
     While,
     For,
     In,
@@ -37,7 +37,7 @@ impl IdentifierSymbol for char {
     }
 }
 
-impl Identifier {
+impl IdentifierKind {
     pub fn new<T>(stream: &mut PeekNth<T>) -> Self
     where
         T: Iterator<Item = char>,
@@ -73,32 +73,32 @@ impl Identifier {
     }
 }
 
-impl fmt::Display for Identifier {
+impl fmt::Display for IdentifierKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Identifier::Variable(name) => write!(f, "Variable({})", name),
-            Identifier::Keyword(keyword) => write!(f, "{}", keyword),
+            IdentifierKind::Variable(name) => write!(f, "Variable({})", name),
+            IdentifierKind::Keyword(keyword) => write!(f, "{}", keyword),
         }
     }
 }
 
-impl fmt::Display for Keyword {
+impl fmt::Display for KeywordKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Keyword::While => write!(f, "While"),
-            Keyword::For => write!(f, "For"),
-            Keyword::In => write!(f, "In"),
-            Keyword::Break => write!(f, "Break"),
-            Keyword::Continue => write!(f, "Continue"),
-            Keyword::If => write!(f, "If"),
-            Keyword::Else => write!(f, "Else"),
-            Keyword::True => write!(f, "True"),
-            Keyword::False => write!(f, "False"),
-            Keyword::Return => write!(f, "Return"),
-            Keyword::And => write!(f, "And"),
-            Keyword::Or => write!(f, "Or"),
-            Keyword::Xor => write!(f, "Xor"),
-            Keyword::Not => write!(f, "Not"),
+            KeywordKind::While => write!(f, "While"),
+            KeywordKind::For => write!(f, "For"),
+            KeywordKind::In => write!(f, "In"),
+            KeywordKind::Break => write!(f, "Break"),
+            KeywordKind::Continue => write!(f, "Continue"),
+            KeywordKind::If => write!(f, "If"),
+            KeywordKind::Else => write!(f, "Else"),
+            KeywordKind::True => write!(f, "True"),
+            KeywordKind::False => write!(f, "False"),
+            KeywordKind::Return => write!(f, "Return"),
+            KeywordKind::And => write!(f, "And"),
+            KeywordKind::Or => write!(f, "Or"),
+            KeywordKind::Xor => write!(f, "Xor"),
+            KeywordKind::Not => write!(f, "Not"),
         }
     }
 }

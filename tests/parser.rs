@@ -1,8 +1,8 @@
 use quark::{
     lexer::token::{
-        literal::{Literal, Number},
-        operator::{Operator, SingleCharOperator},
-        Kind, Token,
+        literal::{LiteralKind, NumberKind},
+        operator::{OperatorKind, SingleCharKind},
+        Token, TokenKind,
     },
     parser::expression::{BinaryExpr, Expression, GroupingExpr, LiteralExpr, UnaryExpr},
 };
@@ -12,21 +12,21 @@ fn test_expression_printing() {
     let expression = Expression::Binary(BinaryExpr {
         left: Box::new(Expression::Unary(UnaryExpr {
             operator: Token {
-                kind: Kind::Operator(Operator::SingleChar(SingleCharOperator::Minus)),
+                token_kind: TokenKind::Operator(OperatorKind::SingleChar(SingleCharKind::Minus)),
             },
             right: Box::new(Expression::Literal(LiteralExpr {
                 value: Token {
-                    kind: Kind::Literal(Literal::Number(Number::Int(123))),
+                    token_kind: TokenKind::Literal(LiteralKind::Number(NumberKind::Int(123))),
                 },
             })),
         })),
         operator: Token {
-            kind: Kind::Operator(Operator::SingleChar(SingleCharOperator::Asterisk)),
+            token_kind: TokenKind::Operator(OperatorKind::SingleChar(SingleCharKind::Asterisk)),
         },
         right: Box::new(Expression::Grouping(GroupingExpr {
             expression: Box::new(Expression::Literal(LiteralExpr {
                 value: Token {
-                    kind: Kind::Literal(Literal::Number(Number::Float(45.67))),
+                    token_kind: TokenKind::Literal(LiteralKind::Number(NumberKind::Float(45.67))),
                 },
             })),
         })),

@@ -1,38 +1,39 @@
 use anyhow::{bail, Result};
-use itertools::structs::PeekNth;
-use token::identifier::{Identifier, IdentifierSymbol};
-use token::literal::Literal;
-use token::operator::Operator;
-use token::separator::Separator;
-use token::{Kind::*, Token};
+use itertools::peek_nth;
+use token::identifier::{IdentifierKind, IdentifierSymbol};
+use token::literal::LiteralKind;
+use token::operator::OperatorKind;
+use token::separator::SeparatorKind;
+use token::{Token, TokenKind::*};
 
 pub mod token;
 
-pub fn scan<T>(mut stream: PeekNth<T>) -> Result<Vec<Token>>
-where
-    T: Iterator<Item = char>,
-{
+pub fn scan(source: String) -> Result<Vec<Token>> {
+    let mut stream = peek_nth(source.chars());
+
     let mut tokens = Vec::new();
 
     while let Some(&symbol) = stream.peek() {
-        let kind = match symbol {
+        let token_type = match symbol {
             _ if symbol.is_whitespace() => {
                 stream.next();
                 Whitespace
             }
-            _ if symbol.is_identifier_symbol() => Identifier(Identifier::new(&mut stream)),
-            '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' => Separator(Separator::new(&mut stream)),
+            _ if symbol.is_identifier_symbol() => Identifier(IdentifierKind::new(&mut stream)),
+            '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' => {
+                Separator(SeparatorKind::new(&mut stream))
+            }
             '+' | '-' | '*' | '/' | '%' | '=' | '!' | '<' | '>' | '&' | '|' => {
-                Operator(Operator::new(&mut stream))
+                Operator(OperatorKind::new(&mut stream))
             }
 
-            '"' => Literal(Literal::new(&mut stream)),
-            _ if symbol.is_ascii_digit() => Literal(Literal::new(&mut stream)),
+            '"' => Literal(LiteralKind::new(&mut stream)),
+            _ if symbol.is_ascii_digit() => Literal(LiteralKind::new(&mut stream)),
             _ => bail!("Unexpected symbol: {symbol}"),
         };
 
-        if kind != Whitespace {
-            tokens.push(Token::new(kind));
+        if token_type != Whitespace {
+            tokens.push(Token::new(token_type));
             eprintln!("{:?}", tokens.last().unwrap());
         }
     }
