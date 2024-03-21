@@ -1,5 +1,7 @@
 use itertools::PeekNth;
 use std::fmt;
+
+use anyhow::bail;
 use DoubleCharKind::*;
 use OperatorKind::*;
 use SingleCharKind::*;
@@ -30,6 +32,8 @@ pub enum SingleCharKind {
 pub enum DoubleCharKind {
     PlusEqual,
     MinusEqual,
+    LessEqual,
+    GreaterEqual,
     AsteriskEqual,
     BangEqual,
     SlashEqual,
@@ -66,27 +70,33 @@ impl OperatorKind {
         T: Iterator<Item = char>,
     {
         match stream.next().unwrap() {
+            '!' if stream.consume_if_matches('=') => DoubleChar(BangEqual),
+            '<' if stream.consume_if_matches('=') => DoubleChar(LessEqual),
+            '>' if stream.consume_if_matches('=') => DoubleChar(GreaterEqual),
+            '=' if stream.consume_if_matches('=') => DoubleChar(EqualEqual),
+
             '+' if stream.consume_if_matches('=') => DoubleChar(PlusEqual),
             '-' if stream.consume_if_matches('=') => DoubleChar(MinusEqual),
             '*' if stream.consume_if_matches('=') => DoubleChar(AsteriskEqual),
-            '!' if stream.consume_if_matches('=') => DoubleChar(BangEqual),
             '/' if stream.consume_if_matches('=') => DoubleChar(SlashEqual),
             '%' if stream.consume_if_matches('=') => DoubleChar(PercentEqual),
-            '=' if stream.consume_if_matches('=') => DoubleChar(EqualEqual),
+
             '/' if stream.consume_if_matches('/') => DoubleChar(SlashSlash),
 
-            '+' => SingleChar(Plus),
-            '-' => SingleChar(Minus),
-            '#' => SingleChar(Hash),
-            '*' => SingleChar(Asterisk),
-            '!' => SingleChar(Bang),
-            '/' => SingleChar(Slash),
-            '%' => SingleChar(Percent),
-            '=' => SingleChar(Equal),
             '<' => SingleChar(Less),
             '>' => SingleChar(Greater),
             '&' => SingleChar(Ampersand),
+            '!' => SingleChar(Bang),
+
+            '+' => SingleChar(Plus),
+            '-' => SingleChar(Minus),
+            '*' => SingleChar(Asterisk),
+            '/' => SingleChar(Slash),
+            '%' => SingleChar(Percent),
+
+            '=' => SingleChar(Equal),
             '|' => SingleChar(Pipe),
+            '#' => SingleChar(Hash),
             _ => unreachable!(),
         }
     }
@@ -132,6 +142,8 @@ impl fmt::Display for DoubleCharKind {
             DoubleCharKind::PercentEqual => "%=",
             DoubleCharKind::EqualEqual => "==",
             DoubleCharKind::SlashSlash => "//",
+            DoubleCharKind::LessEqual => "<=",
+            DoubleCharKind::GreaterEqual => ">=",
         };
 
         write!(f, "{}", symbol)

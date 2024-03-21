@@ -1,11 +1,12 @@
 use crate::lexer::token::Token;
 
-pub struct LookbackIterator {
+/// A iterator-like construction with a peek_prev function
+pub struct Peekback {
     current: usize,
     tokens: Vec<Token>,
 }
 
-impl LookbackIterator {
+impl Peekback {
     pub fn new(tokens: Vec<Token>) -> Self {
         Self { current: 0, tokens }
     }
@@ -18,7 +19,7 @@ impl LookbackIterator {
     pub fn next(&mut self) -> Option<&Token> {
         if !self.is_at_end() {
             self.current += 1;
-            Some(self.peek_prev().unwrap())
+            Some(self.tokens.get(self.current - 1).unwrap())
         } else {
             None
         }
@@ -28,7 +29,7 @@ impl LookbackIterator {
         self.tokens.get(self.current)
     }
 
-    pub fn peek_prev(&self) -> Option<&Token> {
-        self.tokens.get(self.current - 1)
-    }
+    // pub fn peek_back(&self) -> Option<&Token> {
+    //     self.tokens.get(self.current - 1)
+    // }
 }
