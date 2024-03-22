@@ -3,13 +3,13 @@ use std::fmt;
 use IdentifierKind::*;
 use KeywordKind::*;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq)]
 pub enum IdentifierKind {
     Variable(String),
     Keyword(KeywordKind),
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq)]
 pub enum KeywordKind {
     While,
     For,

@@ -1,3 +1,5 @@
+use std::iter::Peekable;
+
 use crate::lexer::token::identifier::IdentifierKind::*;
 use crate::lexer::token::identifier::KeywordKind::*;
 use crate::lexer::token::literal::LiteralKind::*;
@@ -5,6 +7,7 @@ use crate::lexer::token::operator::DoubleCharKind::*;
 use crate::lexer::token::operator::OperatorKind::*;
 use crate::lexer::token::operator::SingleCharKind::*;
 use crate::lexer::token::separator::Delimiter::*;
+use crate::lexer::token::separator::SeparatorKind;
 use crate::lexer::token::separator::SeparatorKind::*;
 use crate::lexer::token::{Token, TokenKind::*};
 use anyhow::anyhow;
@@ -15,23 +18,28 @@ use super::expression::Expression;
 use super::expression::GroupingExpr;
 use super::expression::LiteralExpr;
 use super::expression::UnaryExpr;
-use super::util::Peekback;
 
 /// Grammar Rule:
 /// expression     → equality ;
-pub fn expression(tokens_iter: &mut Peekback) -> Result<Expression> {
+pub fn expression<T>(tokens_iter: &mut Peekable<T>) -> Result<Expression>
+where
+    T: Iterator<Item = Token>,
+{
     equality(tokens_iter)
 }
 
 /// Grammar Rule:
 /// equality       → comparison ( ( "!=" | "==" ) comparison )* ;
-fn equality(tokens_iter: &mut Peekback) -> Result<Expression> {
+fn equality<T>(tokens_iter: &mut Peekable<T>) -> Result<Expression>
+where
+    T: Iterator<Item = Token>,
+{
     let mut expression = comparison(tokens_iter)?;
 
-    while let Operator(DoubleChar(BangEqual)) | Operator(DoubleChar(EqualEqual)) =
-        tokens_iter.peek().unwrap().token_kind
+    while let Some(Operator(DoubleChar(BangEqual))) | Some(Operator(DoubleChar(EqualEqual))) =
+        tokens_iter.peek().map(|token| &token.token_kind)
     {
-        let operator = tokens_iter.next().unwrap().clone();
+        let operator = tokens_iter.next().unwrap();
         let right = comparison(tokens_iter)?;
 
         expression = Expression::Binary(BinaryExpr {
@@ -46,15 +54,19 @@ fn equality(tokens_iter: &mut Peekback) -> Result<Expression> {
 
 /// Grammar Rule:
 /// comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
-fn comparison(tokens_iter: &mut Peekback) -> Result<Expression> {
+fn comparison<T>(tokens_iter: &mut Peekable<T>) -> Result<Expression>
+where
+    T: Iterator<Item = Token>,
+{
     let mut expression = term(tokens_iter)?;
 
-    while let Operator(SingleChar(Greater))
-    | Operator(SingleChar(Less))
-    | Operator(DoubleChar(LessEqual))
-    | Operator(DoubleChar(GreaterEqual)) = tokens_iter.peek().unwrap().token_kind
+    while let Some(Operator(SingleChar(Greater)))
+    | Some(Operator(SingleChar(Less)))
+    | Some(Operator(DoubleChar(LessEqual)))
+    | Some(Operator(DoubleChar(GreaterEqual))) =
+        tokens_iter.peek().map(|token| &token.token_kind)
     {
-        let operator = tokens_iter.next().unwrap().clone();
+        let operator = tokens_iter.next().unwrap();
         let right = term(tokens_iter)?;
 
         expression = Expression::Binary(BinaryExpr {
@@ -69,13 +81,16 @@ fn comparison(tokens_iter: &mut Peekback) -> Result<Expression> {
 
 /// Grammar Rule
 /// term           → factor ( ( "-" | "+" ) factor )* ;
-fn term(tokens_iter: &mut Peekback) -> Result<Expression> {
+fn term<T>(tokens_iter: &mut Peekable<T>) -> Result<Expression>
+where
+    T: Iterator<Item = Token>,
+{
     let mut expression = factor(tokens_iter)?;
 
-    while let Operator(SingleChar(Minus)) | Operator(SingleChar(Plus)) =
-        tokens_iter.peek().unwrap().token_kind
+    while let Some(Operator(SingleChar(Minus))) | Some(Operator(SingleChar(Plus))) =
+        tokens_iter.peek().map(|token| &token.token_kind)
     {
-        let operator = tokens_iter.next().unwrap().clone();
+        let operator = tokens_iter.next().unwrap();
         let right = factor(tokens_iter)?;
 
         expression = Expression::Binary(BinaryExpr {
@@ -90,13 +105,16 @@ fn term(tokens_iter: &mut Peekback) -> Result<Expression> {
 
 /// Grammar Rule:
 /// factor         → unary ( ( "/" | "*" ) unary )* ;
-fn factor(tokens_iter: &mut Peekback) -> Result<Expression> {
+fn factor<T>(tokens_iter: &mut Peekable<T>) -> Result<Expression>
+where
+    T: Iterator<Item = Token>,
+{
     let mut expression = unary(tokens_iter)?;
 
-    while let Operator(SingleChar(Slash)) | Operator(SingleChar(Asterisk)) =
-        tokens_iter.peek().unwrap().token_kind
+    while let Some(Operator(SingleChar(Slash))) | Some(Operator(SingleChar(Asterisk))) =
+        tokens_iter.peek().map(|token| &token.token_kind)
     {
-        let operator = tokens_iter.next().unwrap().clone();
+        let operator = tokens_iter.next().unwrap();
         let right = factor(tokens_iter)?;
 
         expression = Expression::Binary(BinaryExpr {
@@ -111,11 +129,14 @@ fn factor(tokens_iter: &mut Peekback) -> Result<Expression> {
 
 /// Grammar Rule:
 /// unary          → ( "!" | "-" ) unary;
-fn unary(tokens_iter: &mut Peekback) -> Result<Expression> {
-    if let Operator(SingleChar(Bang)) | Operator(SingleChar(Minus)) =
-        tokens_iter.peek().unwrap().token_kind
+fn unary<T>(tokens_iter: &mut Peekable<T>) -> Result<Expression>
+where
+    T: Iterator<Item = Token>,
+{
+    if let Some(Operator(SingleChar(Bang))) | Some(Operator(SingleChar(Minus))) =
+        tokens_iter.peek().map(|token| &token.token_kind)
     {
-        let operator = tokens_iter.next().unwrap().clone();
+        let operator = tokens_iter.next().unwrap();
         let right = unary(tokens_iter)?;
 
         return Ok(Expression::Unary(UnaryExpr {
@@ -123,13 +144,17 @@ fn unary(tokens_iter: &mut Peekback) -> Result<Expression> {
             right: Box::new(right),
         }));
     }
+
     primary(tokens_iter)
 }
 
 /// Grammar Rule:
 /// primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
-fn primary(tokens_iter: &mut Peekback) -> Result<Expression> {
-    let token_kind = tokens_iter.peek().unwrap().token_kind.clone();
+fn primary<T>(tokens_iter: &mut Peekable<T>) -> Result<Expression>
+where
+    T: Iterator<Item = Token>,
+{
+    let token_kind = tokens_iter.next().unwrap().token_kind;
 
     if let Literal(Number(_))
     | Literal(String(_))
@@ -141,13 +166,7 @@ fn primary(tokens_iter: &mut Peekback) -> Result<Expression> {
         }))
     } else if let Separator(Left(Parenthesis)) = token_kind {
         let expression = expression(tokens_iter)?;
-
-        if tokens_iter
-            .consume(Token::new(Separator(Right(Parenthesis))))
-            .is_none()
-        {
-            return Err(anyhow!("Expected ')' after expression"));
-        }
+        consume_if_matches(tokens_iter, Right(Parenthesis))?;
 
         Ok(Expression::Grouping(GroupingExpr {
             expression: Box::new(expression),
@@ -157,10 +176,29 @@ fn primary(tokens_iter: &mut Peekback) -> Result<Expression> {
     }
 }
 
+fn consume_if_matches<T>(tokens_iter: &mut Peekable<T>, separator: SeparatorKind) -> Result<()>
+where
+    T: Iterator<Item = Token>,
+{
+    match tokens_iter.peek() {
+        Some(Token {
+            token_kind: Separator(kind),
+            ..
+        }) if *kind == separator => {
+            tokens_iter.next();
+            Ok(())
+        }
+        _ => Err(anyhow!("Expected '{}' after expression", separator)),
+    }
+}
+
 // TODO: Don't know if this is the best way to handle this
 // TODO:function, let, if, for, while, print, return
-fn synchronize(tokens_iter: &mut Peekback) {
-    while let Some(token) = tokens_iter.next() {
+fn synchronize<T>(tokens_iter: &mut Peekable<T>)
+where
+    T: Iterator<Item = Token>,
+{
+    for token in tokens_iter {
         match token.token_kind {
             Identifier(Keyword(Function)) => return,
             Identifier(Keyword(While)) => return,

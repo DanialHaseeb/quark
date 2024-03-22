@@ -2,7 +2,6 @@ use quark::{
     lexer::token::{
         literal::{LiteralKind, NumberKind},
         operator::{OperatorKind, SingleCharKind},
-        separator::{Delimiter::*, SeparatorKind},
         Token, TokenKind,
     },
     parser::expression::{BinaryExpr, Expression, GroupingExpr, LiteralExpr, UnaryExpr},
@@ -37,10 +36,17 @@ fn test_expression_printing() {
 }
 
 #[test]
-fn test_input() {
-    let input = "123 * (45.67)";
+fn test_numbers() {
+    let input = "1 + 2";
     let tokens = quark::lexer::lex(input.to_string()).unwrap();
-    println!("{:?}", tokens);
     let expression = quark::parser::parse(tokens).unwrap();
-    assert_eq!(format!("{}", expression), "(* (123) (group 45.67))");
+    assert_eq!(format!("{}", expression), "(+ 1 2)");
+}
+
+#[test]
+fn test_paranthesis() {
+    let input = "-123 * (45.67)";
+    let tokens = quark::lexer::lex(input.to_string()).unwrap();
+    let expression = quark::parser::parse(tokens).unwrap();
+    assert_eq!(format!("{}", expression), "(* (- 123) (group 45.67))");
 }

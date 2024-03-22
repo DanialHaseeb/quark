@@ -1,13 +1,13 @@
 use super::fmt;
 use itertools::structs::PeekNth;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq)]
 pub enum LiteralKind {
     Number(NumberKind),
     String(QuarkString),
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq)]
 pub enum NumberKind {
     Int(i64),
     Float(f64),
@@ -15,7 +15,7 @@ pub enum NumberKind {
     ImgFloat(f64),
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq)]
 pub struct QuarkString(String);
 
 impl LiteralKind {
