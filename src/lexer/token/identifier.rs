@@ -17,8 +17,11 @@ pub enum KeywordKind {
     Break,
     Continue,
     If,
+    Let,
+    Function,
     Else,
     True,
+    Print,
     False,
     Return,
     And,
@@ -68,6 +71,7 @@ impl IdentifierKind {
             "or" => Keyword(Or),
             "xor" => Keyword(Xor),
             "not" => Keyword(Not),
+
             _ => Variable(lexeme),
         }
     }
@@ -99,6 +103,9 @@ impl fmt::Display for KeywordKind {
             KeywordKind::Or => write!(f, "Or"),
             KeywordKind::Xor => write!(f, "Xor"),
             KeywordKind::Not => write!(f, "Not"),
+            KeywordKind::Let => write!(f, "Let"),
+            KeywordKind::Function => write!(f, "Function"),
+            KeywordKind::Print => write!(f, "Print"),
         }
     }
 }

@@ -1,17 +1,17 @@
 use anyhow::Result;
-use parser::Tree;
+use parser::expression::Expression;
 use std::fs;
 pub mod lexer;
 pub mod parser;
 
 pub fn compile(file: String) -> Result<()> {
     let source = fs::read_to_string(file)?;
-    let tokens = lexer::scan(source)?;
-    let syntax = parser::generate(tokens)?;
+    let tokens = lexer::lex(source)?;
+    let syntax = parser::parse(tokens)?;
     let target = translate(syntax);
     Ok(println!("{target}"))
 }
 
-fn translate(syntax: parser::Tree) -> String {
+fn translate(syntax: Expression) -> String {
     todo!()
 }
