@@ -34,3 +34,19 @@ fn test_expression_printing() {
 
     assert_eq!(format!("{}", expression), "(* (- 123) (group 45.67))");
 }
+
+#[test]
+fn test_numbers() {
+    let input = "1 + 2";
+    let tokens = quark::lexer::lex(input.to_string()).unwrap();
+    let expression = quark::parser::parse(tokens).unwrap();
+    assert_eq!(format!("{}", expression), "(+ 1 2)");
+}
+
+#[test]
+fn test_paranthesis() {
+    let input = "-123 * (45.67)";
+    let tokens = quark::lexer::lex(input.to_string()).unwrap();
+    let expression = quark::parser::parse(tokens).unwrap();
+    assert_eq!(format!("{}", expression), "(* (- 123) (group 45.67))");
+}

@@ -8,7 +8,7 @@ use token::{Token, TokenKind::*};
 
 pub mod token;
 
-pub fn scan(source: String) -> Result<Vec<Token>> {
+pub fn lex(source: String) -> Result<Vec<Token>> {
     let mut stream = peek_nth(source.chars());
 
     let mut tokens = Vec::new();
