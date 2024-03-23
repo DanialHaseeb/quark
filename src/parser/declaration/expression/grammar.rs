@@ -1,6 +1,6 @@
 use super::structs::{
-    BinaryExprKind, ExpressionKind, ExpressionKind::*, GroupingExprKind, LiteralExprKind,
-    UnaryExprKind,
+    BinaryExprBody, ExpressionKind, ExpressionKind::*, GroupingExprBody, LiteralExprBody,
+    UnaryExprBody, VariableExprBody,
 };
 
 use crate::lexer::token::{
@@ -40,7 +40,7 @@ where
         let operator = tokens_iter.next().unwrap();
         let right = comparison(tokens_iter)?;
 
-        expression = BinaryExpr(BinaryExprKind {
+        expression = BinaryExpr(BinaryExprBody {
             left: Box::new(expression),
             operator,
             right: Box::new(right),
@@ -67,7 +67,7 @@ where
         let operator = tokens_iter.next().unwrap();
         let right = term(tokens_iter)?;
 
-        expression = BinaryExpr(BinaryExprKind {
+        expression = BinaryExpr(BinaryExprBody {
             left: Box::new(expression),
             operator,
             right: Box::new(right),
@@ -91,7 +91,7 @@ where
         let operator = tokens_iter.next().unwrap();
         let right = factor(tokens_iter)?;
 
-        expression = BinaryExpr(BinaryExprKind {
+        expression = BinaryExpr(BinaryExprBody {
             left: Box::new(expression),
             operator,
             right: Box::new(right),
@@ -115,7 +115,7 @@ where
         let operator = tokens_iter.next().unwrap();
         let right = factor(tokens_iter)?;
 
-        expression = BinaryExpr(BinaryExprKind {
+        expression = BinaryExpr(BinaryExprBody {
             left: Box::new(expression),
             operator,
             right: Box::new(right),
@@ -137,9 +137,9 @@ where
         let operator = tokens_iter.next().unwrap();
         let right = unary(tokens_iter)?;
 
-        return Ok(UnaryExpr(UnaryExprKind {
+        return Ok(UnaryExpr(UnaryExprBody {
             operator,
-            right: Box::new(right),
+            expression: Box::new(right),
         }));
     }
 
@@ -159,16 +159,18 @@ where
     | Identifier(Keyword(True))
     | Identifier(Keyword(False)) = token_kind
     {
-        Ok(LiteralExpr(LiteralExprKind {
+        Ok(LiteralExpr(LiteralExprBody {
             value: Token { token_kind },
         }))
     } else if let Separator(Left(Parenthesis)) = token_kind {
         let expression = expression(tokens_iter)?;
-        consume_if_matches(tokens_iter, Right(Parenthesis))?;
+        consume_if_matches(tokens_iter, Separator(Right(Parenthesis)))?;
 
-        Ok(GroupingExpr(GroupingExprKind {
+        Ok(GroupingExpr(GroupingExprBody {
             expression: Box::new(expression),
         }))
+    } else if let Identifier(Variable(name)) = token_kind {
+        Ok(VariableExpr(VariableExprBody { name }))
     } else {
         bail!("Unexpected token: {token_kind}")
     }
@@ -190,7 +192,6 @@ where
             Identifier(Keyword(Break)) => return,
             Identifier(Keyword(Continue)) => return,
             Identifier(Keyword(Return)) => return,
-            Identifier(Keyword(Print)) => return,
             // TODO: Add more keywords here like ELSE, ELSEIF
             _ => (),
         }

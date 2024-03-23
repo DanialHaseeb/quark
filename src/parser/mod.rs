@@ -1,19 +1,19 @@
-pub mod statement;
+pub mod declaration;
 
 use core::fmt;
 
+use self::declaration::{declaration, Declaration};
+
 use super::lexer::token::Token;
 use anyhow::Result;
-use statement::{statement, StatementKind};
-
-pub struct Program(Vec<StatementKind>);
+pub struct Program(Vec<Declaration>);
 
 pub fn parse(tokens: Vec<Token>) -> Result<Program> {
     let mut tokens = tokens.into_iter().peekable();
     let mut statements = Vec::new();
 
     while tokens.peek().is_some() {
-        let statement = statement(&mut tokens)?;
+        let statement = declaration(&mut tokens)?;
         statements.push(statement);
     }
 
