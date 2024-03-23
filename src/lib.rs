@@ -1,8 +1,9 @@
-use anyhow::Result;
-use parser::expression::Expression;
-use std::fs;
 pub mod lexer;
 pub mod parser;
+
+use anyhow::Result;
+use parser::Program;
+use std::fs;
 
 pub fn compile(file: String) -> Result<()> {
     let source = fs::read_to_string(file)?;
@@ -13,6 +14,6 @@ pub fn compile(file: String) -> Result<()> {
     Ok(println!("{target}"))
 }
 
-fn translate(syntax: Expression) -> String {
+fn translate(syntax: Program) -> String {
     todo!()
 }

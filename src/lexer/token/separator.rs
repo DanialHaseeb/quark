@@ -43,9 +43,9 @@ impl fmt::Display for SeparatorKind {
         match self {
             SeparatorKind::Left(delimiter) => write!(f, "Left({})", delimiter),
             SeparatorKind::Right(delimiter) => write!(f, "Right({})", delimiter),
-            SeparatorKind::Comma => write!(f, "Comma"),
-            SeparatorKind::Dot => write!(f, "Dot"),
-            SeparatorKind::Semicolon => write!(f, "Semicolon"),
+            SeparatorKind::Comma => write!(f, ","),
+            SeparatorKind::Dot => write!(f, "."),
+            SeparatorKind::Semicolon => write!(f, ";"),
         }
     }
 }

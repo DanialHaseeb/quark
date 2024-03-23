@@ -43,3 +43,15 @@ impl fmt::Display for Token {
         }
     }
 }
+
+impl fmt::Display for TokenKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TokenKind::Whitespace => write!(f, "Whitespace"),
+            TokenKind::Identifier(identifier) => write!(f, "{}", identifier),
+            TokenKind::Separator(separator) => write!(f, "{}", separator),
+            TokenKind::Operator(operator) => write!(f, "{}", operator),
+            TokenKind::Literal(literal) => write!(f, "{}", literal),
+        }
+    }
+}
