@@ -178,22 +178,22 @@ where
 
 // TODO: Don't know if this is the best way to handle this
 // TODO:function, let, if, for, while, print, return
-fn synchronize<T>(tokens_iter: &mut Peekable<T>)
-where
-    T: Iterator<Item = Token>,
-{
-    for token in tokens_iter {
-        match token.token_kind {
-            Identifier(Keyword(Function)) => return,
-            Identifier(Keyword(While)) => return,
-            Identifier(Keyword(For)) => return,
-            Identifier(Keyword(If)) => return,
-            Identifier(Keyword(Let)) => return,
-            Identifier(Keyword(Break)) => return,
-            Identifier(Keyword(Continue)) => return,
-            Identifier(Keyword(Return)) => return,
-            // TODO: Add more keywords here like ELSE, ELSEIF
-            _ => (),
-        }
-    }
-}
+// fn synchronize<T>(tokens_iter: &mut Peekable<T>)
+// where
+//     T: Iterator<Item = Token>,
+// {
+//     for token in tokens_iter {
+//         match token.token_kind {
+//             Identifier(Keyword(Function)) => return,
+//             Identifier(Keyword(While)) => return,
+//             Identifier(Keyword(For)) => return,
+//             Identifier(Keyword(If)) => return,
+//             Identifier(Keyword(Let)) => return,
+//             Identifier(Keyword(Break)) => return,
+//             Identifier(Keyword(Continue)) => return,
+//             Identifier(Keyword(Return)) => return,
+//             // TODO: Add more keywords here like ELSE, ELSEIF
+//             _ => (),
+//         }
+//     }
+// }
