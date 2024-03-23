@@ -1,13 +1,30 @@
-use crate::lexer::token::Token;
+pub mod statement;
+
+use core::fmt;
+
+use super::lexer::token::Token;
 use anyhow::Result;
+use statement::{statement, StatementKind};
 
-use self::expression::Expression;
-use self::grammar::expression;
+pub struct Program(Vec<StatementKind>);
 
-pub mod expression;
-pub mod grammar;
-
-pub fn parse(tokens: Vec<Token>) -> Result<Expression> {
+pub fn parse(tokens: Vec<Token>) -> Result<Program> {
     let mut tokens = tokens.into_iter().peekable();
-    expression(&mut tokens)
+    let mut statements = Vec::new();
+
+    while tokens.peek().is_some() {
+        let statement = statement(&mut tokens)?;
+        statements.push(statement);
+    }
+
+    Ok(Program(statements))
+}
+
+impl fmt::Display for Program {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for statement in &self.0 {
+            write!(f, "{}", statement)?;
+        }
+        Ok(())
+    }
 }

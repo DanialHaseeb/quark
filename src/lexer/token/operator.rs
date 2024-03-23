@@ -1,7 +1,6 @@
 use itertools::PeekNth;
 use std::fmt;
 
-use anyhow::bail;
 use DoubleCharKind::*;
 use OperatorKind::*;
 use SingleCharKind::*;
