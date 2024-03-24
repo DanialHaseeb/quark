@@ -10,14 +10,14 @@ pub struct Program(Vec<Declaration>);
 
 pub fn parse(tokens: Vec<Token>) -> Result<Program> {
     let mut tokens = tokens.into_iter().peekable();
-    let mut statements = Vec::new();
+    let mut declarations = Vec::new();
 
     while tokens.peek().is_some() {
-        let statement = declaration(&mut tokens)?;
-        statements.push(statement);
+        let declaration = declaration(&mut tokens)?;
+        declarations.push(declaration);
     }
 
-    Ok(Program(statements))
+    Ok(Program(declarations))
 }
 
 impl fmt::Display for Program {
