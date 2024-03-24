@@ -102,3 +102,14 @@ fn test_variable_paranthesis_parsing_with_multiple_operators() {
         "let x = (* (- 123) (/ (group 45.67) 2));\n"
     );
 }
+
+#[test]
+fn test_logical_operators() {
+    let input = "1 == 2 and 3 == 3 or 1 < 3;";
+    let tokens = quark::lexer::lex(input.to_string()).unwrap();
+    let expression = quark::parser::parse(tokens).unwrap();
+    assert_eq!(
+        format!("{}", expression),
+        "(Or (And (== 1 2) (== 3 3)) (< 1 3))\n"
+    );
+}

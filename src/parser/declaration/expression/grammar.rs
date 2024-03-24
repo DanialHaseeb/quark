@@ -18,19 +18,57 @@ use anyhow::{bail, Result};
 use std::iter::Peekable;
 
 /// Grammar Rule:
-/// expression     → equality ;
+/// expression -> logic_or ;
 pub fn expression<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
 {
-    equality(tokens_iter)
+    logic_or(tokens_iter)
 }
 
 /// Grammar Rule:
 /// logic_or -> logic_and ( "or" logic_and )*;
+fn logic_or<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
+where
+    T: Iterator<Item = Token>,
+{
+    let mut expression = logic_and(tokens_iter)?;
+
+    while let Some(Identifier(Keyword(Or))) = tokens_iter.peek().map(|token| &token.token_kind) {
+        let operator = tokens_iter.next().unwrap();
+        let right = logic_and(tokens_iter)?;
+
+        expression = BinaryExpr(BinaryExprBody {
+            left: Box::new(expression),
+            operator,
+            right: Box::new(right),
+        });
+    }
+
+    Ok(expression)
+}
 
 /// Grammar Rule:
 /// logic_and -> equality ( "and" equality )*;
+fn logic_and<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
+where
+    T: Iterator<Item = Token>,
+{
+    let mut expression = equality(tokens_iter)?;
+
+    while let Some(Identifier(Keyword(And))) = tokens_iter.peek().map(|token| &token.token_kind) {
+        let operator = tokens_iter.next().unwrap();
+        let right = equality(tokens_iter)?;
+
+        expression = BinaryExpr(BinaryExprBody {
+            left: Box::new(expression),
+            operator,
+            right: Box::new(right),
+        });
+    }
+
+    Ok(expression)
+}
 
 /// Grammar Rule:
 /// equality       → comparison ( ( "!=" | "==" ) comparison )* ;
