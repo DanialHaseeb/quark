@@ -27,6 +27,12 @@ where
 }
 
 /// Grammar Rule:
+/// logic_or -> logic_and ( "or" logic_and )*;
+
+/// Grammar Rule:
+/// logic_and -> equality ( "and" equality )*;
+
+/// Grammar Rule:
 /// equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 fn equality<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
@@ -147,7 +153,8 @@ where
 }
 
 /// Grammar Rule:
-/// primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+/// primary  ->  NUMBER | STRING | "true" | "false" | "(" expression ")" | "["  parameter "]" | "[" parameter ("||" parameter)+ "]"
+/// parameter ->  expression ("," expression)*
 fn primary<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
@@ -178,22 +185,22 @@ where
 
 // TODO: Don't know if this is the best way to handle this
 // TODO:function, let, if, for, while, print, return
-fn synchronize<T>(tokens_iter: &mut Peekable<T>)
-where
-    T: Iterator<Item = Token>,
-{
-    for token in tokens_iter {
-        match token.token_kind {
-            Identifier(Keyword(Function)) => return,
-            Identifier(Keyword(While)) => return,
-            Identifier(Keyword(For)) => return,
-            Identifier(Keyword(If)) => return,
-            Identifier(Keyword(Let)) => return,
-            Identifier(Keyword(Break)) => return,
-            Identifier(Keyword(Continue)) => return,
-            Identifier(Keyword(Return)) => return,
-            // TODO: Add more keywords here like ELSE, ELSEIF
-            _ => (),
-        }
-    }
-}
+// fn synchronize<T>(tokens_iter: &mut Peekable<T>)
+// where
+//     T: Iterator<Item = Token>,
+// {
+//     for token in tokens_iter {
+//         match token.token_kind {
+//             Identifier(Keyword(Function)) => return,
+//             Identifier(Keyword(While)) => return,
+//             Identifier(Keyword(For)) => return,
+//             Identifier(Keyword(If)) => return,
+//             Identifier(Keyword(Let)) => return,
+//             Identifier(Keyword(Break)) => return,
+//             Identifier(Keyword(Continue)) => return,
+//             Identifier(Keyword(Return)) => return,
+//             // TODO: Add more keywords here like ELSE, ELSEIF
+//             _ => (),
+//         }
+//     }
+// }

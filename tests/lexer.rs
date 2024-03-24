@@ -1,7 +1,7 @@
 use itertools::assert_equal;
 use quark::lexer::token::{
     identifier::IdentifierKind::*,
-    literal::{LiteralKind, NumberKind, QuarkString},
+    literal::{LiteralKind, NumberKind},
     operator::{OperatorKind, SingleCharKind},
     separator::{Delimiter::*, SeparatorKind},
     Token, TokenKind,
