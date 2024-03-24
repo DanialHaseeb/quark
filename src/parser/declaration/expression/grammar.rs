@@ -1,6 +1,6 @@
 use super::structs::{
-    BinaryExprBody, ExpressionKind, ExpressionKind::*, GroupingExprBody, LiteralExprBody,
-    UnaryExprBody, VariableExprBody,
+    BinaryExprBody, ExpressionKind, ExpressionKind::*, GroupingExprBody, ListExprBody,
+    LiteralExprBody, MatrixExprBody, UnaryExprBody, VariableExprBody,
 };
 
 use crate::lexer::token::{
@@ -191,82 +191,81 @@ where
 }
 
 /// Grammar Rule:
-/// primary  ->  NUMBER | STRING | "true" | "false" | "(" expression ")" | "[" list_expression ("||" list_expression)* "]"
+/// primary  ->  NUMBER | STRING | LITERAL | "true" | "false" | LIST | MATRIX | "(" expression ")"
+/// LIST -> "[" parameter "]"
+/// MATRIX -> "[" parameter ("||" parameter)* "]"
+/// parameter -> expression ("," expression)*
+/// Grammar Rule:
+/// list_expression ->  expression ("," expression)*
 fn primary<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
 {
     let token_kind = tokens_iter.next().unwrap().token_kind;
 
-    if let Literal(Number(_))
-    | Literal(String(_))
-    | Identifier(Keyword(True))
-    | Identifier(Keyword(False)) = token_kind
-    {
-        Ok(LiteralExpr(LiteralExprBody {
+    match token_kind {
+        Literal(Number(_))
+        | Literal(String(_))
+        | Identifier(Keyword(True))
+        | Identifier(Keyword(False)) => Ok(LiteralExpr(LiteralExprBody {
             value: Token { token_kind },
-        }))
-    } else if let Separator(Left(Parenthesis)) = token_kind {
-        let expression = expression(tokens_iter)?;
-        consume_if_matches(tokens_iter, Separator(Right(Parenthesis)))?;
+        })),
+        Separator(Left(Parenthesis)) => {
+            let expression = expression(tokens_iter)?;
+            consume_if_matches(tokens_iter, Separator(Right(Parenthesis)))?;
 
-        Ok(GroupingExpr(GroupingExprBody {
-            expression: Box::new(expression),
-        }))
-    } else if let Separator(Left(Bracket)) = token_kind {
-        let mut expression = list_expression(tokens_iter)?;
-        while let Some(Operator(SingleChar(Pipe))) =
-            tokens_iter.peek().map(|token| &token.token_kind)
-        {
-            tokens_iter.next().unwrap();
-            consume_if_matches(tokens_iter, Operator(SingleChar(Pipe)))?;
-            expression = list_expression(tokens_iter)?;
+            Ok(GroupingExpr(GroupingExprBody {
+                expression: Box::new(expression),
+            }))
         }
-        consume_if_matches(tokens_iter, Separator(Right(Bracket)))?;
-        Ok(expression)
-    } else if let Identifier(Variable(name)) = token_kind {
-        Ok(VariableExpr(VariableExprBody { name }))
-    } else {
-        bail!("Unexpected token: {token_kind}")
+        Separator(Left(Bracket)) => {
+            let mut expressions = Vec::new();
+
+            expressions.push(expression(tokens_iter)?);
+
+            while let Some(Separator(Comma)) = tokens_iter.peek().map(|token| &token.token_kind) {
+                tokens_iter.next();
+                expressions.push(expression(tokens_iter)?);
+            }
+
+            let mut list_expressions = Vec::new();
+
+            if let Some(Operator(SingleChar(Pipe))) =
+                tokens_iter.peek().map(|token| &token.token_kind)
+            {
+                list_expressions.push(expressions);
+
+                while let Some(Operator(SingleChar(Pipe))) =
+                    tokens_iter.peek().map(|token| &token.token_kind)
+                {
+                    tokens_iter.next();
+                    consume_if_matches(tokens_iter, Operator(SingleChar(Pipe)))?;
+
+                    let mut expressions = Vec::new();
+
+                    expressions.push(expression(tokens_iter)?);
+
+                    while let Some(Separator(Comma)) =
+                        tokens_iter.peek().map(|token| &token.token_kind)
+                    {
+                        tokens_iter.next();
+                        expressions.push(expression(tokens_iter)?);
+                    }
+                    list_expressions.push(expressions);
+                }
+
+                consume_if_matches(tokens_iter, Separator(Right(Bracket)))?;
+                Ok(MatrixExpr(MatrixExprBody {
+                    matrix: list_expressions,
+                }))
+            } else {
+                consume_if_matches(tokens_iter, Separator(Right(Bracket)))?;
+                Ok(ListExpr(ListExprBody {
+                    list_expressions: expressions,
+                }))
+            }
+        }
+        Identifier(Variable(name)) => Ok(VariableExpr(VariableExprBody { name })),
+        _ => bail!("Unexpected token: {token_kind}"),
     }
 }
-
-/// Grammar Rule:
-/// parameters ->  expression ("," expression)*
-fn list_expression<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
-where
-    T: Iterator<Item = Token>,
-{
-    let mut parameters = Vec::new();
-
-    parameters.push(expression(tokens_iter)?);
-
-    while let Some(Separator(Comma)) = tokens_iter.peek().map(|token| &token.token_kind) {
-        tokens_iter.next().unwrap();
-        parameters.push(expression(tokens_iter)?);
-    }
-
-    Ok(ParameterExpr(parameters))
-}
-
-// TODO: Don't know if this is the best way to handle this
-// TODO:function, let, if, for, while, print, return
-// fn synchronize<T>(tokens_iter: &mut Peekable<T>)
-// where
-//     T: Iterator<Item = Token>,
-// {
-//     for token in tokens_iter {
-//         match token.token_kind {
-//             Identifier(Keyword(Function)) => return,
-//             Identifier(Keyword(While)) => return,
-//             Identifier(Keyword(For)) => return,
-//             Identifier(Keyword(If)) => return,
-//             Identifier(Keyword(Let)) => return,
-//             Identifier(Keyword(Break)) => return,
-//             Identifier(Keyword(Continue)) => return,
-//             Identifier(Keyword(Return)) => return,
-//             // TODO: Add more keywords here like ELSE, ELSEIF
-//             _ => (),
-//         }
-//     }
-// }
