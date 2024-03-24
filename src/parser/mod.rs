@@ -22,8 +22,8 @@ pub fn parse(tokens: Vec<Token>) -> Result<Program> {
 
 impl fmt::Display for Program {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        for statement in &self.0 {
-            write!(f, "{}", statement)?;
+        for declaration in &self.0 {
+            write!(f, "{}", declaration)?;
         }
         Ok(())
     }
