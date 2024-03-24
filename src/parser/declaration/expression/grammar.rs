@@ -191,8 +191,7 @@ where
 }
 
 /// Grammar Rule:
-/// primary  ->  NUMBER | STRING | "true" | "false" | "(" expression ")" | "["  parameter "]" | "[" parameter ("||" parameter)+ "]"
-/// parameter ->  expression ("," expression)*
+/// primary  ->  NUMBER | STRING | "true" | "false" | "(" expression ")" | "[" list_expression ("||" list_expression)* "]"
 fn primary<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
@@ -214,11 +213,40 @@ where
         Ok(GroupingExpr(GroupingExprBody {
             expression: Box::new(expression),
         }))
+    } else if let Separator(Left(Bracket)) = token_kind {
+        let mut expression = list_expression(tokens_iter)?;
+        while let Some(Operator(SingleChar(Pipe))) =
+            tokens_iter.peek().map(|token| &token.token_kind)
+        {
+            tokens_iter.next().unwrap();
+            consume_if_matches(tokens_iter, Operator(SingleChar(Pipe)))?;
+            expression = list_expression(tokens_iter)?;
+        }
+        consume_if_matches(tokens_iter, Separator(Right(Bracket)))?;
+        Ok(expression)
     } else if let Identifier(Variable(name)) = token_kind {
         Ok(VariableExpr(VariableExprBody { name }))
     } else {
         bail!("Unexpected token: {token_kind}")
     }
+}
+
+/// Grammar Rule:
+/// parameters ->  expression ("," expression)*
+fn list_expression<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
+where
+    T: Iterator<Item = Token>,
+{
+    let mut parameters = Vec::new();
+
+    parameters.push(expression(tokens_iter)?);
+
+    while let Some(Separator(Comma)) = tokens_iter.peek().map(|token| &token.token_kind) {
+        tokens_iter.next().unwrap();
+        parameters.push(expression(tokens_iter)?);
+    }
+
+    Ok(ParameterExpr(parameters))
 }
 
 // TODO: Don't know if this is the best way to handle this

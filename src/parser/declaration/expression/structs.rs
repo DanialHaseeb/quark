@@ -8,6 +8,11 @@ pub enum ExpressionKind {
     LiteralExpr(LiteralExprBody),
     GroupingExpr(GroupingExprBody),
     VariableExpr(VariableExprBody),
+    ListExpr(ListExprBody),
+}
+
+pub struct ListExprBody {
+    pub expressions: Vec<ExpressionKind>,
 }
 
 pub struct BinaryExprBody {
