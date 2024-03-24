@@ -8,11 +8,16 @@ pub enum ExpressionKind {
     LiteralExpr(LiteralExprBody),
     GroupingExpr(GroupingExprBody),
     VariableExpr(VariableExprBody),
+    MatrixExpr(MatrixExprBody),
     ListExpr(ListExprBody),
 }
 
 pub struct ListExprBody {
-    pub expressions: Vec<ExpressionKind>,
+    pub list_expressions: Vec<ExpressionKind>,
+}
+
+pub struct MatrixExprBody {
+    pub matrix: Vec<Vec<ExpressionKind>>,
 }
 
 pub struct BinaryExprBody {
@@ -46,6 +51,8 @@ impl fmt::Display for ExpressionKind {
             LiteralExpr(expr) => write!(f, "{}", expr),
             GroupingExpr(expr) => write!(f, "{}", expr),
             VariableExpr(expr) => write!(f, "{}", expr),
+            ListExpr(expr) => write!(f, "{}", expr),
+            MatrixExpr(expr) => write!(f, "{}", expr),
         }
     }
 }
@@ -77,5 +84,39 @@ impl fmt::Display for GroupingExprBody {
 impl fmt::Display for VariableExprBody {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name)
+    }
+}
+impl fmt::Display for ListExprBody {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "[")?;
+        let n = self.list_expressions.len();
+        for (i, expression) in self.list_expressions.iter().enumerate() {
+            if i == n - 1 {
+                write!(f, "{}", expression)?;
+            } else {
+                write!(f, "{}, ", expression)?;
+            }
+        }
+        write!(f, "]")
+    }
+}
+
+impl fmt::Display for MatrixExprBody {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "[")?;
+        for (i, matrix) in self.matrix.iter().enumerate() {
+            if i != 0 {
+                write!(f, "|\n|")?;
+            }
+            let m = matrix.len();
+            for (j, expression) in matrix.iter().enumerate() {
+                if j == m - 1 {
+                    write!(f, "{}", expression)?;
+                } else {
+                    write!(f, "{}, ", expression)?;
+                }
+            }
+        }
+        write!(f, "]")
     }
 }
