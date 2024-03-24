@@ -194,7 +194,6 @@ where
 /// primary  ->  NUMBER | STRING | LITERAL | "true" | "false" | LIST | MATRIX | "(" expression ")"
 /// LIST -> "[" list_expression "]"
 /// MATRIX -> "[" list_expression ("||" list_expression)* "]"
-/// list_expression -> expression ("," expression)*
 fn primary<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
