@@ -27,6 +27,12 @@ where
 }
 
 /// Grammar Rule:
+/// logic_or -> logic_and ( "or" logic_and )*;
+
+/// Grammar Rule:
+/// logic_and -> equality ( "and" equality )*;
+
+/// Grammar Rule:
 /// equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 fn equality<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
@@ -147,7 +153,8 @@ where
 }
 
 /// Grammar Rule:
-/// primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+/// primary  ->  NUMBER | STRING | "true" | "false" | "(" expression ")" | "["  parameter "]" | "[" parameter ("||" parameter)+ "]"
+/// parameter ->  expression ("," expression)*
 fn primary<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,

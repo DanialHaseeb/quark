@@ -9,7 +9,6 @@ pub fn compile(file: String) -> Result<()> {
     let source = fs::read_to_string(file)?;
     let tokens = lexer::lex(source)?;
     let syntax = parser::parse(tokens)?;
-    println!("{}", syntax);
     let target = translate(syntax);
     Ok(println!("{target}"))
 }
