@@ -192,11 +192,8 @@ where
 
 /// Grammar Rule:
 /// primary  ->  NUMBER | STRING | LITERAL | "true" | "false" | LIST | MATRIX | "(" expression ")"
-/// LIST -> "[" parameter "]"
-/// MATRIX -> "[" parameter ("||" parameter)* "]"
-/// parameter -> expression ("," expression)*
-/// Grammar Rule:
-/// list_expression ->  expression ("," expression)*
+/// LIST -> "[" list_expression "]"
+/// MATRIX -> "[" list_expression ("||" list_expression)* "]"
 fn primary<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
@@ -219,53 +216,51 @@ where
             }))
         }
         Separator(Left(Bracket)) => {
-            let mut expressions = Vec::new();
-
-            expressions.push(expression(tokens_iter)?);
-
-            while let Some(Separator(Comma)) = tokens_iter.peek().map(|token| &token.token_kind) {
-                tokens_iter.next();
-                expressions.push(expression(tokens_iter)?);
-            }
-
-            let mut list_expressions = Vec::new();
+            let mut list_expressions = vec![list_expression(tokens_iter)?];
 
             if let Some(Operator(SingleChar(Pipe))) =
                 tokens_iter.peek().map(|token| &token.token_kind)
             {
-                list_expressions.push(expressions);
-
                 while let Some(Operator(SingleChar(Pipe))) =
                     tokens_iter.peek().map(|token| &token.token_kind)
                 {
                     tokens_iter.next();
                     consume_if_matches(tokens_iter, Operator(SingleChar(Pipe)))?;
-
-                    let mut expressions = Vec::new();
-
-                    expressions.push(expression(tokens_iter)?);
-
-                    while let Some(Separator(Comma)) =
-                        tokens_iter.peek().map(|token| &token.token_kind)
-                    {
-                        tokens_iter.next();
-                        expressions.push(expression(tokens_iter)?);
-                    }
-                    list_expressions.push(expressions);
+                    list_expressions.push(list_expression(tokens_iter)?);
                 }
 
                 consume_if_matches(tokens_iter, Separator(Right(Bracket)))?;
-                Ok(MatrixExpr(MatrixExprBody {
-                    matrix: list_expressions,
-                }))
+                Ok(MatrixExpr(MatrixExprBody { list_expressions }))
             } else {
                 consume_if_matches(tokens_iter, Separator(Right(Bracket)))?;
-                Ok(ListExpr(ListExprBody {
-                    list_expressions: expressions,
-                }))
+
+                let only_expresssion = match list_expressions.pop() {
+                    Some(element) => element,
+                    None => unreachable!(),
+                };
+
+                Ok(ListExpr(only_expresssion))
             }
         }
         Identifier(Variable(name)) => Ok(VariableExpr(VariableExprBody { name })),
         _ => bail!("Unexpected token: {token_kind}"),
     }
+}
+
+/// Grammar Rule:
+/// list_expression ->  expression ("," expression)*
+fn list_expression<T>(tokens_iter: &mut Peekable<T>) -> Result<ListExprBody>
+where
+    T: Iterator<Item = Token>,
+{
+    let mut expressions = Vec::new();
+
+    expressions.push(expression(tokens_iter)?);
+
+    while let Some(Separator(Comma)) = tokens_iter.peek().map(|token| &token.token_kind) {
+        tokens_iter.next();
+        expressions.push(expression(tokens_iter)?);
+    }
+
+    Ok(ListExprBody { expressions })
 }

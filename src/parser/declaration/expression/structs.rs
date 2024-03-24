@@ -13,11 +13,11 @@ pub enum ExpressionKind {
 }
 
 pub struct ListExprBody {
-    pub list_expressions: Vec<ExpressionKind>,
+    pub expressions: Vec<ExpressionKind>,
 }
 
 pub struct MatrixExprBody {
-    pub matrix: Vec<Vec<ExpressionKind>>,
+    pub list_expressions: Vec<ListExprBody>,
 }
 
 pub struct BinaryExprBody {
@@ -89,8 +89,8 @@ impl fmt::Display for VariableExprBody {
 impl fmt::Display for ListExprBody {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "[")?;
-        let n = self.list_expressions.len();
-        for (i, expression) in self.list_expressions.iter().enumerate() {
+        let n = self.expressions.len();
+        for (i, expression) in self.expressions.iter().enumerate() {
             if i == n - 1 {
                 write!(f, "{}", expression)?;
             } else {
@@ -104,12 +104,12 @@ impl fmt::Display for ListExprBody {
 impl fmt::Display for MatrixExprBody {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "[")?;
-        for (i, matrix) in self.matrix.iter().enumerate() {
+        for (i, matrix) in self.list_expressions.iter().enumerate() {
             if i != 0 {
                 write!(f, "|\n|")?;
             }
-            let m = matrix.len();
-            for (j, expression) in matrix.iter().enumerate() {
+            let m = matrix.expressions.len();
+            for (j, expression) in matrix.expressions.iter().enumerate() {
                 if j == m - 1 {
                     write!(f, "{}", expression)?;
                 } else {
