@@ -5,7 +5,6 @@ use quark::{
         Token,
         TokenKind::*,
     },
-    parser::declaration::expression::grammar::expression,
     parser::declaration::expression::structs::{
         BinaryExprBody, ExpressionKind::*, GroupingExprBody, LiteralExprBody, UnaryExprBody,
     },
