@@ -83,10 +83,13 @@ fn test_print_panic_function() {
 
 #[test]
 fn test_if_statement() {
-    let input = "if 1 == 2 { print(1); }";
+    let input = "if 1 == 2 { print(1); if 1 == 2 { print(1); } }";
     let tokens = quark::lexer::lex(input.to_string()).unwrap();
     let expression = quark::parser::parse(tokens).unwrap();
-    assert_eq!(format!("{}", expression), "if (== 1 2) {\nprint(1)\n}\n");
+    assert_eq!(
+        format!("{}", expression),
+        "if (== 1 2) {\nprint(1)\nif (== 1 2) {\nprint(1)\n}\n}\n"
+    );
 }
 
 #[test]
