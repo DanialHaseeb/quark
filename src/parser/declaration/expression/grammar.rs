@@ -12,7 +12,7 @@ use crate::lexer::token::{
     TokenKind::*,
 };
 
-use super::super::utils::consume_if_matches;
+use super::super::super::utils::consume_if_matches;
 
 use anyhow::{bail, Result};
 use std::iter::Peekable;

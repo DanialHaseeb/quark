@@ -1,26 +1,20 @@
 pub mod expression;
-pub mod utils;
+pub mod statement;
 
 use anyhow::Result;
 use std::fmt;
 use std::iter::Peekable;
 
-use crate::lexer::token::identifier::IdentifierKind::*;
-use crate::lexer::token::identifier::KeywordKind;
-use crate::lexer::token::operator::OperatorKind::*;
-use crate::lexer::token::operator::SingleCharKind::*;
-use crate::lexer::token::separator::SeparatorKind::*;
-use crate::lexer::token::Token;
-use crate::lexer::token::TokenKind::*;
+use crate::lexer::token::{
+    identifier::IdentifierKind::*, identifier::KeywordKind, operator::OperatorKind::*,
+    operator::SingleCharKind::*, separator::SeparatorKind::*, Token, TokenKind::*,
+};
 
-use expression::grammar::expression;
-use expression::structs::ExpressionKind;
-
-use self::utils::consume_and_return_if_variable;
-use self::utils::consume_if_matches;
+use super::utils::{consume_and_return_if_variable, consume_if_matches};
+use expression::{grammar::expression, structs::ExpressionKind};
+use statement::{statement, StatementKind};
 
 use Declaration::*;
-use StatementKind::*;
 
 pub enum Declaration {
     VariableDeclaration(VariableDeclarationBody),
@@ -30,12 +24,6 @@ pub enum Declaration {
 pub struct VariableDeclarationBody {
     pub identifier: String,
     pub expression: ExpressionKind,
-}
-
-// Statements are things that you can possible not store in variables like print operation.
-pub enum StatementKind {
-    Expresssion(ExpressionKind),
-    // TODO: implement other statement types like `print`, `while`, `if`, `return`, `function` etc.
 }
 
 // Grammar Rule:
@@ -63,34 +51,6 @@ where
     } else {
         let statement_thing = statement(tokens_iter)?;
         Ok(Statement(statement_thing))
-    }
-}
-
-/// Grammar Rule:
-/// statement -> expression_statement;
-pub fn statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind>
-where
-    T: Iterator<Item = Token>,
-{
-    let expresssion = expression_statement(tokens_iter)?;
-    Ok(expresssion)
-}
-
-/// expression_statement -> expression  ";";
-pub fn expression_statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind>
-where
-    T: Iterator<Item = Token>,
-{
-    let expression = expression(tokens_iter)?;
-    consume_if_matches(tokens_iter, Separator(Semicolon))?;
-    Ok(Expresssion(expression))
-}
-
-impl fmt::Display for StatementKind {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Expresssion(expression) => writeln!(f, "{}", expression),
-        }
     }
 }
 
