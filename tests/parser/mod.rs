@@ -57,3 +57,45 @@ fn test_logical_operators() {
         "(Or (And (== 1 2) (== 3 3)) (< 1 3))\n"
     );
 }
+
+#[test]
+fn test_print_function() {
+    let input = "print(1 == 2 and 3 == 3 or 1 < 3);";
+    let tokens = quark::lexer::lex(input.to_string()).unwrap();
+    let expression = quark::parser::parse(tokens).unwrap();
+    assert_eq!(
+        format!("{}", expression),
+        "print((Or (And (== 1 2) (== 3 3)) (< 1 3)))\n"
+    );
+}
+
+#[test]
+#[should_panic]
+fn test_print_panic_function() {
+    let input = "print(1 == 2 and 3 == 3 or 1 < 3;);";
+    let tokens = quark::lexer::lex(input.to_string()).unwrap();
+    let expression = quark::parser::parse(tokens).unwrap();
+    assert_eq!(
+        format!("{}", expression),
+        "print((Or (And (== 1 2) (== 3 3)) (< 1 3)))\n"
+    );
+}
+
+#[test]
+fn test_if_statement() {
+    let input = "if 1 == 2 { print(1); if 1 == 2 { print(1); } }";
+    let tokens = quark::lexer::lex(input.to_string()).unwrap();
+    let expression = quark::parser::parse(tokens).unwrap();
+    assert_eq!(
+        format!("{}", expression),
+        "if (== 1 2) {\nprint(1)\nif (== 1 2) {\nprint(1)\n}\n}\n"
+    );
+}
+
+#[test]
+fn test_while_statement() {
+    let input = "while 1 == 2 { print(1); }";
+    let tokens = quark::lexer::lex(input.to_string()).unwrap();
+    let expression = quark::parser::parse(tokens).unwrap();
+    assert_eq!(format!("{}", expression), "while (== 1 2) {\nprint(1)\n}\n");
+}
