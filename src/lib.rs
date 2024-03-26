@@ -9,7 +9,7 @@ pub fn compile(file: String) -> Result<String> {
     let source = fs::read_to_string(file)?;
     let tokens = lexer::lex(source)?;
     let syntax = parser::parse(tokens)?;
-    let target = generator::intermediate(syntax);
-    let python = generator::python(target);
+    let interm = generator::intermediate(syntax);
+    let python = generator::python(interm);
     Ok(python)
 }
