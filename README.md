@@ -6,7 +6,7 @@ A programming language designed from the ground-up for quantum computing.
 
 Quark focuses on short and concise code:
 ```
-A = [1, 2 || 3 4];
+A = [1, 2 || 3, 4];
 B = [5, 6|
     |7, 8];
 C = A + B;
