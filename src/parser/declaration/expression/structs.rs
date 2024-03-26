@@ -1,4 +1,4 @@
-use crate::lexer::token::Token;
+use crate::{generator::CodeGenerator, lexer::token::Token};
 use std::fmt;
 use ExpressionKind::*;
 
@@ -118,5 +118,86 @@ impl fmt::Display for MatrixExprBody {
             }
         }
         write!(f, "]")
+    }
+}
+
+impl CodeGenerator for ExpressionKind {
+    fn generate(&self) -> String {
+        match self {
+            BinaryExpr(expr) => expr.generate(),
+            UnaryExpr(expr) => expr.generate(),
+            LiteralExpr(expr) => expr.generate(),
+            GroupingExpr(expr) => expr.generate(),
+            VariableExpr(expr) => expr.generate(),
+            ListExpr(expr) => expr.generate(),
+            MatrixExpr(expr) => expr.generate(),
+        }
+    }
+}
+
+impl CodeGenerator for BinaryExprBody {
+    fn generate(&self) -> String {
+        format!(
+            "({} {} {})",
+            self.left.generate(),
+            self.operator,
+            self.right.generate()
+        )
+    }
+}
+
+impl CodeGenerator for UnaryExprBody {
+    fn generate(&self) -> String {
+        format!("({}{})", self.operator, self.expression.generate())
+    }
+}
+
+impl CodeGenerator for LiteralExprBody {
+    fn generate(&self) -> String {
+        format!("{}", self.value)
+    }
+}
+
+impl CodeGenerator for GroupingExprBody {
+    fn generate(&self) -> String {
+        format!("({})", self.expression.generate())
+    }
+}
+
+impl CodeGenerator for VariableExprBody {
+    fn generate(&self) -> String {
+        self.name.clone()
+    }
+}
+
+impl CodeGenerator for ListExprBody {
+    fn generate(&self) -> String {
+        let mut output = String::from("[");
+        for (i, expression) in self.expressions.iter().enumerate() {
+            output.push_str(&expression.generate());
+            if i != self.expressions.len() - 1 {
+                output.push_str(", ");
+            }
+        }
+        output.push(']');
+        output
+    }
+}
+
+impl CodeGenerator for MatrixExprBody {
+    fn generate(&self) -> String {
+        let mut output = String::from("np.array([");
+        for list_expr in self.list_expressions.iter() {
+            output.push('[');
+            for (j, expression) in list_expr.expressions.iter().enumerate() {
+                output.push_str(&expression.generate());
+                if j != list_expr.expressions.len() - 1 {
+                    output.push_str(", ");
+                }
+            }
+            output.push(']');
+        }
+        output.push_str("])");
+        output
     }
 }

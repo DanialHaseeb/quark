@@ -34,7 +34,6 @@ pub fn lex(source: String) -> Result<Vec<Token>> {
 
         if token_type != Whitespace {
             tokens.push(Token::new(token_type));
-            eprintln!("{:?}", tokens.last().unwrap());
         }
     }
 

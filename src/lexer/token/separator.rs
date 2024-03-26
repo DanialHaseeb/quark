@@ -49,6 +49,7 @@ impl fmt::Display for SeparatorKind {
         }
     }
 }
+// TODO: fix Delimiter(Type)
 
 impl fmt::Display for Delimiter {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

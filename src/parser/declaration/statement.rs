@@ -4,6 +4,8 @@ use std::iter::Peekable;
 
 use super::super::utils::consume_if_matches;
 use super::expression::{grammar::expression, structs::ExpressionKind};
+use super::{block, Block};
+use crate::generator::CodeGenerator;
 use crate::lexer::token::{
     identifier::{IdentifierKind::*, KeywordKind::*},
     separator::{Delimiter::*, SeparatorKind::*},
@@ -31,8 +33,6 @@ pub struct WhileStatementBody {
     pub condition: ExpressionKind,
     pub block: Block,
 }
-
-pub struct Block(pub Vec<StatementKind>);
 
 /// Grammar Rule:
 /// statement -> expression_statement | print_statement | if_statement
@@ -92,22 +92,6 @@ where
     Ok(ExpresssionStmt(expression))
 }
 
-pub fn block<T>(tokens_iter: &mut Peekable<T>) -> Result<Block>
-where
-    T: Iterator<Item = Token>,
-{
-    consume_if_matches(tokens_iter, Separator(Left(Brace)))?;
-    let mut statements = Vec::new();
-    while let Some(token) = tokens_iter.peek() {
-        if token.token_kind == Separator(Right(Brace)) {
-            break;
-        }
-        statements.push(statement(tokens_iter)?);
-    }
-    consume_if_matches(tokens_iter, Separator(Right(Brace)))?;
-    Ok(Block(statements))
-}
-
 impl fmt::Display for StatementKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -121,12 +105,21 @@ impl fmt::Display for StatementKind {
     }
 }
 
-impl fmt::Display for Block {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        writeln!(f, "{{")?;
-        for statement in &self.0 {
-            write!(f, "{}", statement)?;
+impl CodeGenerator for StatementKind {
+    fn generate(&self) -> String {
+        match self {
+            ExpresssionStmt(expression) => expression.generate(),
+            PrintStmt(expression) => format!("print({});", expression.generate()),
+            IfStmt(if_stmt) => format!(
+                "if {}: {}",
+                if_stmt.condition.generate(),
+                if_stmt.block.generate()
+            ),
+            WhileStmt(while_stmt) => format!(
+                "while {}: {}",
+                while_stmt.condition.generate(),
+                while_stmt.block.generate()
+            ),
         }
-        write!(f, "}}")
     }
 }
