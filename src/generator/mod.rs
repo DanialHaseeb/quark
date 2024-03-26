@@ -21,7 +21,7 @@ pub fn python(syntax: String) -> String {
                 indent_level -= 1;
                 output.push_str(&format!("\n{}", "\t".repeat(indent_level)));
             }
-            ';' => output.push('\n'),
+            ';' => output.push_str(&format!("\n{}", "\t".repeat(indent_level))),
             _ => output.push(char),
         }
     }
