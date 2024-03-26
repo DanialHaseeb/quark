@@ -14,7 +14,7 @@ struct Args {
     python: bool,
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<()> {
     let args = Args::parse();
 
     let compiled_code = quark::compile(args.file.clone())?;
