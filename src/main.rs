@@ -15,8 +15,8 @@ struct Args {
 
 fn main() -> Result<()> {
     let args = Args::parse();
-    let source = fs::read_to_string(args.file)?;
-    let compiled_code = quark::compile(source)?;
+    let source = fs::read_to_string(args.file).context("Failed to read input file 🤕")?;
+    let compiled_code = quark::compile(source).context("Failed to compile Quark code 💥")?;
 
     if args.python {
         fs::write("output.py", compiled_code).with_context(|| "Failed to write to output.py ❎")?;
