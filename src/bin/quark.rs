@@ -1,6 +1,5 @@
 use anyhow::{Context, Result};
 use std::fs;
-
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -14,10 +13,10 @@ struct Args {
     python: bool,
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<()> {
     let args = Args::parse();
-
-    let compiled_code = quark::compile(args.file.clone())?;
+    let source = fs::read_to_string(args.file)?;
+    let compiled_code = quark::compile(source)?;
 
     if args.python {
         fs::write("output.py", compiled_code).with_context(|| "Failed to write to output.py")?;
