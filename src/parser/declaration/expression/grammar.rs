@@ -243,7 +243,7 @@ where
             }
         }
         Identifier(Variable(name)) => Ok(VariableExpr(VariableExprBody { name })),
-        _ => bail!("Unexpected token: {token_kind}"),
+        _ => bail!(" Parsing Error: Unexpected token: {token_kind}"),
     }
 }
 

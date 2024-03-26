@@ -12,7 +12,7 @@ where
             tokens_iter.next();
             Ok(())
         }
-        _ => bail!("Expected `{}` after expression", kind),
+        _ => bail!("Parser expected `{}` after expression", kind),
     }
 }
 
@@ -29,6 +29,6 @@ where
             _ => unreachable!(),
         }
     } else {
-        bail!("Expected variable after `let` keyword")
+        bail!("Parser expected variable after `let` keyword")
     }
 }

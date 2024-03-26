@@ -5,9 +5,13 @@ use anyhow::Result;
 use std::fmt;
 use std::iter::Peekable;
 
-use crate::lexer::token::{
-    identifier::IdentifierKind::*, identifier::KeywordKind, operator::OperatorKind::*,
-    operator::SingleCharKind::*, separator::SeparatorKind::*, Token, TokenKind::*,
+use crate::{
+    generator::CodeGenerator,
+    lexer::token::{
+        identifier::IdentifierKind::*, identifier::KeywordKind, operator::OperatorKind::*,
+        operator::SingleCharKind::*, separator::Delimiter::*, separator::SeparatorKind::*, Token,
+        TokenKind::*,
+    },
 };
 
 use super::utils::{consume_and_return_if_variable, consume_if_matches};
@@ -20,6 +24,8 @@ pub enum Declaration {
     VariableDeclaration(VariableDeclarationBody),
     Statement(StatementKind),
 }
+
+pub struct Block(pub Vec<Declaration>);
 
 pub struct VariableDeclarationBody {
     pub identifier: String,
@@ -64,4 +70,54 @@ impl fmt::Display for Declaration {
             Statement(statement) => write!(f, "{}", statement),
         }
     }
+}
+
+impl CodeGenerator for Declaration {
+    fn generate(&self) -> String {
+        match self {
+            VariableDeclaration(VariableDeclarationBody {
+                identifier,
+                expression,
+            }) => format!("{} = {};", identifier, &expression.generate()),
+            Statement(statement) => statement.generate(),
+        }
+    }
+}
+
+impl CodeGenerator for Block {
+    fn generate(&self) -> String {
+        let mut output = String::new();
+        output.push('{');
+        for statement in &self.0 {
+            output.push_str(&statement.generate());
+        }
+        output.push('}');
+        output
+    }
+}
+
+impl fmt::Display for Block {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "{{")?;
+        for statement in &self.0 {
+            write!(f, "{}", statement)?;
+        }
+        write!(f, "}}")
+    }
+}
+
+pub fn block<T>(tokens_iter: &mut Peekable<T>) -> Result<Block>
+where
+    T: Iterator<Item = Token>,
+{
+    consume_if_matches(tokens_iter, Separator(Left(Brace)))?;
+    let mut declarations = Vec::new();
+    while let Some(token) = tokens_iter.peek() {
+        if token.token_kind == Separator(Right(Brace)) {
+            break;
+        }
+        declarations.push(declaration(tokens_iter)?);
+    }
+    consume_if_matches(tokens_iter, Separator(Right(Brace)))?;
+    Ok(Block(declarations))
 }
