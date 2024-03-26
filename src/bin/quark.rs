@@ -1,13 +1,31 @@
-use std::{env, process};
+use anyhow::{Context, Result};
+use clap::Arg;
+use std::fs;
 
-fn main() {
-    let file = env::args().nth(1).unwrap_or_else(|| {
-        eprintln!("No file provided");
-        process::exit(1);
-    });
+use clap::Parser;
 
-    if let Err(message) = quark::compile(file) {
-        eprintln!("Error: {message}");
-        process::exit(1);
+#[derive(Parser, Debug)]
+struct Args {
+    /// Input Quark file
+    #[clap(index = 1, required = true)]
+    file: String,
+
+    /// Output Python file
+    #[clap(short = 'p', long)]
+    python: bool,
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let args = Args::parse();
+
+    let compiled_code = quark::compile(args.file.clone())?;
+
+    if args.python {
+        fs::write("output.py", compiled_code).with_context(|| "Failed to write to output.py")?;
+        println!("Python file written to output.py");
+    } else {
+        println!("{}", compiled_code);
     }
+
+    Ok(())
 }

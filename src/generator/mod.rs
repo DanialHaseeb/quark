@@ -11,6 +11,8 @@ pub fn intermediate(program: Program) -> String {
 pub fn python(syntax: String) -> String {
     let mut indent_level = 0;
     let mut output = String::new();
+    output.push_str("import numpy as np\n");
+
     for char in syntax.chars() {
         match char {
             '{' => {
