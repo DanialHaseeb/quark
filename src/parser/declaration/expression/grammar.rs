@@ -3,18 +3,21 @@ use super::structs::{
     LiteralExprBody, MatrixExprBody, UnaryExprBody, VariableExprBody,
 };
 
-use crate::lexer::token::{
-    identifier::{IdentifierKind::*, KeywordKind::*},
-    literal::LiteralKind::*,
-    operator::{DoubleCharKind::*, OperatorKind::*, SingleCharKind::*},
-    separator::{Delimiter::*, SeparatorKind::*},
-    Token,
-    TokenKind::*,
+use crate::{
+    lexer::token::{
+        identifier::{IdentifierKind::*, KeywordKind::*},
+        literal::LiteralKind::*,
+        operator::{DoubleCharKind::*, OperatorKind::*, SingleCharKind::*},
+        separator::{Delimiter::*, SeparatorKind::*},
+        Token,
+        TokenKind::*,
+    },
+    parser::utils::consumes_if_matches,
 };
 
-use super::super::super::utils::consume_if_matches;
+use super::super::super::utils::consumes;
 
-use anyhow::{bail, Result};
+use anyhow::{bail, Context, Result};
 use std::iter::Peekable;
 
 /// Grammar Rule:
@@ -71,7 +74,7 @@ where
 }
 
 /// Grammar Rule:
-/// equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+/// equality       -> comparison ( ( "!=" | "==" ) comparison )* ;
 fn equality<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
@@ -95,7 +98,7 @@ where
 }
 
 /// Grammar Rule:
-/// comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+/// comparison     -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 fn comparison<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
@@ -122,7 +125,7 @@ where
 }
 
 /// Grammar Rule
-/// term           → factor ( ( "-" | "+" ) factor )* ;
+/// term           -> factor ( ( "-" | "+" ) factor )* ;
 fn term<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
@@ -146,7 +149,7 @@ where
 }
 
 /// Grammar Rule:
-/// factor         → unary ( ( "/" | "*" ) unary )* ;
+/// factor         -> unary ( ( "/" | "*" ) unary )* ;
 fn factor<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
@@ -170,7 +173,7 @@ where
 }
 
 /// Grammar Rule:
-/// unary          → ( "!" | "-" ) unary;
+/// unary          -> ( "!" | "-" ) unary;
 fn unary<T>(tokens_iter: &mut Peekable<T>) -> Result<ExpressionKind>
 where
     T: Iterator<Item = Token>,
@@ -209,7 +212,7 @@ where
         })),
         Separator(Left(Parenthesis)) => {
             let expression = expression(tokens_iter)?;
-            consume_if_matches(tokens_iter, Separator(Right(Parenthesis)))?;
+            consumes(tokens_iter, Separator(Right(Parenthesis)))?;
 
             Ok(GroupingExpr(GroupingExprBody {
                 expression: Box::new(expression),
@@ -225,14 +228,14 @@ where
                     tokens_iter.peek().map(|token| &token.token_kind)
                 {
                     tokens_iter.next();
-                    consume_if_matches(tokens_iter, Operator(SingleChar(Pipe)))?;
+                    consumes_if_matches(tokens_iter, Operator(SingleChar(Pipe)));
                     list_expressions.push(list_expression(tokens_iter)?);
                 }
 
-                consume_if_matches(tokens_iter, Separator(Right(Bracket)))?;
+                consumes(tokens_iter, Separator(Right(Bracket)))?;
                 Ok(MatrixExpr(MatrixExprBody { list_expressions }))
             } else {
-                consume_if_matches(tokens_iter, Separator(Right(Bracket)))?;
+                consumes(tokens_iter, Separator(Right(Bracket)))?;
 
                 let only_expresssion = match list_expressions.pop() {
                     Some(element) => element,
@@ -243,7 +246,7 @@ where
             }
         }
         Identifier(Variable(name)) => Ok(VariableExpr(VariableExprBody { name })),
-        _ => bail!(" Parsing Error: Unexpected token: {token_kind}"),
+        _ => bail!(" Parsing found an unexpected token: {token_kind}"),
     }
 }
 

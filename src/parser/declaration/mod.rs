@@ -14,7 +14,7 @@ use crate::{
     },
 };
 
-use super::utils::{consume_and_return_if_variable, consume_if_matches};
+use super::utils::{consume_and_return_variable, consumes};
 use expression::{grammar::expression, structs::ExpressionKind};
 use statement::{statement, StatementKind};
 
@@ -42,13 +42,13 @@ where
         tokens_iter.peek().map(|token| &token.token_kind)
     {
         tokens_iter.next().unwrap();
-        let identifier = consume_and_return_if_variable(tokens_iter)?;
+        let identifier = consume_and_return_variable(tokens_iter)?;
 
-        consume_if_matches(tokens_iter, Operator(SingleChar(Equal)))?;
+        consumes(tokens_iter, Operator(SingleChar(Equal)))?;
 
         let expr = expression(tokens_iter)?;
 
-        consume_if_matches(tokens_iter, Separator(Semicolon))?;
+        consumes(tokens_iter, Separator(Semicolon))?;
 
         Ok(VariableDeclaration(VariableDeclarationBody {
             identifier,
@@ -110,7 +110,7 @@ pub fn block<T>(tokens_iter: &mut Peekable<T>) -> Result<Block>
 where
     T: Iterator<Item = Token>,
 {
-    consume_if_matches(tokens_iter, Separator(Left(Brace)))?;
+    consumes(tokens_iter, Separator(Left(Brace)))?;
     let mut declarations = Vec::new();
     while let Some(token) = tokens_iter.peek() {
         if token.token_kind == Separator(Right(Brace)) {
@@ -118,6 +118,6 @@ where
         }
         declarations.push(declaration(tokens_iter)?);
     }
-    consume_if_matches(tokens_iter, Separator(Right(Brace)))?;
+    consumes(tokens_iter, Separator(Right(Brace)))?;
     Ok(Block(declarations))
 }

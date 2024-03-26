@@ -2,7 +2,7 @@ use anyhow::Result;
 use std::fmt;
 use std::iter::Peekable;
 
-use super::super::utils::consume_if_matches;
+use super::super::utils::consumes;
 use super::expression::{grammar::expression, structs::ExpressionKind};
 use super::{block, Block};
 use crate::generator::CodeGenerator;
@@ -75,10 +75,10 @@ where
     T: Iterator<Item = Token>,
 {
     tokens_iter.next(); // skip the print token
-    consume_if_matches(tokens_iter, Separator(Left(Parenthesis)))?;
+    consumes(tokens_iter, Separator(Left(Parenthesis)))?;
     let expression = expression(tokens_iter)?;
-    consume_if_matches(tokens_iter, Separator(Right(Parenthesis)))?;
-    consume_if_matches(tokens_iter, Separator(Semicolon))?;
+    consumes(tokens_iter, Separator(Right(Parenthesis)))?;
+    consumes(tokens_iter, Separator(Semicolon))?;
     Ok(PrintStmt(expression))
 }
 
@@ -88,7 +88,7 @@ where
     T: Iterator<Item = Token>,
 {
     let expression = expression(tokens_iter)?;
-    consume_if_matches(tokens_iter, Separator(Semicolon))?;
+    consumes(tokens_iter, Separator(Semicolon))?;
     Ok(ExpresssionStmt(expression))
 }
 
