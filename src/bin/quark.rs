@@ -1,6 +1,5 @@
 use anyhow::{Context, Result};
 use std::fs;
-
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -16,7 +15,7 @@ struct Args {
 
 fn main() -> Result<()> {
     let args = Args::parse();
-
+    let source = fs::read_to_string(file)?;
     let compiled_code = quark::compile(args.file.clone())?;
 
     if args.python {
