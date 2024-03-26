@@ -1,5 +1,4 @@
 use anyhow::{Context, Result};
-use clap::Arg;
 use std::fs;
 
 use clap::Parser;
