@@ -187,7 +187,7 @@ impl CodeGenerator for ListExprBody {
 impl CodeGenerator for MatrixExprBody {
     fn generate(&self) -> String {
         let mut output = String::from("np.array([");
-        for list_expr in self.list_expressions.iter() {
+        for (i, list_expr) in self.list_expressions.iter().enumerate() {
             output.push('[');
             for (j, expression) in list_expr.expressions.iter().enumerate() {
                 output.push_str(&expression.generate());
@@ -196,6 +196,9 @@ impl CodeGenerator for MatrixExprBody {
                 }
             }
             output.push(']');
+            if i != list_expr.expressions.len() - 1 {
+                output.push_str(", ");
+            }
         }
         output.push_str("])");
         output
