@@ -12,7 +12,7 @@ struct Args {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
-    /// Compile Quark code to Python and print to stdout
+    /// Compile Quark code to Python and write to a file
     #[command(arg_required_else_help = true)]
     Default {
         /// Input Quark file
@@ -28,7 +28,7 @@ enum Commands {
         input: String,
     },
 
-    /// Compile Quark code to Python and write to a file
+    /// Compile Quark code to Python and print to stdout
     #[command(arg_required_else_help = true)]
     Output {
         /// Input Quark file
@@ -43,8 +43,9 @@ fn main() -> Result<()> {
 
     match args.command {
         Commands::Default { input } => {
-            let compiled_code = read_and_compile(input)?;
-            println!("{}", compiled_code);
+            write_to_file(input, output)?;
+
+            println!("Output written to output.py 🐍\n./output.py");
         }
         Commands::Run { input } => {
             write_to_file(input, output)?;
@@ -58,9 +59,8 @@ fn main() -> Result<()> {
             println!("{}", output);
         }
         Commands::Output { input } => {
-            write_to_file(input, output)?;
-
-            println!("Output written to output.py 🐍\n./output.py");
+            let compiled_code = read_and_compile(input)?;
+            println!("{}", compiled_code);
         }
     }
 
