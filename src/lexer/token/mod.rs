@@ -11,47 +11,55 @@ use operator::OperatorKind;
 use separator::SeparatorKind;
 
 #[derive(Debug, PartialEq)]
-pub struct Token {
-    pub token_kind: TokenKind,
+pub struct Token
+{
+	pub token_kind: TokenKind,
 }
 
 #[derive(Debug, PartialEq)]
-pub enum TokenKind {
-    Whitespace,
-    Identifier(IdentifierKind),
-    Separator(SeparatorKind),
-    Operator(OperatorKind),
-    Literal(LiteralKind),
+pub enum TokenKind
+{
+	Whitespace,
+	Identifier(IdentifierKind),
+	Separator(SeparatorKind),
+	Operator(OperatorKind),
+	Literal(LiteralKind),
 }
 
-impl Token {
-    pub fn new(token_type: TokenKind) -> Self {
-        Self {
-            token_kind: token_type,
-        }
-    }
+impl Token
+{
+	pub fn new(token_type: TokenKind) -> Self
+	{
+		Self { token_kind: token_type }
+	}
 }
 
-impl fmt::Display for Token {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.token_kind {
-            TokenKind::Whitespace => unreachable!(),
-            TokenKind::Identifier(identifier) => write!(f, "{}", identifier),
-            TokenKind::Separator(separator) => write!(f, "{}", separator),
-            TokenKind::Operator(operator) => write!(f, "{}", operator),
-            TokenKind::Literal(literal) => write!(f, "{}", literal),
-        }
-    }
+impl fmt::Display for Token
+{
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+	{
+		match &self.token_kind
+		{
+			TokenKind::Whitespace => unreachable!(),
+			TokenKind::Identifier(identifier) => write!(f, "{}", identifier),
+			TokenKind::Separator(separator) => write!(f, "{}", separator),
+			TokenKind::Operator(operator) => write!(f, "{}", operator),
+			TokenKind::Literal(literal) => write!(f, "{}", literal),
+		}
+	}
 }
 
-impl fmt::Display for TokenKind {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            TokenKind::Whitespace => unreachable!(),
-            TokenKind::Identifier(identifier) => write!(f, "{}", identifier),
-            TokenKind::Separator(separator) => write!(f, "{}", separator),
-            TokenKind::Operator(operator) => write!(f, "{}", operator),
-            TokenKind::Literal(literal) => write!(f, "{}", literal),
-        }
-    }
+impl fmt::Display for TokenKind
+{
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+	{
+		match self
+		{
+			TokenKind::Whitespace => unreachable!(),
+			TokenKind::Identifier(identifier) => write!(f, "{}", identifier),
+			TokenKind::Separator(separator) => write!(f, "{}", separator),
+			TokenKind::Operator(operator) => write!(f, "{}", operator),
+			TokenKind::Literal(literal) => write!(f, "{}", literal),
+		}
+	}
 }

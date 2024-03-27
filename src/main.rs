@@ -3,27 +3,32 @@ use clap::Parser;
 use std::fs;
 
 #[derive(Parser, Debug)]
-struct Args {
-    /// Input Quark file
-    #[clap(index = 1, required = true)]
-    file: String,
+struct Args
+{
+	/// Input Quark file
+	#[clap(index = 1, required = true)]
+	file: String,
 
-    /// Output Python file
-    #[clap(short = 'p', long)]
-    python: bool,
+	/// Output Python file
+	#[clap(short = 'p', long)]
+	python: bool,
 }
 
-fn main() -> Result<()> {
-    let args = Args::parse();
-    let source = fs::read_to_string(args.file).context("Failed to read input file 🤕")?;
-    let compiled_code = quark::compile(source).context("Failed to compile Quark code 💥")?;
+fn main() -> Result<()>
+{
+	let args = Args::parse();
+	let source = fs::read_to_string(args.file).context("Failed to read input file 🤕")?;
+	let compiled_code = quark::compile(source).context("Failed to compile Quark code 💥")?;
 
-    if args.python {
-        fs::write("output.py", compiled_code).with_context(|| "Failed to write to output.py ❎")?;
-        println!("Output written to output.py 🐍\n./output.py");
-    } else {
-        println!("{}", compiled_code);
-    }
+	if args.python
+	{
+		fs::write("output.py", compiled_code).with_context(|| "Failed to write to output.py ❎")?;
+		println!("Output written to output.py 🐍\n./output.py");
+	}
+	else
+	{
+		println!("{}", compiled_code);
+	}
 
-    Ok(())
+	Ok(())
 }

@@ -1,0 +1,13 @@
+brace_style = "AlwaysNextLine"
+control_brace_style = "AlwaysNextLine"
+hard_tabs = true
+imports_indent = "Visual"
+indent_style = "Visual"
+newline_style = "Unix"
+normalize_comments = true
+normalize_doc_attributes = true
+reorder_impl_items = true
+use_field_init_shorthand = true
+use_try_shorthand = true
+where_single_line = true
+wrap_comments = true
