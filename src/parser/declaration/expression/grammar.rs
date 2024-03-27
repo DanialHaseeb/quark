@@ -12,7 +12,7 @@ use crate::{lexer::token::{identifier::{IdentifierKind::*, KeywordKind::*},
 
 use super::super::super::utils::consumes;
 
-use anyhow::{bail, Context, Result};
+use anyhow::{bail, Result};
 use std::iter::Peekable;
 
 /// Grammar Rule:
