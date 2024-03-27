@@ -2,8 +2,8 @@
 name = "quark"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "Quark: A programming language for quantum computing 🌐"
+authors = ["Danial Haseeb", "Rasib Nadeem"]
 
 [dependencies]
 anyhow = "1.0"
