@@ -1,11 +1,11 @@
 use quark::{
-	lexer::token::{
+	compiler::lexer::token::{
 		literal::{LiteralKind::*, NumberKind::*},
 		operator::{OperatorKind::*, SingleCharKind::*},
 		Token,
 		TokenKind::*,
 	},
-	parser::declaration::expression::structs::{
+	compiler::parser::declaration::expression::structs::{
 		BinaryExprBody, ExpressionKind::*, GroupingExprBody, LiteralExprBody,
 		UnaryExprBody,
 	},

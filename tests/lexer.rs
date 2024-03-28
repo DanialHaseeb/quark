@@ -1,5 +1,5 @@
 use itertools::assert_equal;
-use quark::lexer::token::{
+use quark::compiler::lexer::token::{
 	identifier::IdentifierKind::*,
 	literal::{LiteralKind, NumberKind},
 	operator::{OperatorKind, SingleCharKind},
@@ -11,7 +11,7 @@ use quark::lexer::token::{
 fn test_number_expressions()
 {
 	let input = "123 * (45.67)";
-	let tokens = quark::lexer::lex(input.to_string()).unwrap();
+	let tokens = quark::compiler::lexer::lex(input.to_string()).unwrap();
 
 	assert_eq!(tokens.len(), 5);
 	assert_eq!(
@@ -37,7 +37,9 @@ fn test_number_expressions()
 			},
 			Token {
 				token_kind: TokenKind::Separator(
-					quark::lexer::token::separator::SeparatorKind::Right(Parenthesis)
+					quark::compiler::lexer::token::separator::SeparatorKind::Right(
+						Parenthesis
+					)
 				),
 			},
 		]
@@ -53,7 +55,7 @@ fn test_complex_numbers()
 x = 1 + 1.1i
 ";
 
-	let tokens = quark::lexer::lex(input.to_string()).unwrap();
+	let tokens = quark::compiler::lexer::lex(input.to_string()).unwrap();
 
 	assert_equal(
 		tokens,

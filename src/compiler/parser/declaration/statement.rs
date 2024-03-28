@@ -1,6 +1,12 @@
 use anyhow::Result;
 use std::{fmt, iter::Peekable};
 
+use super::{
+	super::utils::consumes,
+	block,
+	expression::{grammar::expression, structs::ExpressionKind},
+	Block,
+};
 use crate::compiler::{
 	generator::CodeGenerator,
 	lexer::token::{
@@ -9,12 +15,6 @@ use crate::compiler::{
 		Token,
 		TokenKind::*,
 	},
-};
-use super::{
-	super::utils::consumes,
-	block,
-	expression::{grammar::expression, structs::ExpressionKind},
-	Block,
 };
 
 use StatementKind::*;
