@@ -30,7 +30,9 @@ impl Token
 {
 	pub fn new(token_type: TokenKind) -> Self
 	{
-		Self { token_kind: token_type }
+		Self {
+			token_kind: token_type,
+		}
 	}
 }
 

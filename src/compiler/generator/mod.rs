@@ -1,4 +1,4 @@
-use crate::parser::Program;
+use super::parser::Program;
 
 pub trait CodeGenerator
 {

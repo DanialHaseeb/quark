@@ -1,11 +1,13 @@
 use anyhow::{bail, Result};
 use itertools::peek_nth;
-use token::{identifier::{IdentifierKind, IdentifierSymbol},
-            literal::LiteralKind,
-            operator::OperatorKind,
-            separator::SeparatorKind,
-            Token,
-            TokenKind::*};
+use token::{
+	identifier::{Identifier, IdentifierKind},
+	literal::LiteralKind,
+	operator::OperatorKind,
+	separator::SeparatorKind,
+	Token,
+	TokenKind::*,
+};
 
 pub mod token;
 
@@ -24,7 +26,10 @@ pub fn lex(source: String) -> Result<Vec<Token>>
 				stream.next();
 				Whitespace
 			}
-			_ if symbol.is_identifier_symbol() => Identifier(IdentifierKind::new(&mut stream)),
+			_ if symbol.is_identifier() =>
+			{
+				Identifier(IdentifierKind::new(&mut stream))
+			}
 			'(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' =>
 			{
 				Separator(SeparatorKind::new(&mut stream))

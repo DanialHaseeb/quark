@@ -32,14 +32,14 @@ pub enum KeywordKind
 	Not,
 }
 
-pub trait IdentifierSymbol
+pub trait Identifier
 {
-	fn is_identifier_symbol(&self) -> bool;
+	fn is_identifier(&self) -> bool;
 }
 
-impl IdentifierSymbol for char
+impl Identifier for char
 {
-	fn is_identifier_symbol(&self) -> bool
+	fn is_identifier(&self) -> bool
 	{
 		self.is_alphabetic() || *self == '_'
 	}
@@ -48,13 +48,13 @@ impl IdentifierSymbol for char
 impl IdentifierKind
 {
 	pub fn new<T>(stream: &mut PeekNth<T>) -> Self
-		where T: Iterator<Item = char>
+	where T: Iterator<Item = char>
 	{
 		let mut lexeme = String::new();
 
 		while let Some(&symbol) = stream.peek()
 		{
-			if symbol.is_identifier_symbol()
+			if symbol.is_identifier()
 			{
 				lexeme.push(symbol);
 				stream.next();

@@ -4,12 +4,16 @@ pub mod statement;
 use anyhow::Result;
 use std::{fmt, iter::Peekable};
 
-use crate::{generator::CodeGenerator,
-            lexer::token::{identifier::{IdentifierKind::*, KeywordKind},
-                           operator::{OperatorKind::*, SingleCharKind::*},
-                           separator::{Delimiter::*, SeparatorKind::*},
-                           Token,
-                           TokenKind::*}};
+use crate::compiler::{
+	generator::CodeGenerator,
+	lexer::token::{
+		identifier::{IdentifierKind::*, KeywordKind},
+		operator::{OperatorKind::*, SingleCharKind::*},
+		separator::{Delimiter::*, SeparatorKind::*},
+		Token,
+		TokenKind::*,
+	},
+};
 
 use super::utils::{consume_and_return_variable, consumes};
 use expression::{grammar::expression, structs::ExpressionKind};
@@ -34,7 +38,7 @@ pub struct VariableDeclarationBody
 // Grammar Rule:
 // Declaration -> "let" VARIABLE "=" expression ";" | Statement;
 pub fn declaration<T>(tokens_iter: &mut Peekable<T>) -> Result<Declaration>
-	where T: Iterator<Item = Token>
+where T: Iterator<Item = Token>
 {
 	if let Some(Identifier(Keyword(KeywordKind::Let))) =
 		tokens_iter.peek().map(|token| &token.token_kind)
@@ -48,8 +52,10 @@ pub fn declaration<T>(tokens_iter: &mut Peekable<T>) -> Result<Declaration>
 
 		consumes(tokens_iter, Separator(Semicolon))?;
 
-		Ok(VariableDeclaration(VariableDeclarationBody { identifier,
-		                                                 expression: expr }))
+		Ok(VariableDeclaration(VariableDeclarationBody {
+			identifier,
+			expression: expr,
+		}))
 	}
 	else
 	{
@@ -64,8 +70,10 @@ impl fmt::Display for Declaration
 	{
 		match self
 		{
-			VariableDeclaration(VariableDeclarationBody { identifier,
-			                                              expression, }) =>
+			VariableDeclaration(VariableDeclarationBody {
+				identifier,
+				expression,
+			}) =>
 			{
 				writeln!(f, "let {} = {};", identifier, expression)
 			}
@@ -80,8 +88,10 @@ impl CodeGenerator for Declaration
 	{
 		match self
 		{
-			VariableDeclaration(VariableDeclarationBody { identifier,
-			                                              expression, }) =>
+			VariableDeclaration(VariableDeclarationBody {
+				identifier,
+				expression,
+			}) =>
 			{
 				format!("{} = {};", identifier, &expression.generate())
 			}
@@ -119,7 +129,7 @@ impl fmt::Display for Block
 }
 
 pub fn block<T>(tokens_iter: &mut Peekable<T>) -> Result<Block>
-	where T: Iterator<Item = Token>
+where T: Iterator<Item = Token>
 {
 	consumes(tokens_iter, Separator(Left(Brace)))?;
 	let mut declarations = Vec::new();

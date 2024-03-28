@@ -23,12 +23,15 @@ pub struct QuarkString(String);
 impl LiteralKind
 {
 	pub fn new<T>(stream: &mut PeekNth<T>) -> Self
-		where T: Iterator<Item = char>
+	where T: Iterator<Item = char>
 	{
 		match stream.peek()
 		{
 			Some(&'"') => Self::String(QuarkString::new(stream)),
-			Some(&symbol) if symbol.is_numeric() => Self::Number(NumberKind::new(stream)),
+			Some(&symbol) if symbol.is_numeric() =>
+			{
+				Self::Number(NumberKind::new(stream))
+			}
 			_ => unreachable!(),
 		}
 	}
@@ -37,7 +40,7 @@ impl LiteralKind
 impl QuarkString
 {
 	fn new<T>(stream: &mut PeekNth<T>) -> Self
-		where T: Iterator<Item = char>
+	where T: Iterator<Item = char>
 	{
 		let mut string = String::new();
 		stream.next(); // consume the opening quote
@@ -66,7 +69,7 @@ enum NumberIs
 impl NumberKind
 {
 	pub fn new<T>(stream: &mut PeekNth<T>) -> Self
-		where T: Iterator<Item = char>
+	where T: Iterator<Item = char>
 	{
 		let mut number = String::new();
 		let mut num_type: NumberIs = NumberIs::Int;
@@ -74,7 +77,8 @@ impl NumberKind
 
 		stream.consume_digits_into(&mut number);
 
-		if stream.peek() == Some(&'.') && stream.peek_next().unwrap().is_ascii_digit()
+		if stream.peek() == Some(&'.')
+			&& stream.peek_next().unwrap().is_ascii_digit()
 		{
 			is_int = false;
 			number.push(stream.next().unwrap());
@@ -112,31 +116,26 @@ fn parse_number(number: &str, num_type: NumberIs) -> NumberKind
 {
 	match num_type
 	{
-		NumberIs::ComplexInt =>
-		{
-			NumberKind::ImgInt(
-			                   number.parse::<i64>()
-			                         .unwrap_or_else(|_| panic!("Failed to parse complex integer")),
-			)
-		}
-		NumberIs::ComplexFloat => NumberKind::ImgFloat(number.parse::<f64>()
-		                                                     .unwrap_or_else(|_| {
-			                                                     panic!("Failed to parse complex float")
-		                                                     })),
-		NumberIs::Int =>
-		{
-			NumberKind::Int(
-			                number.parse::<i64>()
-			                      .unwrap_or_else(|_| panic!("Failed to parse integer")),
-			)
-		}
-		NumberIs::Float =>
-		{
-			NumberKind::Float(
-			                  number.parse::<f64>()
-			                        .unwrap_or_else(|_| panic!("Failed to parse float")),
-			)
-		}
+		NumberIs::ComplexInt => NumberKind::ImgInt(
+			number
+				.parse::<i64>()
+				.unwrap_or_else(|_| panic!("Failed to parse complex integer")),
+		),
+		NumberIs::ComplexFloat => NumberKind::ImgFloat(
+			number
+				.parse::<f64>()
+				.unwrap_or_else(|_| panic!("Failed to parse complex float")),
+		),
+		NumberIs::Int => NumberKind::Int(
+			number
+				.parse::<i64>()
+				.unwrap_or_else(|_| panic!("Failed to parse integer")),
+		),
+		NumberIs::Float => NumberKind::Float(
+			number
+				.parse::<f64>()
+				.unwrap_or_else(|_| panic!("Failed to parse float")),
+		),
 	}
 }
 
@@ -162,7 +161,8 @@ trait ConsumeDigits
 	fn consume_digits_into(&mut self, number: &mut String);
 }
 
-impl<T> ConsumeDigits for PeekNth<T> where T: Iterator<Item = char>
+impl<T> ConsumeDigits for PeekNth<T>
+where T: Iterator<Item = char>
 {
 	fn consume_digits_into(&mut self, number: &mut String)
 	{

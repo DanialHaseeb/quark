@@ -1,4 +1,4 @@
-use crate::{generator::CodeGenerator, lexer::token::Token};
+use crate::compiler::{generator::CodeGenerator, lexer::token::Token};
 use std::fmt;
 use ExpressionKind::*;
 
@@ -178,10 +178,10 @@ impl CodeGenerator for BinaryExprBody
 	fn generate(&self) -> String
 	{
 		format!(
-		        "({} {} {})",
-		        self.left.generate(),
-		        self.operator,
-		        self.right.generate()
+			"({} {} {})",
+			self.left.generate(),
+			self.operator,
+			self.right.generate()
 		)
 	}
 }

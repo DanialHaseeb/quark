@@ -23,7 +23,7 @@ pub enum Delimiter
 impl SeparatorKind
 {
 	pub fn new<T>(stream: &mut T) -> Self
-		where T: Iterator<Item = char>
+	where T: Iterator<Item = char>
 	{
 		match stream.next().unwrap()
 		{
@@ -48,7 +48,10 @@ impl fmt::Display for SeparatorKind
 		match self
 		{
 			SeparatorKind::Left(delimiter) => write!(f, "Left({})", delimiter),
-			SeparatorKind::Right(delimiter) => write!(f, "Right({})", delimiter),
+			SeparatorKind::Right(delimiter) =>
+			{
+				write!(f, "Right({})", delimiter)
+			}
 			SeparatorKind::Comma => write!(f, ","),
 			SeparatorKind::Dot => write!(f, "."),
 			SeparatorKind::Semicolon => write!(f, ";"),

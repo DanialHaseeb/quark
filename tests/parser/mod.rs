@@ -26,8 +26,8 @@ fn test_paranthesis_parsing_with_multiple_operators()
 	let tokens = quark::lexer::lex(input.to_string()).unwrap();
 	let expression = quark::parser::parse(tokens).unwrap();
 	assert_eq!(
-	           format!("{}", expression),
-	           "(* (- 123) (/ (group 45.67) 2))\n"
+		format!("{}", expression),
+		"(* (- 123) (/ (group 45.67) 2))\n"
 	);
 }
 
@@ -47,8 +47,8 @@ fn test_variable_paranthesis_parsing_with_multiple_operators()
 	let tokens = quark::lexer::lex(input.to_string()).unwrap();
 	let expression = quark::parser::parse(tokens).unwrap();
 	assert_eq!(
-	           format!("{}", expression),
-	           "let x = (* (- 123) (/ (group 45.67) 2));\n"
+		format!("{}", expression),
+		"let x = (* (- 123) (/ (group 45.67) 2));\n"
 	);
 }
 
@@ -59,8 +59,8 @@ fn test_logical_operators()
 	let tokens = quark::lexer::lex(input.to_string()).unwrap();
 	let expression = quark::parser::parse(tokens).unwrap();
 	assert_eq!(
-	           format!("{}", expression),
-	           "(Or (And (== 1 2) (== 3 3)) (< 1 3))\n"
+		format!("{}", expression),
+		"(Or (And (== 1 2) (== 3 3)) (< 1 3))\n"
 	);
 }
 
@@ -71,8 +71,8 @@ fn test_print_function()
 	let tokens = quark::lexer::lex(input.to_string()).unwrap();
 	let expression = quark::parser::parse(tokens).unwrap();
 	assert_eq!(
-	           format!("{}", expression),
-	           "print((Or (And (== 1 2) (== 3 3)) (< 1 3)))\n"
+		format!("{}", expression),
+		"print((Or (And (== 1 2) (== 3 3)) (< 1 3)))\n"
 	);
 }
 
@@ -84,8 +84,8 @@ fn test_print_panic_function()
 	let tokens = quark::lexer::lex(input.to_string()).unwrap();
 	let expression = quark::parser::parse(tokens).unwrap();
 	assert_eq!(
-	           format!("{}", expression),
-	           "print((Or (And (== 1 2) (== 3 3)) (< 1 3)))\n"
+		format!("{}", expression),
+		"print((Or (And (== 1 2) (== 3 3)) (< 1 3)))\n"
 	);
 }
 
@@ -96,8 +96,8 @@ fn test_if_statement()
 	let tokens = quark::lexer::lex(input.to_string()).unwrap();
 	let expression = quark::parser::parse(tokens).unwrap();
 	assert_eq!(
-	           format!("{}", expression),
-	           "if (== 1 2) {\nprint(1)\nif (== 1 2) {\nprint(1)\n}\n}\n"
+		format!("{}", expression),
+		"if (== 1 2) {\nprint(1)\nif (== 1 2) {\nprint(1)\n}\n}\n"
 	);
 }
 

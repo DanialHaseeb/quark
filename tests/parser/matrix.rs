@@ -14,8 +14,8 @@ fn test_matrices_basic()
 	let tokens = quark::lexer::lex(input.to_string()).unwrap();
 	let expression = quark::parser::parse(tokens).unwrap();
 	assert_eq!(
-	           format!("{}", expression),
-	           "let A = [1, 2|
+		format!("{}", expression),
+		"let A = [1, 2|
 |1, 2];\n"
 	);
 }
@@ -27,8 +27,8 @@ fn test_matrices_expression_nesting()
 	let tokens = quark::lexer::lex(input.to_string()).unwrap();
 	let expression = quark::parser::parse(tokens).unwrap();
 	assert_eq!(
-	           format!("{}", expression),
-	           "let A = [(+ 1 2), (group (+ 3 2))|
+		format!("{}", expression),
+		"let A = [(+ 1 2), (group (+ 3 2))|
 |(+ 3 4), (* 1 (group (/ 2 3)))];\n"
 	);
 }

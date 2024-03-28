@@ -1,15 +1,21 @@
 use anyhow::Result;
 use std::{fmt, iter::Peekable};
 
-use super::{super::utils::consumes,
-            block,
-            expression::{grammar::expression, structs::ExpressionKind},
-            Block};
-use crate::{generator::CodeGenerator,
-            lexer::token::{identifier::{IdentifierKind::*, KeywordKind::*},
-                           separator::{Delimiter::*, SeparatorKind::*},
-                           Token,
-                           TokenKind::*}};
+use crate::compiler::{
+	generator::CodeGenerator,
+	lexer::token::{
+		identifier::{IdentifierKind::*, KeywordKind::*},
+		separator::{Delimiter::*, SeparatorKind::*},
+		Token,
+		TokenKind::*,
+	},
+};
+use super::{
+	super::utils::consumes,
+	block,
+	expression::{grammar::expression, structs::ExpressionKind},
+	Block,
+};
 
 use StatementKind::*;
 
@@ -21,8 +27,8 @@ pub enum StatementKind
 	IfStmt(IfStatementBody),
 	WhileStmt(WhileStatementBody),
 	PrintStmt(ExpressionKind),
-	// TODO: implement other statement types like `print`, `while`, `if`, `return`, `function`
-	// etc.
+	// TODO: implement other statement types like `print`, `while`, `if`,
+	// `return`, `function` etc.
 }
 
 pub struct IfStatementBody
@@ -40,7 +46,7 @@ pub struct WhileStatementBody
 /// Grammar Rule:
 /// statement -> expression_statement | print_statement | if_statement
 pub fn statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind>
-	where T: Iterator<Item = Token>
+where T: Iterator<Item = Token>
 {
 	match tokens_iter.peek().map(|token| &token.token_kind)
 	{
@@ -52,7 +58,7 @@ pub fn statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind>
 }
 /// if_statement -> "if" expression block
 fn if_statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind>
-	where T: Iterator<Item = Token>
+where T: Iterator<Item = Token>
 {
 	tokens_iter.next(); // skip the if token
 	let condition = expression(tokens_iter)?;
@@ -61,8 +67,10 @@ fn if_statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind>
 }
 
 /// while_statement -> "while" expression block
-pub fn while_statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind>
-	where T: Iterator<Item = Token>
+pub fn while_statement<T>(
+	tokens_iter: &mut Peekable<T>,
+) -> Result<StatementKind>
+where T: Iterator<Item = Token>
 {
 	tokens_iter.next(); // skip the while token
 	let condition = expression(tokens_iter)?;
@@ -72,7 +80,7 @@ pub fn while_statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind
 
 /// print_statement -> "print" "(" expression_statement ")";
 fn print_statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind>
-	where T: Iterator<Item = Token>
+where T: Iterator<Item = Token>
 {
 	tokens_iter.next(); // skip the print token
 	consumes(tokens_iter, Separator(Left(Parenthesis)))?;
@@ -83,8 +91,10 @@ fn print_statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind>
 }
 
 /// expression_statement -> expression  ";";
-pub fn expression_statement<T>(tokens_iter: &mut Peekable<T>) -> Result<StatementKind>
-	where T: Iterator<Item = Token>
+pub fn expression_statement<T>(
+	tokens_iter: &mut Peekable<T>,
+) -> Result<StatementKind>
+where T: Iterator<Item = Token>
 {
 	let expression = expression(tokens_iter)?;
 	consumes(tokens_iter, Separator(Semicolon))?;
@@ -99,7 +109,10 @@ impl fmt::Display for StatementKind
 		{
 			ExpresssionStmt(expression) => writeln!(f, "{}", expression),
 			PrintStmt(expression) => writeln!(f, "print({})", expression),
-			IfStmt(if_stmt) => writeln!(f, "if {} {}", if_stmt.condition, if_stmt.block),
+			IfStmt(if_stmt) =>
+			{
+				writeln!(f, "if {} {}", if_stmt.condition, if_stmt.block)
+			}
 			WhileStmt(while_stmt) =>
 			{
 				writeln!(f, "while {} {}", while_stmt.condition, while_stmt.block)
@@ -115,16 +128,19 @@ impl CodeGenerator for StatementKind
 		match self
 		{
 			ExpresssionStmt(expression) => expression.generate(),
-			PrintStmt(expression) => format!("print({});", expression.generate()),
+			PrintStmt(expression) =>
+			{
+				format!("print({});", expression.generate())
+			}
 			IfStmt(if_stmt) => format!(
-			                           "if {}: {}",
-			                           if_stmt.condition.generate(),
-			                           if_stmt.block.generate()
+				"if {}: {}",
+				if_stmt.condition.generate(),
+				if_stmt.block.generate()
 			),
 			WhileStmt(while_stmt) => format!(
-			                                 "while {}: {}",
-			                                 while_stmt.condition.generate(),
-			                                 while_stmt.block.generate()
+				"while {}: {}",
+				while_stmt.condition.generate(),
+				while_stmt.block.generate()
 			),
 		}
 	}

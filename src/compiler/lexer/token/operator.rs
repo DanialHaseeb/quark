@@ -45,12 +45,13 @@ pub enum DoubleCharKind
 }
 
 pub trait Match<T>
-	where T: Iterator<Item = char>
+where T: Iterator<Item = char>
 {
 	fn consume_if_matches(&mut self, c: char) -> bool;
 }
 
-impl<T> Match<T> for PeekNth<T> where T: Iterator<Item = char>
+impl<T> Match<T> for PeekNth<T>
+where T: Iterator<Item = char>
 {
 	fn consume_if_matches(&mut self, c: char) -> bool
 	{
@@ -69,7 +70,7 @@ impl<T> Match<T> for PeekNth<T> where T: Iterator<Item = char>
 impl OperatorKind
 {
 	pub fn new<T>(stream: &mut PeekNth<T>) -> Self
-		where T: Iterator<Item = char>
+	where T: Iterator<Item = char>
 	{
 		match stream.next().unwrap()
 		{

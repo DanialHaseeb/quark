@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 
 /// The command line arguments.
 #[derive(clap::Parser)]
@@ -75,12 +75,11 @@ pub fn build(file_path: String, output: String) -> Result<()>
 	// 2. Compile the Quark code to Python.
 	// 3. Write the Python code to the output file.
 
-	let source = std::fs::read_to_string(&file_path)
+	let source = std::fs::read_to_string(file_path)
 		.context("Failed to read input file 🤕")?;
-	let target = crate::compiler::compile(source)
+	let target = super::compiler::compile(source)
 		.context("Failed to compile Quark code 💥")?;
-	std::fs::write(&output, target)
-		.context("Failed to write to output file ❎")
+	std::fs::write(output, target).context("Failed to write to output file ❎")
 }
 
 /// Compiles and executes your Quark code.
@@ -97,9 +96,9 @@ pub fn run(file_path: String) -> Result<()>
 	// 3. Execute target Python file.
 	// 4. Print output to console.
 
-	let source = std::fs::read_to_string(&file_path)
+	let source = std::fs::read_to_string(file_path)
 		.context("Failed to read input file 🤕")?;
-	let target = crate::compiler::compile(source)
+	let target = super::compiler::compile(source)
 		.context("Failed to compile Quark code 💥")?;
 	let target_file = std::path::Path::new("target").with_extension("py");
 	std::fs::write(&target_file, target)
@@ -108,7 +107,8 @@ pub fn run(file_path: String) -> Result<()>
 		.arg(&target_file)
 		.output()
 		.context("Failed to execute target.py 🚀")?;
-	std::io::stdout().write_all(&output.stdout)
+	std::io::stdout()
+		.write_all(&output.stdout)
 		.context("Failed to write to stdout 📭")
 }
 

@@ -1,10 +1,15 @@
-use quark::{lexer::token::{literal::{LiteralKind::*, NumberKind::*},
-                           operator::{OperatorKind::*, SingleCharKind::*},
-                           Token,
-                           TokenKind::*},
-            parser::declaration::expression::structs::{BinaryExprBody, ExpressionKind::*,
-                                                       GroupingExprBody, LiteralExprBody,
-                                                       UnaryExprBody}};
+use quark::{
+	lexer::token::{
+		literal::{LiteralKind::*, NumberKind::*},
+		operator::{OperatorKind::*, SingleCharKind::*},
+		Token,
+		TokenKind::*,
+	},
+	parser::declaration::expression::structs::{
+		BinaryExprBody, ExpressionKind::*, GroupingExprBody, LiteralExprBody,
+		UnaryExprBody,
+	},
+};
 
 #[test]
 fn test_expression_printing()

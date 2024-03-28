@@ -4,7 +4,7 @@ pub mod utils;
 use core::fmt;
 
 use self::declaration::{declaration, Declaration};
-use crate::generator::CodeGenerator;
+use super::generator::CodeGenerator;
 
 use super::lexer::token::Token;
 use anyhow::Result;
