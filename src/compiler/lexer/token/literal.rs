@@ -52,6 +52,14 @@ impl QuarkString
 				stream.next();
 				break;
 			}
+
+			if symbol == '\n'
+			{
+				string.push_str("\\n");
+				stream.next();
+				continue;
+			}
+
 			string.push(stream.next().unwrap());
 		}
 		QuarkString(string)
