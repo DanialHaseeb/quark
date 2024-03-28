@@ -27,6 +27,7 @@ pub enum SingleCharKind
 	Ampersand,
 	Pipe,
 	Bang,
+	Dot,
 }
 
 #[derive(Debug, PartialEq)]
