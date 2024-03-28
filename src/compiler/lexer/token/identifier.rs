@@ -82,7 +82,7 @@ impl IdentifierKind
 			"xor" => Keyword(Xor),
 			"not" => Keyword(Not),
 			"let" => Keyword(Let),
-			"function" => Keyword(Function),
+			"fn" => Keyword(Function),
 			"print" => Keyword(Print),
 			_ => Variable(lexeme),
 		}
