@@ -240,14 +240,7 @@ where T: Iterator<Item = Token>
 			else
 			{
 				consumes(tokens_iter, Separator(Right(Bracket)))?;
-
-				let only_expresssion = match list_expressions.pop()
-				{
-					Some(element) => element,
-					None => unreachable!(),
-				};
-
-				Ok(ListExpr(only_expresssion))
+				Ok(MatrixExpr(MatrixExprBody { list_expressions }))
 			}
 		}
 		Identifier(Variable(name)) => Ok(VariableExpr(VariableExprBody { name })),
