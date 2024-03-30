@@ -10,7 +10,6 @@ pub enum ExpressionKind
 	GroupingExpr(GroupingExprBody),
 	VariableExpr(VariableExprBody),
 	MatrixExpr(MatrixExprBody),
-	ListExpr(ListExprBody),
 }
 
 pub struct ListExprBody
@@ -62,7 +61,6 @@ impl fmt::Display for ExpressionKind
 			LiteralExpr(expr) => write!(f, "{}", expr),
 			GroupingExpr(expr) => write!(f, "{}", expr),
 			VariableExpr(expr) => write!(f, "{}", expr),
-			ListExpr(expr) => write!(f, "{}", expr),
 			MatrixExpr(expr) => write!(f, "{}", expr),
 		}
 	}
@@ -167,7 +165,6 @@ impl CodeGenerator for ExpressionKind
 			LiteralExpr(expr) => expr.generate(),
 			GroupingExpr(expr) => expr.generate(),
 			VariableExpr(expr) => expr.generate(),
-			ListExpr(expr) => expr.generate(),
 			MatrixExpr(expr) => expr.generate(),
 		}
 	}
