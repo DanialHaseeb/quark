@@ -137,6 +137,7 @@ impl fmt::Display for SingleCharKind
 			SingleCharKind::Ampersand => "&",
 			SingleCharKind::Pipe => "|",
 			SingleCharKind::Bang => "!",
+			SingleCharKind::Dot => ".",
 		};
 		write!(f, "{}", symbol)
 	}
