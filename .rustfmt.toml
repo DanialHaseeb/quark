@@ -1,8 +1,10 @@
 max_width = 80
 tab_spaces = 2
 brace_style = "AlwaysNextLine"
+condense_wildcard_suffixes = true
 control_brace_style = "AlwaysNextLine"
 hard_tabs = true
+hex_literal_case = "Upper"
 newline_style = "Unix"
 normalize_comments = true
 normalize_doc_attributes = true
