@@ -15,7 +15,7 @@ use token::{
 
 pub mod token;
 
-pub fn lex(source: &String) -> Result<Vec<Token>>
+pub fn lex(source: String) -> Result<Vec<Token>>
 {
 	let mut stream = peek_nth(source.chars());
 

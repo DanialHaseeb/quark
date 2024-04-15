@@ -18,12 +18,12 @@ pub trait Compile
 	///
 	/// ### Errors
 	/// * If the Quark code cannot be compiled.
-	fn compile(&self) -> Result<String>;
+	fn compile(self) -> Result<String>;
 }
 
 impl Compile for String
 {
-	fn compile(&self) -> Result<String>
+	fn compile(self) -> Result<String>
 	{
 		let source: Vec<Vec<_>> = self
 			.lines()

@@ -17,12 +17,12 @@ pub trait Lex
 	///
 	/// ### Errors
 	/// * If the Quark source code cannot be lexed.
-	fn lex(&self, source: &[Vec<char>]) -> Result<Vec<Token>>;
+	fn lex(self, source: &[Vec<char>]) -> Result<Vec<Token>>;
 }
 
 impl Lex for String
 {
-	fn lex(&self, _source: &[Vec<char>]) -> Result<Vec<Token>>
+	fn lex(self, _source: &[Vec<char>]) -> Result<Vec<Token>>
 	{
 		super::lex(self)
 	}
