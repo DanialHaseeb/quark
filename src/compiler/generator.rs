@@ -1,11 +1,11 @@
-use super::parser::Program;
+use super::parser::Programme;
 
 pub trait CodeGenerator
 {
 	fn generate(&self) -> String;
 }
 
-pub fn intermediate(program: Program) -> String
+pub fn intermediate(program: Programme) -> String
 {
 	program.generate()
 }

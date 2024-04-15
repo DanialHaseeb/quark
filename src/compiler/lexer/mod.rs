@@ -1,3 +1,7 @@
+pub mod lexer;
+
+pub use lexer::*;
+
 use anyhow::{bail, Result};
 use itertools::peek_nth;
 use token::{
@@ -11,7 +15,7 @@ use token::{
 
 pub mod token;
 
-pub fn lex(source: String) -> Result<Vec<Token>>
+pub fn lex(source: &String) -> Result<Vec<Token>>
 {
 	let mut stream = peek_nth(source.chars());
 

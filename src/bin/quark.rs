@@ -1,9 +1,9 @@
 use anyhow::Result;
 use clap::Parser;
-use quark::command::Command;
+
+use quark::interface::Command;
 
 fn main() -> Result<()>
 {
-	let command = Command::parse();
-	quark::run(command)
+	Command::parse().run()
 }

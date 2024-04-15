@@ -1,3 +1,7 @@
+pub mod parser;
+
+pub use parser::*;
+
 pub mod declaration;
 pub mod utils;
 
@@ -8,9 +12,10 @@ use super::generator::CodeGenerator;
 
 use super::lexer::token::Token;
 use anyhow::Result;
-pub struct Program(pub Vec<Declaration>);
 
-pub fn parse(tokens: Vec<Token>) -> Result<Program>
+pub struct Programme(pub Vec<Declaration>);
+
+pub fn parse(tokens: Vec<Token>) -> Result<Programme>
 {
 	let mut tokens = tokens.into_iter().peekable();
 	let mut declarations = Vec::new();
@@ -21,10 +26,10 @@ pub fn parse(tokens: Vec<Token>) -> Result<Program>
 		declarations.push(declaration);
 	}
 
-	Ok(Program(declarations))
+	Ok(Programme(declarations))
 }
 
-impl fmt::Display for Program
+impl fmt::Display for Programme
 {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
 	{
@@ -36,7 +41,7 @@ impl fmt::Display for Program
 	}
 }
 
-impl CodeGenerator for Program
+impl CodeGenerator for Programme
 {
 	fn generate(&self) -> String
 	{
