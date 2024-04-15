@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use crate::compiler::parser::Programme;
 
-use super::super::generator::CodeGenerator;
+use super::super::generator::{CodeGenerator, python};
 
 /// Types that can be synthesised.
 ///
@@ -26,6 +26,6 @@ impl Synthesise for Programme
 {
 	fn synthesise(&self, source: &[Vec<char>]) -> Result<String>
 	{
-		Ok(self.generate())
+		Ok(python(self.generate()))
 	}
 }
