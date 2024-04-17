@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use super::*;
+use crate::language::token::Token;
 
 /// Types that can be lexed.
 ///
@@ -24,6 +24,6 @@ impl Lex for String
 {
 	fn lex(self, source: &[Vec<char>]) -> Result<Vec<Token>>
 	{
-		super::lex(self)
+		todo!()
 	}
 }

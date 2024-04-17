@@ -6,7 +6,6 @@
 //! how the words and symbols can be combined to form valid sentences. The
 //! semantics define the meaning of the sentences.
 
-pub mod grammar;
 pub mod language;
 pub mod token;
 

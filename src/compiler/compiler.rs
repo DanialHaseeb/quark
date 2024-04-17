@@ -2,9 +2,6 @@ use anyhow::Result;
 
 use super::*;
 use lexer::Lex;
-use parser::Parse;
-use semanter::Analyse;
-use synthesiser::Synthesise;
 
 /// Types that can be compiled.
 ///
@@ -25,15 +22,17 @@ impl Compile for String
 {
 	fn compile(self) -> Result<String>
 	{
-		let source: Vec<Vec<_>> = self
+		let _source: Vec<Vec<_>> = self
 			.lines()
 			.map(|line| format!("{line}\n").chars().collect())
 			.collect();
 
-		self
-			.lex(&source)?
-			.parse(&source)?
-			.analyse(&source)?
-			.synthesise(&source)
+		// self
+		// 	.lex(&source)?
+		// 	.parse(&source)?
+		// 	.analyse(&source)?
+		// 	.synthesise(&source)
+
+		Ok("".to_string())
 	}
 }
