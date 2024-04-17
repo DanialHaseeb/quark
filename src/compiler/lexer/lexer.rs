@@ -22,7 +22,7 @@ pub trait Lex
 
 impl Lex for String
 {
-	fn lex(self, _source: &[Vec<char>]) -> Result<Vec<Token>>
+	fn lex(self, source: &[Vec<char>]) -> Result<Vec<Token>>
 	{
 		super::lex(self)
 	}
