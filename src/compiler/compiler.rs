@@ -22,10 +22,17 @@ impl Compile for String
 {
 	fn compile(self) -> Result<String>
 	{
-		let _source: Vec<Vec<_>> = self
+		let source: Vec<Vec<_>> = self
 			.lines()
 			.map(|line| format!("{line}\n").chars().collect())
 			.collect();
+
+		let tokens = self.lex(&source)?;
+
+		for token in &tokens
+		{
+			eprintln!("{token:?}");
+		}
 
 		// self
 		// 	.lex(&source)?
