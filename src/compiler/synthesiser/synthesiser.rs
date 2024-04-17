@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use crate::compiler::parser::Programme;
 
-use super::super::generator::{CodeGenerator, python};
+use super::super::generator::{python, CodeGenerator};
 
 /// Types that can be synthesised.
 ///
