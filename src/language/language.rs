@@ -49,29 +49,3 @@ impl Display for Span
 		write!(formatter, "{start}--{end}")
 	}
 }
-
-// MARK: Symbol
-
-/// A symbol in a source file.
-///
-/// The symbol is given by a position and a value. The position is the position
-/// of the symbol in the source file. The value is the character that represents
-/// the symbol.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Symbol
-{
-	/// The position of the symbol in the source file.
-	pub position: Position,
-
-	/// The character that represents the symbol.
-	pub value: char,
-}
-
-impl Display for Symbol
-{
-	fn fmt(&self, formatter: &mut Formatter) -> Result
-	{
-		let Self { position, value } = self;
-		write!(formatter, "{position}: {value}")
-	}
-}

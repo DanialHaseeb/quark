@@ -8,5 +8,8 @@
 
 pub mod language;
 pub mod token;
+pub mod symbol;
 
 pub use language::*;
+pub use symbol::*;
+pub use token::Token;
