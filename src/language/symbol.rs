@@ -87,4 +87,46 @@ impl Symbol
 	{
 		self.value.is_whitespace()
 	}
+
+	/// Checks if the symbol is a starting symbol of an identifier token.
+	///
+	/// ### Returns
+	/// * `true` if the symbol is a starting symbol of an identifier token.
+	/// * `false` otherwise.
+	///
+	/// ### Examples
+	/// ```rust
+	/// use quark::language::{Position, Symbol};
+	/// let position = Position { line: 0, column: 0 };
+	/// let symbol = Symbol { position, value: 'a' };
+	/// assert!(symbol.is_identifier_start());
+	/// let symbol = Symbol { position, value: '1' };
+	/// assert!(!symbol.is_identifier_start());
+	/// ```
+	pub fn is_identifier_head(&self) -> bool
+	{
+		self.value.is_alphabetic() || self.value == '_'
+	}
+
+	/// Checks if the symbol is a starting symbol of a number token.
+	///
+	/// ### Returns
+	/// * `true` if the symbol is a starting symbol of a number token.
+	/// * `false` otherwise.
+	///
+	/// ### Examples
+	/// ```rust
+	/// use quark::language::{Position, Symbol};
+	/// let position = Position { line: 0, column: 0 };
+	/// let symbol = Symbol { position, value: '1' };
+	/// assert!(symbol.is_number_head());
+	/// let symbol = Symbol { position, value: 'a' };
+	/// assert!(!symbol.is_number_head());
+	/// let symbol = Symbol { position, value: '.' };
+	/// assert!(symbol.is_number_head());
+	/// ```
+	pub fn is_number_head(&self) -> bool
+	{
+		self.value.is_ascii_digit() || self.value == '.'
+	}
 }
