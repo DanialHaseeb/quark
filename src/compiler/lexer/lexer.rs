@@ -29,7 +29,7 @@ impl Lex for String
 
 		let mut tokens = Vec::new();
 
-		while let Some(token) = Token::from_stream(&mut stream, source)?
+		while let Some(token) = Token::try_from_stream(&mut stream, source)?
 		{
 			tokens.push(token);
 		}
