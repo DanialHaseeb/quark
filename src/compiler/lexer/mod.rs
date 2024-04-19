@@ -1,6 +1,6 @@
+pub mod error;
 pub mod lexer;
 pub mod scanner;
-pub mod error;
 
-pub use lexer::*;
 pub use error::*;
+pub use lexer::*;

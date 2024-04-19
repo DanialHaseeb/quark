@@ -24,11 +24,8 @@ impl Lex for String
 {
 	fn lex(self, source: &[Vec<char>]) -> Result<Vec<Token>>
 	{
-		let mut stream = self
-			.lines()
-			.enumerate()
-			.flat_map(Symbol::vector)
-			.peekable();
+		let mut stream =
+			self.lines().enumerate().flat_map(Symbol::vector).peekable();
 
 		let mut tokens = Vec::new();
 

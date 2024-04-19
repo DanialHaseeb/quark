@@ -26,10 +26,6 @@ impl Error for &[Vec<char>]
 		let length = end.column - start.column + 1;
 		let arrows = "^".repeat(length);
 
-		format!(
-		"{header}
-		{prefix}{source}
-		{indent}{arrows}
-		{message}")
+		format!("{header}\n{prefix}{source}\n{indent}{arrows}\n{message}")
 	}
 }

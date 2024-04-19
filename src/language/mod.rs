@@ -7,8 +7,8 @@
 //! semantics define the meaning of the sentences.
 
 pub mod language;
-pub mod token;
 pub mod symbol;
+pub mod token;
 
 pub use language::*;
 pub use symbol::*;
