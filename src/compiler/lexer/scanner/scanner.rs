@@ -7,7 +7,7 @@ use crate::language::{Symbol, Token};
 
 impl Token
 {
-	/// Converts a stream of symbols into a token.
+	/// Creates a token from a stream of symbols.
 	///
 	/// ### Parameters
 	/// * `stream` - The stream of symbols.
@@ -26,21 +26,28 @@ impl Token
 	where
 		I: Iterator<Item = Symbol>,
 	{
-		let symbol = match stream.peek()
+		let token = match stream.peek()
 		{
-			Some(symbol) => symbol,
-			None => return Ok(None),
+			None => None,
+
+			Some(symbol) if symbol.is_whitespace() =>
+			{
+				Some(Token::from_whitespace(stream, source)?)
+			}
+
+			Some(symbol) if symbol.is_identifier_head() =>
+			{
+				Some(Token::from_identifier_head(stream, source))
+			}
+
+			Some(symbol) if symbol.is_number_head() =>
+			{
+				Token::from_number_head(stream, source)
+			}
+
+			_ => bail!(error::SYMBOL),
 		};
 
-		let token = match symbol
-		{
-			_ if symbol.is_whitespace() => Token::from_whitespace(stream, source)?,
-			_ if symbol.is_identifier_head() => Token::from_identifier_head(stream, source),
-			_ if symbol.is_number_head() => Token::from_number_head(stream, source),
-
-			_ => bail!(error::SYMBOL)
-		};
-
-		Ok(Some(token))
+		Ok(token)
 	}
 }
