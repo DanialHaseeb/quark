@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use crate::language::token::Token;
+use crate::language::{Symbol, Token};
 
 /// Types that can be lexed.
 ///
@@ -24,6 +24,19 @@ impl Lex for String
 {
 	fn lex(self, source: &[Vec<char>]) -> Result<Vec<Token>>
 	{
-		todo!()
+		let mut stream = self
+			.lines()
+			.enumerate()
+			.flat_map(Symbol::vector)
+			.peekable();
+
+		let mut tokens = Vec::new();
+
+		while let Some(token) = Token::from_stream(&mut stream, source)?
+		{
+			tokens.push(token);
+		}
+
+		Ok(tokens)
 	}
 }
