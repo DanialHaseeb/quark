@@ -34,11 +34,13 @@ impl Token
 
 		let token = match symbol
 		{
-			_ if symbol.is_whitespace() => Token::from_whitespace(stream, source),
+			_ if symbol.is_whitespace() => Token::from_whitespace(stream, source)?,
 			_ if symbol.is_identifier_head() => Token::from_identifier_head(stream, source),
 			_ if symbol.is_number_head() => Token::from_number_head(stream, source),
+
+			_ => bail!(error::SYMBOL)
 		};
 
-		todo!()
+		Ok(Some(token))
 	}
 }
