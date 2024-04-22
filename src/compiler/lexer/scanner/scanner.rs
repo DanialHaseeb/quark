@@ -44,8 +44,8 @@ impl Token
 			'_' => Token::from_identifier_head(stream),
 
 			// If the next symbol potentially starts a number.
-			_ if value.is_ascii_digit() => Token::from_number_head(stream),
-			'.' => Token::from_number_head(stream),
+			_ if value.is_ascii_digit() => Token::from_number_head(stream, source),
+			'.' => Token::from_number_head(stream, source),
 
 			// If the next symbol potentially starts a string.
 			'"' => Token::try_from_string_head(stream, source)?,
@@ -63,6 +63,6 @@ impl Token
 			_ => Token::try_from_symbol(stream, source)?,
 		};
 
-		Ok(Some(token))
+		Ok(token)
 	}
 }

@@ -1,11 +1,11 @@
-pub mod comment_head;
-pub mod delimiter;
-pub mod identifier_head;
-pub mod number_head;
-pub mod operator_head;
+mod comment_head;
+mod delimiter;
+mod identifier_head;
+mod number_head;
+mod operator_head;
 pub mod scanner;
-pub mod string_head;
-pub mod symbol;
-pub mod whitespace;
+mod string_head;
+mod symbol;
+mod whitespace;
 
 pub use super::*;

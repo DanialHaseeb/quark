@@ -30,8 +30,10 @@ impl Symbol
 	/// ### Examples
 	/// ```rust
 	/// use quark::language::{Position, Symbol};
+	///
 	/// let position = Position { line: 0, column: 0 };
 	/// let symbol = Symbol::new(0, 0, 'a');
+	///
 	/// assert_eq!(symbol.position, position);
 	/// assert_eq!(symbol.value, 'a');
 	/// ```
@@ -39,32 +41,5 @@ impl Symbol
 	{
 		let position = Position { line, column };
 		Self { position, value }
-	}
-
-	/// Creates a vector of symbols.
-	///
-	/// ### Parameters
-	/// * `line` - The line number of each symbol in the vector.
-	/// * `string` - The string of characters to be converted.
-	///
-	/// ### Returns
-	/// * A vector of symbols created from the given string.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use quark::language::Symbol;
-	/// let symbols = Symbol::vector(0, "abc");
-	/// assert_eq!(symbols.len(), 3);
-	/// assert_eq!(symbols[0].value, 'a');
-	/// assert_eq!(symbols[1].value, 'b');
-	/// assert_eq!(symbols[2].value, 'c');
-	/// ```
-	pub fn vector((line, string): (usize, &str)) -> Vec<Self>
-	{
-		format!("{string}\n")
-			.chars()
-			.enumerate()
-			.map(|(column, value)| Symbol::new(line, column, value))
-			.collect()
 	}
 }

@@ -43,6 +43,42 @@ pub enum Kind
 	/// The `proc` declarator token.
 	Procedure,
 
+	/// The lexical token for the `if` keyword.
+	If,
+
+	/// The lexical token for the `else` keyword.
+	Else,
+
+	/// The lexical token for the `while` keyword.
+	While,
+
+	/// The lexical token for the `for` keyword.
+	For,
+
+	/// The lexical token for the `in` keyword.
+	In,
+
+	/// The lexical token for the `return` keyword.
+	Return,
+
+	/// The lexical token for the `break` keyword.
+	Break,
+
+	/// The lexical token for the `continue` keyword.
+	Continue,
+
+	/// The `and` operator.
+	And,
+
+	/// The `or` operator.
+	Or,
+
+	/// The `not` operator.
+	Not,
+
+	/// The `xor` operator.
+	Xor,
+
 	/// The `+` operator.
 	Plus,
 
@@ -100,18 +136,6 @@ pub enum Kind
 	/// The `<=` operator.
 	LessEqual,
 
-	/// The `and` operator.
-	And,
-
-	/// The `or` operator.
-	Or,
-
-	/// The `not` operator.
-	Not,
-
-	/// The `xor` operator.
-	Xor,
-
 	/// A parenthesis literal token.
 	///
 	/// The associated boolean value indicates whether it is opening or closing:
@@ -142,30 +166,6 @@ pub enum Kind
 	/// * _brace_ -> `{` | `}`
 	Brace(bool),
 
-	/// The lexical token for the `if` keyword.
-	If,
-
-	/// The lexical token for the `else` keyword.
-	Else,
-
-	/// The lexical token for the `while` keyword.
-	While,
-
-	/// The lexical token for the `for` keyword.
-	For,
-
-	/// The lexical token for the `in` keyword.
-	In,
-
-	/// The lexical token for the `return` keyword.
-	Return,
-
-	/// The lexical token for the `break` keyword.
-	Break,
-
-	/// The lexical token for the `continue` keyword.
-	Continue,
-
 	/// The lexical token for the `.` symbol.
 	Dot,
 
@@ -180,36 +180,4 @@ pub enum Kind
 
 	/// The lexical token for the `|` symbol.
 	Bar,
-}
-
-impl Kind
-{
-	/// Checks if this kind of token is a declarator.
-	///
-	/// A declarator is a token that declares a constant, variable, function, or
-	/// procedure.
-	///
-	/// #### Returns
-	/// * `true` if the token is a declarator.
-	/// * `false` otherwise.
-	///
-	/// ### Examples
-	/// ```
-	/// use quark::language::token::Kind;
-	/// assert!(Kind::Constant.is_declarator());
-	/// assert!(Kind::Variable.is_declarator());
-	/// assert!(!Kind::And.is_declarator());
-	/// assert!(!Kind::Plus.is_declarator());
-	/// ```
-	pub const fn is_declarator(&self) -> bool
-	{
-		match self
-		{
-			Self::Constant => true,
-			Self::Variable => true,
-			Self::Function => true,
-			Self::Procedure => true,
-			_ => false,
-		}
-	}
 }
