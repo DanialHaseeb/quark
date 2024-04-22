@@ -5,7 +5,7 @@
 //! compile Quark code to Python, and run your Quark code.
 
 pub mod command;
-pub mod error;
+mod error;
 pub mod interface;
 
 pub use command::*;
