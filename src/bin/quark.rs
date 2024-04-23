@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::Parser;
 
-use quark::interface::Command;
+use quark::cli::Command;
 
 fn main() -> Result<()>
 {

@@ -6,7 +6,5 @@
 
 pub mod command;
 mod error;
-pub mod interface;
 
 pub use command::*;
-pub use interface::*;

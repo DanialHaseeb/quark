@@ -1,6 +1,7 @@
 use std::iter::Peekable;
 
-use crate::language::{token, Span, Symbol, Token};
+use crate::language::token::{self, Token};
+use crate::language::utils::{Span, Symbol};
 
 impl Token
 {

@@ -1,4 +1,4 @@
-use crate::language::{Position, Span};
+use crate::language::utils::*;
 
 pub trait Error
 {

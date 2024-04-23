@@ -1,5 +1,5 @@
 mod error;
-pub mod lexer;
+pub mod lex;
 mod scanner;
 
-pub use lexer::*;
+pub use lex::*;

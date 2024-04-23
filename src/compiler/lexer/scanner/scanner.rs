@@ -2,7 +2,8 @@ use std::iter::Peekable;
 
 use anyhow::Result;
 
-use crate::language::{Symbol, Token};
+use crate::language::token::Token;
+use crate::language::utils::Symbol;
 
 impl Token
 {

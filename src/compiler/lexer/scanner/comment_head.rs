@@ -4,8 +4,8 @@ use anyhow::{bail, Result};
 
 use super::*;
 use crate::compiler::Error;
-use crate::language::token::Kind::Slash;
-use crate::language::{Span, Symbol, Token};
+use crate::language::token::{Kind::Slash, Token};
+use crate::language::utils::{Span, Symbol};
 
 impl Token
 {

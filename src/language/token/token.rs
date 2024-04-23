@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter, Result};
 
-use super::*;
+use crate::language::{token, utils::Span};
 
 /// A token in a source file.
 ///
@@ -13,7 +13,7 @@ pub struct Token
 	pub span: Span,
 
 	/// The kind of the token.
-	pub kind: Kind,
+	pub kind: token::Kind,
 }
 
 impl Display for Token
