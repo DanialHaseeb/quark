@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use crate::language::{token::Token, utils::Symbol};
+use crate::language::lexicon::{Symbol, Token};
 
 /// Types that can be lexed.
 ///

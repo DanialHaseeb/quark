@@ -1,4 +1,4 @@
-use super::*;
+use crate::language::utils::Position;
 
 /// A symbol in a source file.
 ///
