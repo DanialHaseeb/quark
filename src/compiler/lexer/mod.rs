@@ -1,5 +1,5 @@
 mod error;
 pub mod lex;
-mod scanner;
+mod rules;
 
 pub use lex::*;

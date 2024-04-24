@@ -5,16 +5,18 @@ use crate::language::utils::Span;
 ///
 /// ### Rule
 /// * _declaration_ -> _function_ | _variable_
+#[derive(Debug, PartialEq, Clone)]
 pub struct Declaration
 {
 	/// The span of the declaration.
-	span: Span,
+	pub span: Span,
 
 	/// The kind of the declaration.
-	kind: Kind,
+	pub kind: Kind,
 }
 
 /// The kind of a declaration.
+#[derive(Debug, PartialEq, Clone)]
 pub enum Kind
 {
 	/// A function declaration.

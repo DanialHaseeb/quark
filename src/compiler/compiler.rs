@@ -1,7 +1,9 @@
 use anyhow::Result;
 
 use super::*;
+use crate::language::grammar::Programme;
 use lexer::Lex;
+use parser::parse::{Parse, Tree};
 
 /// Types that can be compiled.
 ///
@@ -32,6 +34,13 @@ impl Compile for String
 		for token in &tokens
 		{
 			eprintln!("{token:?}");
+		}
+
+		let Tree(Programme { statements, .. }) = tokens.parse(&source)?;
+
+		for statement in &statements
+		{
+			eprintln!("{statement:?}");
 		}
 
 		// self

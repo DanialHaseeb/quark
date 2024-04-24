@@ -4,16 +4,18 @@ use crate::language::utils::Span;
 ///
 /// ### Rule
 /// * _statement_ -> { _declaration_ | _expression_ } `;`
+#[derive(Debug, PartialEq, Clone)]
 pub struct Statement
 {
 	/// The span of the statement.
-	span: Span,
+	pub span: Span,
 
 	/// The kind of the statement.
-	kind: Kind,
+	pub kind: Kind,
 }
 
 /// The kind of a statement.
+#[derive(Debug, PartialEq, Clone)]
 pub enum Kind
 {
 	/// A declaration statement.
