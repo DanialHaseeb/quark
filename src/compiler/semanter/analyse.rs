@@ -11,7 +11,7 @@ impl Tree
 	///
 	/// ### Errors
 	/// * If there are semantic errors in the abstract syntax tree.
-	fn analyse(self) -> Result<Self>
+	pub fn analyse(self, _source: &[Vec<char>]) -> Result<Self>
 	{
 		Ok(self)
 	}

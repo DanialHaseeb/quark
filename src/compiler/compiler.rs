@@ -1,9 +1,9 @@
 use anyhow::Result;
 
 use super::*;
-use crate::language::grammar::Programme;
 use lexer::Lex;
-use parser::parse::{Parse, Tree};
+use parser::Parse;
+use synthesiser::Synthesis;
 
 /// Types that can be compiled.
 ///
@@ -29,28 +29,12 @@ impl Compile for String
 			.map(|line| format!("{line}\n").chars().collect())
 			.collect();
 
-		let tokens = self.lex(&source)?;
+		let target = self
+			.lex(&source)?
+			.parse(&source)?
+			.analyse(&source)?
+			.synthesise();
 
-		for token in &tokens
-		{
-			eprintln!("{token:#?}");
-		}
-
-		eprintln!();
-
-		let Tree(Programme { statements, .. }) = tokens.parse(&source)?;
-
-		for statement in &statements
-		{
-			eprintln!("{statement:#?}");
-		}
-
-		// self
-		// 	.lex(&source)?
-		// 	.parse(&source)?
-		// 	.analyse(&source)?
-		// 	.synthesise(&source)
-
-		Ok("".to_string())
+		Ok(target)
 	}
 }
