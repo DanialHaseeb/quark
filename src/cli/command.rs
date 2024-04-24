@@ -103,8 +103,9 @@ impl Command
 				let extension = output.extension().and_then(OsStr::to_str);
 				ensure!(extension == Some("py"), error::TARGET_EXTENSION);
 
-				let source = fs::read_to_string(input).context(error::READ_SOURCE)?;
-				let target = source.compile()?;
+				let target = fs::read_to_string(input)
+					.context(error::READ_SOURCE)?
+					.compile()?;
 
 				fs::write(output, target).context(error::CREATE_TARGET)
 			}
@@ -115,8 +116,10 @@ impl Command
 				let extension = input.extension().map(OsStr::to_str);
 				ensure!(extension == Some(Some("q")), error::SOURCE_EXTENSION);
 
-				let source = fs::read_to_string(input).context(error::READ_SOURCE)?;
-				let target = source.compile()?;
+				let target = fs::read_to_string(input)
+					.context(error::READ_SOURCE)?
+					.compile()?;
+
 				let file = Path::new(TARGET);
 
 				fs::write(file, target).context(error::CREATE_TARGET)?;
@@ -136,8 +139,9 @@ impl Command
 				let extension = input.extension().map(OsStr::to_str);
 				ensure!(extension == Some(Some("q")), error::SOURCE_EXTENSION);
 
-				let source = fs::read_to_string(input).context(error::READ_SOURCE)?;
-				source.compile()?;
+				fs::read_to_string(input)
+					.context(error::READ_SOURCE)?
+					.compile()?;
 
 				Ok(eprintln!("No errors found."))
 			}
