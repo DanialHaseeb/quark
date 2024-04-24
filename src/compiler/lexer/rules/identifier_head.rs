@@ -15,7 +15,7 @@ impl Token
 	/// ### Returns
 	/// * The next token if it can be constructed from the stream.
 	/// * `None` if the stream is empty.
-	pub fn from_identifier_head<I>(stream: &mut Peekable<I>) -> Option<Token>
+	pub fn from_identifier_head<I>(stream: &mut Peekable<I>) -> Option<Self>
 	where I: Iterator<Item = Symbol>
 	{
 		let Symbol {

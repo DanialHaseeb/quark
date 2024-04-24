@@ -19,7 +19,7 @@ impl Token
 	pub fn from_number_head<I>(
 		stream: &mut Peekable<I>,
 		source: &[Vec<char>],
-	) -> Option<Token>
+	) -> Option<Self>
 	where
 		I: Iterator<Item = Symbol>,
 	{

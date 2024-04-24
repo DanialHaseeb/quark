@@ -21,7 +21,7 @@ impl Token
 	pub fn try_from_whitespace<I>(
 		stream: &mut Peekable<I>,
 		source: &[Vec<char>],
-	) -> Result<Option<Token>>
+	) -> Result<Option<Self>>
 	where
 		I: Iterator<Item = Symbol>,
 	{
