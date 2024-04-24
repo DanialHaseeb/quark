@@ -1,4 +1,4 @@
-use std::fmt::{Display, Formatter, Result};
+use std::fmt::{Debug, Formatter, Result};
 
 use crate::language::utils::Span;
 
@@ -6,7 +6,7 @@ use crate::language::utils::Span;
 ///
 /// A token is a word or symbol that represents a unit of meaning in the
 /// language.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct Token
 {
 	/// The span of the token in the source file.
@@ -16,12 +16,12 @@ pub struct Token
 	pub kind: Kind,
 }
 
-impl Display for Token
+impl Debug for Token
 {
 	fn fmt(&self, formatter: &mut Formatter) -> Result
 	{
 		let Self { span, kind } = self;
-		write!(formatter, "{span}: {kind:?}")
+		write!(formatter, "{span:?}: {kind:?}")
 	}
 }
 

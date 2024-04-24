@@ -3,7 +3,6 @@ use anyhow::Result;
 use crate::compiler::parser::parse;
 use crate::language::grammar::*;
 use crate::language::lexicon::Token;
-use crate::language::utils::{Position, Span};
 
 /// Types that can be parsed.
 ///

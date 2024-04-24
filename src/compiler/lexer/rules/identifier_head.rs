@@ -70,8 +70,7 @@ impl Symbol
 	/// ```
 	pub fn continues_identifier(&self) -> bool
 	{
-		false
-			|| self.value.is_alphabetic()
+		self.value.is_alphabetic()
 			|| self.value.is_ascii_digit()
 			|| self.value == '_'
 	}

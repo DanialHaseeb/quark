@@ -24,3 +24,19 @@ pub enum Kind
 	/// An expression statement.
 	Expression(super::Expression),
 }
+
+impl Kind
+{
+	/// Determines the span of the underlying kind of statement.
+	///
+	/// ### Returns
+	/// * The span of the underlying kind of statement.
+	pub fn span(&self) -> Span
+	{
+		match self
+		{
+			Self::Declaration(declaration) => declaration.span,
+			Self::Expression(expression) => expression.span,
+		}
+	}
+}

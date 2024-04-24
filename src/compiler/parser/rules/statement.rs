@@ -4,9 +4,8 @@ use anyhow::{bail, Result};
 
 use super::*;
 use crate::compiler::Error;
-use crate::language::grammar::statement::{
-	Declaration, Expression, Kind, Statement,
-};
+use crate::language::grammar::statement::{Kind, Statement};
+use crate::language::grammar::{Declaration, Expression};
 use crate::language::lexicon::token::{Kind::*, Token};
 use crate::language::utils::Span;
 
@@ -52,30 +51,19 @@ impl Statement
 			}
 		};
 
-		let start = match kind
+		let start = match &kind
 		{
 			Kind::Declaration(declaration) => declaration.span.start,
 			Kind::Expression(expression) => expression.span.start,
 		};
 
-		let end = match stream.next_if(|token| token.kind == Semicolon)
+		let end = match stream.next()
 		{
-			Some(token) => token.span.end,
-			None =>
-			{
-				let position = match kind
-				{
-					Kind::Declaration(declaration) => declaration.span.end,
-					Kind::Expression(expression) => expression.span.end,
-				};
-
-				let span = Span {
-					start: position,
-					end: position,
-				};
-
-				bail!(source.error(span, error::SEMICOLON))
-			}
+			Some(Token {
+				span,
+				kind: Semicolon,
+			}) => span.end,
+			_ => bail!(source.error(kind.span(), error::SEMICOLON)),
 		};
 
 		let span = Span { start, end };

@@ -33,14 +33,16 @@ impl Compile for String
 
 		for token in &tokens
 		{
-			eprintln!("{token:?}");
+			eprintln!("{token:#?}");
 		}
+
+		eprintln!();
 
 		let Tree(Programme { statements, .. }) = tokens.parse(&source)?;
 
 		for statement in &statements
 		{
-			eprintln!("{statement:?}");
+			eprintln!("{statement:#?}");
 		}
 
 		// self

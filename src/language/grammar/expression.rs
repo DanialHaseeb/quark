@@ -1,4 +1,5 @@
-use crate::language::{lexicon::Token, utils::Span};
+use crate::language::lexicon::Token;
+use crate::language::utils::Span;
 
 /// An expression in a Quark programme.
 ///
@@ -25,7 +26,7 @@ pub enum Kind
 	/// * _identifier_ -> _letter_ | `_` { _letter_ | _digit_ | `_` }*
 	/// * _letter_ -> `a`..`z` | `A`..`Z`
 	/// * _digit_ -> `0`..`9`
-	Identifier(String),
+	Identifier(Token),
 
 	/// A literal expression.
 	/// a
