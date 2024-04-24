@@ -70,33 +70,33 @@ impl Token
 		let token = match value
 		{
 			// If the next symbol is whitespace.
-			_ if value.is_whitespace() => Token::try_from_whitespace(stream, source)?,
+			_ if value.is_whitespace() => Self::try_from_whitespace(stream, source)?,
 
 			// If the next symbol potentially starts a comment.
-			'/' => Token::try_from_comment_head(stream, source)?,
+			'/' => Self::try_from_comment_head(stream, source)?,
 
 			// If the next symbol potentially starts an identifier.
 			_ if value.is_alphabetic() => Token::from_identifier_head(stream),
-			'_' => Token::from_identifier_head(stream),
+			'_' => Self::from_identifier_head(stream),
 
 			// If the next symbol potentially starts a number.
-			_ if value.is_ascii_digit() => Token::from_number_head(stream, source),
-			'.' => Token::from_number_head(stream, source),
+			_ if value.is_ascii_digit() => Self::from_number_head(stream, source),
+			'.' => Self::from_number_head(stream, source),
 
 			// If the next symbol potentially starts a string.
-			'"' => Token::try_from_string_head(stream, source)?,
+			'"' => Self::try_from_string_head(stream, source)?,
 
 			// If the next symbol is a delimiter.
-			'(' | ')' => Token::from_delimiter(stream),
-			'[' | ']' => Token::from_delimiter(stream),
-			'{' | '}' => Token::from_delimiter(stream),
+			'(' | ')' => Self::from_delimiter(stream),
+			'[' | ']' => Self::from_delimiter(stream),
+			'{' | '}' => Self::from_delimiter(stream),
 
 			// If the next symbol potentially starts an operator.
-			'+' | '-' | '*' | '%' | '^' => Token::from_operator_head(stream),
-			'=' | '!' | '<' | '>' => Token::from_operator_head(stream),
+			'+' | '-' | '*' | '%' | '^' => Self::from_operator_head(stream),
+			'=' | '!' | '<' | '>' => Self::from_operator_head(stream),
 
 			// If it is any other symbol.
-			_ => Token::try_from_symbol(stream, source)?,
+			_ => Self::try_from_symbol(stream, source)?,
 		};
 
 		Ok(token)
@@ -130,7 +130,7 @@ impl Symbol
 		format!("{string}\n")
 			.chars()
 			.enumerate()
-			.map(|(column, value)| Symbol::new(line, column, value))
+			.map(|(column, value)| Self::new(line, column, value))
 			.collect()
 	}
 }
