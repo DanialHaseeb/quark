@@ -8,4 +8,3 @@ authors = ["Danial Haseeb", "Rasib Nadeem"]
 [dependencies]
 anyhow = "1.0"
 clap = { version = "4.5.4", features = ["derive"] }
-itertools = "0.12.1"
