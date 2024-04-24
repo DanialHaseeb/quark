@@ -4,7 +4,9 @@ use anyhow::{bail, Result};
 
 use super::*;
 use crate::compiler::Error;
-use crate::language::grammar::statement::{Statement, Kind, Declaration, Expression};
+use crate::language::grammar::statement::{
+	Declaration, Expression, Kind, Statement,
+};
 use crate::language::lexicon::token::{Kind::*, Token};
 use crate::language::utils::Span;
 
@@ -55,7 +57,10 @@ impl Statement
 					Kind::Expression(expression) => expression.span.end,
 				};
 
-				let span = Span { start: position, end: position };
+				let span = Span {
+					start: position,
+					end: position,
+				};
 
 				bail!(source.error(span, error::SEMICOLON))
 			}

@@ -103,7 +103,6 @@ impl Token
 	}
 }
 
-
 impl Symbol
 {
 	/// Creates a vector of symbols.

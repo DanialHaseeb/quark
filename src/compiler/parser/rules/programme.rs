@@ -4,11 +4,14 @@ use anyhow::Result;
 
 use crate::language::grammar::{Programme, Statement};
 use crate::language::lexicon::Token;
-use crate::language::utils::{Span, Position};
+use crate::language::utils::{Position, Span};
 
 impl Programme
 {
-	pub fn try_from_stream<I>(stream: &mut Peekable<I>, source: &[Vec<char>]) -> Result<Programme>
+	pub fn try_from_stream<I>(
+		stream: &mut Peekable<I>,
+		source: &[Vec<char>],
+	) -> Result<Programme>
 	where
 		I: Iterator<Item = Token>,
 	{
