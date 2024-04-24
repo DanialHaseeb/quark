@@ -12,6 +12,18 @@ use crate::language::utils::Span;
 
 impl Statement
 {
+	/// Creates a statement from a stream of tokens.
+	///
+	/// ### Parameters
+	/// * `stream` - The stream of tokens.
+	/// * `source` - The source code.
+	///
+	/// ### Returns
+	/// * The statement if it can be constructed from the stream.
+	/// * `None` if the stream is empty.
+	///
+	/// ### Errors
+	/// * If the statement cannot be created.
 	pub fn try_from_stream<I>(
 		stream: &mut Peekable<I>,
 		source: &[Vec<char>],

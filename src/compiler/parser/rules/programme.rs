@@ -8,6 +8,18 @@ use crate::language::utils::{Position, Span};
 
 impl Programme
 {
+	/// Creates a programme from a stream of tokens.
+	///
+	/// ### Parameters
+	/// * `stream` - The stream of tokens.
+	/// * `source` - The source code.
+	///
+	/// ### Returns
+	/// * The programme if it can be constructed from the stream.
+	/// * `None` if the stream is empty.
+	///
+	/// ### Errors
+	/// * If the programme cannot be created.
 	pub fn try_from_stream<I>(
 		stream: &mut Peekable<I>,
 		source: &[Vec<char>],
