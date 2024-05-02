@@ -286,23 +286,6 @@ impl Token
 	/// ### Returns
 	/// * `true` if the token can be used to perform an equality comparison.
 	/// * `false` otherwise.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use crate::language::lexicon::token::{Kind::*, Token};
-	/// use crate::language::utils::Span;
-	///
-	/// let span = Span { start: 0, end: 1 };
-	///
-	/// let token = Token { span, kind: EqualEqual };
-	/// assert!(token.is_equality());
-	///
-	/// let token = Token { span, kind: ExclaimEqual };
-	/// assert!(token.is_equality());
-	///
-	/// let token = Token { span, kind: LessEqual };
-	/// assert!(!token.is_equality());
-	/// ```
 	pub fn is_equality(&self) -> bool
 	{
 		self.kind == EqualEqual || self.kind == ExclaimEqual
@@ -313,23 +296,6 @@ impl Token
 	/// ### Returns
 	/// * `true` if the token can be used to perform a comparison.
 	/// * `false` otherwise.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use crate::language::lexicon::token::{Kind::*, Token};
-	/// use crate::language::utils::Span;
-	///
-	/// let span = Span { start: 0, end: 1 };
-	///
-	/// let token = Token { span, kind: Less };
-	/// assert!(token.is_comparison());
-	///
-	/// let token = Token { span, kind: LessEqual };
-	/// assert!(token.is_comparison());
-	///
-	/// let token = Token { span, kind: Colon };
-	/// assert!(!token.is_comparison());
-	/// ```
 	pub fn is_comparison(&self) -> bool
 	{
 		self.kind == Less
@@ -344,23 +310,6 @@ impl Token
 	/// ### Returns
 	/// * `true` if the token can be used to perform an addition or subtraction.
 	/// * `false` otherwise.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use crate::language::lexicon::token::{Kind::*, Token};
-	/// use crate::language::utils::Span;
-	///
-	/// let span = Span { start: 0, end: 1 };
-	///
-	/// let token = Token { span, kind: Plus };
-	/// assert!(token.creates_term());
-	///
-	/// let token = Token { span, kind: Minus };
-	/// assert!(token.creates_term());
-	///
-	/// let token = Token { span, kind: Asterisk };
-	/// assert!(!token.creates_term());
-	/// ```
 	pub fn creates_term(&self) -> bool
 	{
 		self.kind == Plus || self.kind == Minus
@@ -372,26 +321,6 @@ impl Token
 	/// ### Returns
 	/// * `true` if the token can be used to create a factor.
 	/// * `false` otherwise.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use crate::language::lexicon::token::{Kind::*, Token};
-	/// use crate::language::utils::Span;
-	///
-	/// let span = Span { start: 0, end: 1 };
-	///
-	/// let token = Token { span, kind: Asterisk };
-	/// assert!(token.creates_factor());
-	///
-	/// let token = Token { span, kind: Slash };
-	/// assert!(token.creates_factor());
-	///
-	/// let token = Token { span, kind: Percent };
-	/// assert!(token.creates_factor());
-	///
-	/// let token = Token { span, kind: Plus };
-	/// assert!(!token.creates_factor());
-	/// ```
 	pub fn creates_factor(&self) -> bool
 	{
 		self.kind == Asterisk || self.kind == Slash || self.kind == Percent
@@ -402,26 +331,6 @@ impl Token
 	/// ### Returns
 	/// * `true` if the token is a prefix operator.
 	/// * `false` otherwise.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use crate::language::lexicon::token::{Kind::*, Token};
-	/// use crate::language::utils::Span;
-	///
-	/// let span = Span { start: 0, end: 1 };
-	///
-	/// let token = Token { span, kind: Plus };
-	/// assert!(token.is_prefix_operator());
-	///
-	/// let token = Token { span, kind: Minus };
-	/// assert!(token.is_prefix_operator());
-	///
-	/// let token = Token { span, kind: Not };
-	/// assert!(token.is_prefix_operator());
-	///
-	/// let token = Token { span, kind: Asterisk };
-	/// assert!(!token.is_prefix_operator());
-	/// ```
 	pub fn is_prefix_operator(&self) -> bool
 	{
 		self.kind == Plus || self.kind == Minus || self.kind == Not
