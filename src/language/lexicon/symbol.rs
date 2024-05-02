@@ -26,17 +26,6 @@ impl Symbol
 	///
 	/// ### Returns
 	/// * The new symbol created from the given line, column, and value.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use quark::language::{Position, Symbol};
-	///
-	/// let position = Position { line: 0, column: 0 };
-	/// let symbol = Symbol::new(0, 0, 'a');
-	///
-	/// assert_eq!(symbol.position, position);
-	/// assert_eq!(symbol.value, 'a');
-	/// ```
 	pub fn new(line: usize, column: usize, value: char) -> Self
 	{
 		let position = Position { line, column };

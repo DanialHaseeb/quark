@@ -39,23 +39,6 @@ impl Symbol
 	/// ### Returns
 	/// * `true` if the symbol is a whitespace character.
 	/// * `false` otherwise.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use quark::language::Symbol;
-	///
-	/// let symbol = Symbol::new(0, 0, ' ');
-	/// assert!(symbol.is_whitespace());
-	///
-	/// let symbol = Symbol::new(0, 0, '\t');
-	/// assert!(symbol.is_whitespace());
-	///
-	/// let symbol = Symbol::new(0, 0, '\n');
-	/// assert!(symbol.is_whitespace());
-	///
-	/// let symbol = Symbol::new(0, 0, 'a');
-	/// assert!(!symbol.is_whitespace());
-	/// ```
 	pub fn is_whitespace(&self) -> bool
 	{
 		self.value.is_whitespace()

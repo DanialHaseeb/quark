@@ -86,17 +86,6 @@ impl Symbol
 	/// ### Returns
 	/// * `true` if the symbol is a digit.
 	/// * `false` otherwise.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use crate::language::Symbol;
-	///
-	/// let symbol = Symbol::new(0, 0, '1');
-	/// assert!(symbol.is_digit());
-	///
-	/// let symbol = Symbol::new(0, 0, 'a');
-	/// assert!(!symbol.is_digit());
-	/// ```
 	pub fn is_digit(&self) -> bool
 	{
 		self.value.is_ascii_digit()

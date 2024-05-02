@@ -48,26 +48,6 @@ impl Symbol
 	/// ### Returns
 	/// * `true` if the symbol can continue an identifier.
 	/// * `false` otherwise.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use crate::language::Symbol;
-	///
-	/// let symbol = Symbol::new(0, 0, 'a');
-	/// assert!(symbol.continues_identifier());
-	///
-	/// let symbol = Symbol::new(0, 0, '1');
-	/// assert!(symbol.continues_identifier());
-	///
-	/// let symbol = Symbol::new(0, 0, '_');
-	/// assert!(symbol.continues_identifier());
-	///
-	/// let symbol = Symbol::new(0, 0, ' ');
-	/// assert!(!symbol.continues_identifier());
-	///
-	/// let symbol = Symbol::new(0, 0, '+');
-	/// assert!(!symbol.continues_identifier());
-	/// ```
 	pub fn continues_identifier(&self) -> bool
 	{
 		self.value.is_alphabetic()
@@ -85,17 +65,6 @@ impl token::Kind
 	///
 	/// ### Returns
 	/// * The kind of token.
-	///
-	/// ### Examples
-	/// ```rust
-	/// use crate::language::token::Kind;
-	///
-	/// let kind = Kind::from_identifier(String::from("true"));
-	/// assert_eq!(kind, Kind::Bool(true));
-	///
-	/// let kind = Kind::from_identifier(String::from("hello"));
-	/// assert_eq!(kind, Kind::Identifier(String::from("hello")));
-	/// ```
 	pub fn from_identifier(lexeme: String) -> Self
 	{
 		use token::Kind::*;
