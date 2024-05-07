@@ -1,3 +1,4 @@
+use super::Items;
 use crate::language::lexicon::Token;
 use crate::language::utils::Span;
 
@@ -39,6 +40,18 @@ pub enum Kind
 	/// ### Rule
 	/// * _parenthesised_ -> `(` _expression_ `)`
 	Parenthesised(Box<Expression>),
+
+	/// A list expression.
+	///
+	/// ### Rule
+	/// * _list_ -> `[` _items_ `]` `l`?
+	List(Items),
+
+	/// A matrix expression.
+	///
+	/// ### Rule
+	///  * _matrix_ -> `[` _items_ { (`||` | `|`) _items_ }* `]` `m`?
+	Matrix(Vec<Items>),
 
 	/// A unary prefix expression.
 	///
