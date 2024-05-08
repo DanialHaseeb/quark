@@ -6,7 +6,8 @@ use crate::language::utils::Span;
 ///
 /// ### Rule
 /// * _expression_ -> _primary_ | _prefix_ | _infix_
-/// * _primary_ -> _literal_ | _identifier_ | _parenthesised_
+/// * _primary_ -> _literal_ | _identifier_ | _parenthesised_ | _list_ |
+///   _matrix_
 #[derive(Debug, PartialEq, Clone)]
 pub struct Expression
 {

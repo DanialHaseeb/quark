@@ -228,6 +228,20 @@ impl Expression
 		}
 	}
 
+	/// * _list_ -> `[` _items_ `]` `l`?
+	fn list<I>(stream: &mut Peekable<I>, source: &[Vec<char>]) -> Result<Self>
+	where I: Iterator<Item = Token>
+	{
+		todo!()
+	}
+
+	///  * _matrix_ -> `[` _items_ { (`||` | `|`) _items_ }* `]` `m`?
+	fn matrix<I>(stream: &mut Peekable<I>, source: &[Vec<char>]) -> Result<Self>
+	where I: Iterator<Item = Token>
+	{
+		todo!()
+	}
+
 	fn primary<I>(
 		stream: &mut Peekable<I>,
 		source: &[Vec<char>],
