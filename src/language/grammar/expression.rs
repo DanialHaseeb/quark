@@ -51,7 +51,7 @@ pub enum Kind
 	///
 	/// ### Rule
 	///  * _matrix_ -> `[` _items_ { (`||` | `|`) _items_ }* `]` `m`?
-	Matrix(Vec<Items>),
+	Matrix(Vec<Option<Items>>),
 
 	/// A unary prefix expression.
 	///

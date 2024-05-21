@@ -50,10 +50,16 @@ impl Synthesis for Expression
 				for items in items_list.into_iter()
 				{
 					output.push('[');
-					for expression in items.expressions.into_iter()
+					if let Some(items) = items
 					{
-						output.push_str(&expression.synthesise());
-						output.push(',');
+						for expression in items.expressions.into_iter()
+						{
+							output.push_str(&expression.synthesise());
+							output.push(',');
+							output.push(' ');
+						}
+						output.pop();
+						output.pop();
 					}
 					output.push(']');
 				}

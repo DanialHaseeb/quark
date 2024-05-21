@@ -228,124 +228,39 @@ impl Expression
 		}
 	}
 
-	fn empty_list<I>(
-		stream: &mut Peekable<I>,
-		source: &[Vec<char>],
-	) -> Result<Self>
-	where
-		I: Iterator<Item = Token>,
-	{
-		let opening = match stream.next()
-		{
-			Some(token) => token,
-			None => unreachable!(),
-		};
-
-		let start = opening.span.start;
-
-		let closing = stream.next();
-
-		match closing
-		{
-			Some(token) if token.is_list_closing() =>
-			{
-				let span = Span {
-					start,
-					end: token.span.end,
-				};
-
-				Ok(Self {
-					span,
-					kind: Kind::List(None),
-				})
-			}
-
-			Some(token) if token.kind == BracketRightWithM =>
-			{
-				let span = Span {
-					start,
-					end: token.span.end,
-				};
-				Ok(Self {
-					span,
-					kind: Kind::Matrix(vec![]),
-				})
-			}
-			_ => bail!(source.error(opening.span, error::BRACKET)),
-		}
-	}
-
-	/// * _list_ -> `[` _items_ `]` `a`?
-	fn list<I>(stream: &mut Peekable<I>, source: &[Vec<char>]) -> Result<Self>
-	where I: Iterator<Item = Token>
-	{
-		let opening = match stream.next()
-		{
-			Some(token) => token,
-			None => unreachable!(),
-		};
-
-		let start = opening.span.start;
-
-		let items = Self::items(stream, source)?;
-		let closing = stream.next();
-
-		match closing
-		{
-			Some(token) if token.is_list_closing() =>
-			{
-				let span = Span {
-					start,
-					end: token.span.end,
-				};
-
-				Ok(Self {
-					span,
-					kind: Kind::List(Some(items)),
-				})
-			}
-			_ => bail!(source.error(opening.span, error::BRACKET)),
-		}
-	}
-
-	/// * _items_ -> _expression_ { `,` _expression_ }*
 	pub fn items<I>(
 		stream: &mut std::iter::Peekable<I>,
 		source: &[Vec<char>],
-	) -> Result<Items>
+	) -> Result<Option<Items>>
 	where
 		I: Iterator<Item = Token>,
 	{
-		let mut expressions = Vec::new();
-
-		let expression = Self::try_from_stream(stream, source)?;
-
-		let start = expression.span.start;
-		let mut end = expression.span.end;
-
-		expressions.push(expression);
-
-		while stream.next_if(|token| token.kind == Comma).is_some()
+		if stream.peek().is_some_and(|token| token.is_closing())
 		{
-			let expression = Self::try_from_stream(stream, source)?;
-			end = expression.span.end;
-			expressions.push(expression);
+			Ok(None)
 		}
+		else
+		{
+			let mut expressions = Vec::new();
 
-		let span = Span { start, end };
+			let expression = Self::try_from_stream(stream, source)?;
 
-		Ok(Items { span, expressions })
-	}
+			let start = expression.span.start;
+			let mut end = expression.span.end;
 
-	///  * _matrix_ -> `[` _items_ { (`||` | `|`) _items_ }* `]` `m`?
-	fn _matrix<I>(
-		_stream: &mut Peekable<I>,
-		_source: &[Vec<char>],
-	) -> Result<Self>
-	where
-		I: Iterator<Item = Token>,
-	{
-		todo!()
+			expressions.push(expression);
+
+			while stream.next_if(|token| token.kind == Comma).is_some()
+			{
+				let expression = Self::try_from_stream(stream, source)?;
+				end = expression.span.end;
+				expressions.push(expression);
+			}
+
+			let span = Span { start, end };
+
+			Ok(Some(Items { span, expressions }))
+		}
 	}
 
 	fn primary<I>(
@@ -355,13 +270,12 @@ impl Expression
 	where
 		I: Iterator<Item = Token>,
 	{
-		let token = stream.peek().expect("Token");
+		let token = stream.next().expect("Token");
 
 		let expression = match token.kind
 		{
 			Identifier(_) =>
 			{
-				let token = stream.next().expect("Token");
 				let span = token.span;
 				let kind = Kind::Identifier(token);
 
@@ -370,7 +284,6 @@ impl Expression
 
 			Number(_) | String(_) | Boolean(_) =>
 			{
-				let token = stream.next().expect("Token");
 				let span = token.span;
 				let kind = Kind::Literal(token);
 
@@ -379,7 +292,6 @@ impl Expression
 
 			ParenthesisLeft =>
 			{
-				let token = stream.next().expect("Token");
 				let expression = Box::new(Self::try_from_stream(stream, source)?);
 
 				let start = token.span.start;
@@ -397,13 +309,75 @@ impl Expression
 			}
 			BracketLeft =>
 			{
-				if let Ok(expression) = Self::list(stream, source)
+				let start = token.span.start;
+
+				let items = Self::items(stream, source)?;
+
+				if stream.peek().is_some_and(|token| token.kind == Bar)
 				{
-					expression
+					// 2D matrix
+					let mut matrix = vec![items];
+					stream.next();
+					stream.next_if(|token| token.kind == Bar);
+					matrix.push(Self::items(stream, source)?);
+
+					let closing = stream.next();
+
+					match closing
+					{
+						Some(token) if token.is_matrix_closing() =>
+						{
+							let span = Span {
+								start,
+								end: token.span.end,
+							};
+
+							Self {
+								span,
+								kind: Kind::Matrix(matrix),
+							}
+						}
+						_ => bail!(source.error(token.span, error::MATRIX_BRACKET)),
+					}
 				}
 				else
 				{
-					Self::empty_list(stream, source)?
+					let closing = stream.next();
+
+					match closing
+					{
+						Some(Token {
+							span,
+							kind: BracketRight | BracketRightWithA,
+						}) =>
+						{
+							let span = Span {
+								start,
+								end: span.end,
+							};
+
+							Self {
+								span,
+								kind: Kind::List(items),
+							}
+						}
+						Some(Token {
+							span,
+							kind: BracketRightWithM,
+						}) =>
+						{
+							let span = Span {
+								start,
+								end: span.end,
+							};
+
+							Self {
+								span,
+								kind: Kind::Matrix(vec![items]),
+							}
+						}
+						_ => bail!(source.error(token.span, error::BRACKET)),
+					}
 				}
 			}
 
@@ -489,5 +463,13 @@ impl Token
 	pub fn is_list_closing(&self) -> bool
 	{
 		self.kind == BracketRight || self.kind == BracketRightWithA
+	}
+
+	pub fn is_closing(&self) -> bool
+	{
+		self.kind == BracketRight
+			|| self.kind == ParenthesisRight
+			|| self.kind == BracketRightWithA
+			|| self.kind == BracketRightWithM
 	}
 }

@@ -15,3 +15,6 @@ pub const PARENTHESIS: &str = "This parenthesis is unmatched";
 
 /// An error message indicating unmatched brackets.
 pub const BRACKET: &str = "This bracket is unmatched. Try `]`, `]a`, or `]m`";
+
+pub const MATRIX_BRACKET: &str =
+	"This matrix bracket is unmatched. Try `]`, `]m`";
