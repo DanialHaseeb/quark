@@ -71,8 +71,8 @@ impl token::Kind
 
 		match lexeme.as_str()
 		{
-			"true" => Bool(true),
-			"false" => Bool(false),
+			"true" => Boolean(true),
+			"false" => Boolean(false),
 			"let" => Constant,
 			"var" => Variable,
 			"func" => Function,

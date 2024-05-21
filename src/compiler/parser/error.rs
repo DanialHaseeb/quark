@@ -12,3 +12,9 @@ pub const EXPRESSION: &str = "Expected an identifier, literal, or `(` here";
 
 /// An error message indiciating unmatches parentheses.
 pub const PARENTHESIS: &str = "This parenthesis is unmatched";
+
+/// An error message indicating unmatched brackets.
+pub const BRACKET: &str = "This bracket is unmatched. Try `]`, `]a`, or `]m`";
+
+pub const MATRIX_BRACKET: &str =
+	"This matrix bracket is unmatched. Try `]`, `]m`";

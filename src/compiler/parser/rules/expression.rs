@@ -4,7 +4,7 @@ use anyhow::{bail, Result};
 
 use super::*;
 use crate::compiler::Error;
-use crate::language::grammar::expression::{Expression, Kind};
+use crate::language::grammar::expression::{Expression, Items, Kind};
 use crate::language::lexicon::token::{Kind::*, Token};
 use crate::language::utils::Span;
 
@@ -228,18 +228,39 @@ impl Expression
 		}
 	}
 
-	/// * _list_ -> `[` _items_ `]` `l`?
-	fn list<I>(stream: &mut Peekable<I>, source: &[Vec<char>]) -> Result<Self>
-	where I: Iterator<Item = Token>
+	pub fn items<I>(
+		stream: &mut std::iter::Peekable<I>,
+		source: &[Vec<char>],
+	) -> Result<Option<Items>>
+	where
+		I: Iterator<Item = Token>,
 	{
-		todo!()
-	}
+		if stream.peek().is_some_and(|token| token.is_closing())
+		{
+			Ok(None)
+		}
+		else
+		{
+			let mut expressions = Vec::new();
 
-	///  * _matrix_ -> `[` _items_ { (`||` | `|`) _items_ }* `]` `m`?
-	fn matrix<I>(stream: &mut Peekable<I>, source: &[Vec<char>]) -> Result<Self>
-	where I: Iterator<Item = Token>
-	{
-		todo!()
+			let expression = Self::try_from_stream(stream, source)?;
+
+			let start = expression.span.start;
+			let mut end = expression.span.end;
+
+			expressions.push(expression);
+
+			while stream.next_if(|token| token.kind == Comma).is_some()
+			{
+				let expression = Self::try_from_stream(stream, source)?;
+				end = expression.span.end;
+				expressions.push(expression);
+			}
+
+			let span = Span { start, end };
+
+			Ok(Some(Items { span, expressions }))
+		}
 	}
 
 	fn primary<I>(
@@ -261,7 +282,7 @@ impl Expression
 				Self { span, kind }
 			}
 
-			Number(_) | String(_) | Bool(_) =>
+			Number(_) | String(_) | Boolean(_) =>
 			{
 				let span = token.span;
 				let kind = Kind::Literal(token);
@@ -269,14 +290,15 @@ impl Expression
 				Self { span, kind }
 			}
 
-			Parenthesis(true) =>
+			ParenthesisLeft =>
 			{
 				let expression = Box::new(Self::try_from_stream(stream, source)?);
 
 				let start = token.span.start;
+
 				let end = match stream.next()
 				{
-					Some(token) if (token.kind == Parenthesis(false)) => token.span.end,
+					Some(token) if (token.kind == ParenthesisRight) => token.span.end,
 					_ => bail!(source.error(token.span, error::PARENTHESIS)),
 				};
 
@@ -284,6 +306,79 @@ impl Expression
 				let kind = Kind::Parenthesised(expression);
 
 				Self { span, kind }
+			}
+			BracketLeft =>
+			{
+				let start = token.span.start;
+
+				let items = Self::items(stream, source)?;
+
+				if stream.peek().is_some_and(|token| token.kind == Bar)
+				{
+					// 2D matrix
+					let mut matrix = vec![items];
+					stream.next();
+					stream.next_if(|token| token.kind == Bar);
+					matrix.push(Self::items(stream, source)?);
+
+					let closing = stream.next();
+
+					match closing
+					{
+						Some(token) if token.is_matrix_closing() =>
+						{
+							let span = Span {
+								start,
+								end: token.span.end,
+							};
+
+							Self {
+								span,
+								kind: Kind::Matrix(matrix),
+							}
+						}
+						_ => bail!(source.error(token.span, error::MATRIX_BRACKET)),
+					}
+				}
+				else
+				{
+					let closing = stream.next();
+
+					match closing
+					{
+						Some(Token {
+							span,
+							kind: BracketRight | BracketRightWithA,
+						}) =>
+						{
+							let span = Span {
+								start,
+								end: span.end,
+							};
+
+							Self {
+								span,
+								kind: Kind::List(items),
+							}
+						}
+						Some(Token {
+							span,
+							kind: BracketRightWithM,
+						}) =>
+						{
+							let span = Span {
+								start,
+								end: span.end,
+							};
+
+							Self {
+								span,
+								kind: Kind::Matrix(vec![items]),
+							}
+						}
+						_ => bail!(source.error(token.span, error::BRACKET)),
+					}
+				}
 			}
 
 			_ => bail!(source.error(token.span, error::EXPRESSION)),
@@ -348,5 +443,33 @@ impl Token
 	pub fn is_prefix_operator(&self) -> bool
 	{
 		self.kind == Plus || self.kind == Minus || self.kind == Not
+	}
+
+	/// Checks whether the token is a matrix closing parenthesis.
+	///
+	/// ### Returns
+	/// * `true` if the token is a matrix closing parenthesis.
+	/// * `false` otherwise.
+	pub fn is_matrix_closing(&self) -> bool
+	{
+		self.kind == BracketRight || self.kind == BracketRightWithM
+	}
+
+	/// Checks whether the token is a matrix closing parenthesis.
+	///
+	/// ### Returns
+	/// * `true` if the token is a matrix closing parenthesis.
+	/// * `false` otherwise.
+	pub fn is_list_closing(&self) -> bool
+	{
+		self.kind == BracketRight || self.kind == BracketRightWithA
+	}
+
+	pub fn is_closing(&self) -> bool
+	{
+		self.kind == BracketRight
+			|| self.kind == ParenthesisRight
+			|| self.kind == BracketRightWithA
+			|| self.kind == BracketRightWithM
 	}
 }

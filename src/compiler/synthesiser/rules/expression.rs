@@ -18,8 +18,8 @@ impl Synthesis for Expression
 			{
 				Number(value) => value,
 				String(value) => format!("\"{value}\""),
-				Bool(true) => "True".to_string(),
-				Bool(false) => "False".to_string(),
+				Boolean(true) => "True".to_string(),
+				Boolean(false) => "False".to_string(),
 				_ => unreachable!(),
 			},
 
@@ -29,16 +29,20 @@ impl Synthesis for Expression
 				format!("({inner})")
 			}
 
-			Kind::List(items) =>
+			Kind::List(items) => match items
 			{
-				let items = items
-					.expressions
-					.into_iter()
-					.map(|expr| expr.synthesise())
-					.collect::<Vec<_>>()
-					.join(", ");
-				format!("[{items}]")
-			}
+				Some(items) =>
+				{
+					let items = items
+						.expressions
+						.into_iter()
+						.map(|expr| expr.synthesise())
+						.collect::<Vec<_>>()
+						.join(", ");
+					format!("[{items}]")
+				}
+				None => "[]".to_string(),
+			},
 
 			Kind::Matrix(items_list) =>
 			{
@@ -46,14 +50,21 @@ impl Synthesis for Expression
 				for items in items_list.into_iter()
 				{
 					output.push('[');
-					for expression in items.expressions.into_iter()
+					if let Some(items) = items
 					{
-						output.push_str(&expression.synthesise());
-						output.push(',');
+						for expression in items.expressions.into_iter()
+						{
+							output.push_str(&expression.synthesise());
+							output.push(',');
+							output.push(' ');
+						}
+						output.pop();
+						output.pop();
 					}
 					output.push(']');
 				}
-				output.push(']'); // Add this to close the outer array
+				output.push(']');
+				output.push(')');
 
 				output
 			}

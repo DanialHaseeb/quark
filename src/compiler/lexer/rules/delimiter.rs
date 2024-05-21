@@ -18,22 +18,52 @@ impl Token
 	pub fn from_delimiter<I>(stream: &mut Peekable<I>) -> Option<Self>
 	where I: Iterator<Item = Symbol>
 	{
-		let Symbol { position, value } = stream.next()?;
+		let Symbol {
+			position: start,
+			value,
+		} = stream.next()?;
 
-		let span = Span {
-			start: position,
-			end: position,
-		};
-
-		let state = matches!(value, '(' | '[' | '{');
+		let mut end = start;
 
 		let kind = match value
 		{
-			'(' | ')' => Parenthesis(state),
-			'[' | ']' => Bracket(state),
-			'{' | '}' => Brace(state),
+			'[' => BracketLeft,
+			']' =>
+			{
+				let option =
+					stream.next_if(|&symbol| symbol.value == 'a' || symbol.value == 'm');
+
+				match option
+				{
+					Some(Symbol {
+						position,
+						value: 'a',
+					}) =>
+					{
+						end = position;
+						BracketRightWithA
+					}
+					Some(Symbol {
+						position,
+						value: 'm',
+					}) =>
+					{
+						end = position;
+						BracketRightWithM
+					}
+					None => BracketRight,
+					_ => unreachable!(),
+				}
+			}
+			'{' => BraceLeft,
+			'}' => BraceRight,
+			'(' => ParenthesisLeft,
+			')' => ParenthesisRight,
+
 			_ => unreachable!(),
 		};
+
+		let span = Span { start, end };
 
 		Self { span, kind }.into()
 	}

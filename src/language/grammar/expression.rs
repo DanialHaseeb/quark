@@ -1,4 +1,3 @@
-use super::Items;
 use crate::language::lexicon::Token;
 use crate::language::utils::Span;
 
@@ -46,13 +45,13 @@ pub enum Kind
 	///
 	/// ### Rule
 	/// * _list_ -> `[` _items_ `]` `l`?
-	List(Items),
+	List(Option<Items>),
 
 	/// A matrix expression.
 	///
 	/// ### Rule
 	///  * _matrix_ -> `[` _items_ { (`||` | `|`) _items_ }* `]` `m`?
-	Matrix(Vec<Items>),
+	Matrix(Vec<Option<Items>>),
 
 	/// A unary prefix expression.
 	///
@@ -79,4 +78,18 @@ pub enum Kind
 		/// The right operand of the infix expression.
 		right: Box<Expression>,
 	},
+}
+
+#[derive(Debug, PartialEq, Clone)]
+/// An list of items in a Quark programme.
+///
+/// ### Rule
+/// * _items_ -> _expression_ { `,` _expression_ }*
+pub struct Items
+{
+	/// The span of the expression.
+	pub span: Span,
+
+	/// The comma separated items.
+	pub expressions: Vec<Expression>,
 }

@@ -56,7 +56,7 @@ pub enum Kind
 	///
 	/// ### Rule
 	/// * _boolean_ -> `true` | `false`
-	Bool(bool),
+	Boolean(bool),
 
 	/// The `let` declarator token.
 	Constant,
@@ -163,35 +163,29 @@ pub enum Kind
 	/// The `<=` operator.
 	LessEqual,
 
-	/// A parenthesis literal token.
-	///
-	/// The associated boolean value indicates whether it is opening or closing:
-	/// * `true` - Opening
-	/// * `false` - Closing
-	///
-	/// ### Rule
-	/// * _boolean_ -> `(` | `)`
-	Parenthesis(bool),
+	/// The lexical token for the `(` symbol.
+	ParenthesisLeft,
 
-	/// A bracket literal token.
-	///
-	/// The associated boolean value indicates whether it is opening or closing:
-	/// * `true` - Opening
-	/// * `false` - Closing
-	///
-	/// ### Rule
-	/// * _bracket_ -> `[` | `]`
-	Bracket(bool),
+	/// The lexical token for the `)` symbol.
+	ParenthesisRight,
 
-	/// A brace literal token.
-	///
-	/// The associated boolean value indicates whether it is opening or closing:
-	/// * `true` - Opening
-	/// * `false` - Closing
-	///
-	/// ### Rule
-	/// * _brace_ -> `{` | `}`
-	Brace(bool),
+	/// The lexical token for the `[` symbol.
+	BracketLeft,
+
+	/// The lexical token for the `]` symbol.
+	BracketRight,
+
+	/// The lexical token for the `]m` symbol.
+	BracketRightWithM,
+
+	/// The lexical token for the `]l` symbol.
+	BracketRightWithA,
+
+	/// The lexical token for the `{` symbol.
+	BraceLeft,
+
+	/// The lexical token for the `}` symbol.
+	BraceRight,
 
 	/// The lexical token for the `.` symbol.
 	Dot,
