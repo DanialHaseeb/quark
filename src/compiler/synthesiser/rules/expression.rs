@@ -18,8 +18,8 @@ impl Synthesis for Expression
 			{
 				Number(value) => value,
 				String(value) => format!("\"{value}\""),
-				Bool(true) => "True".to_string(),
-				Bool(false) => "False".to_string(),
+				Boolean(true) => "True".to_string(),
+				Boolean(false) => "False".to_string(),
 				_ => unreachable!(),
 			},
 

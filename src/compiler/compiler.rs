@@ -29,8 +29,7 @@ impl Compile for String
 			.map(|line| format!("{line}\n").chars().collect())
 			.collect();
 
-		let target = self
-			.lex(&source)?
+		let target = dbg!(self.lex(&source)?)
 			.parse(&source)?
 			.analyse(&source)?
 			.synthesise();

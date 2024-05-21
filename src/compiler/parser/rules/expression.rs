@@ -4,7 +4,7 @@ use anyhow::{bail, Result};
 
 use super::*;
 use crate::compiler::Error;
-use crate::language::grammar::expression::{Expression, Kind};
+use crate::language::grammar::expression::{Expression, Items, Kind};
 use crate::language::lexicon::token::{Kind::*, Token};
 use crate::language::utils::Span;
 
@@ -228,16 +228,75 @@ impl Expression
 		}
 	}
 
-	/// * _list_ -> `[` _items_ `]` `l`?
+	/// * _list_ -> `[` _items_ `]` `a`?
 	fn list<I>(stream: &mut Peekable<I>, source: &[Vec<char>]) -> Result<Self>
 	where I: Iterator<Item = Token>
 	{
-		todo!()
+		let opening = match stream.next()
+		{
+			Some(token) => token,
+			None => unreachable!(),
+		};
+
+		let start = opening.span.start;
+
+		let items = Self::items(stream, source)?;
+		let closing = stream.next();
+
+		match closing
+		{
+			Some(token) if token.is_list_closing() =>
+			{
+				let span = Span {
+					start,
+					end: token.span.end,
+				};
+
+				Ok(Self {
+					span,
+					kind: Kind::List(items),
+				})
+			}
+			_ => bail!(source.error(opening.span, error::BRACKET)),
+		}
+	}
+
+	/// * _items_ -> _expression_ { `,` _expression_ }*
+	pub fn items<I>(
+		stream: &mut std::iter::Peekable<I>,
+		source: &[Vec<char>],
+	) -> Result<Items>
+	where
+		I: Iterator<Item = Token>,
+	{
+		let mut expressions = Vec::new();
+
+		let expression = Self::try_from_stream(stream, source)?;
+
+		let start = expression.span.start;
+		let mut end = expression.span.end;
+
+		expressions.push(expression);
+
+		while stream.next_if(|token| token.kind == Comma).is_some()
+		{
+			let expression = Self::try_from_stream(stream, source)?;
+			end = expression.span.end;
+			expressions.push(expression);
+		}
+
+		let span = Span { start, end };
+
+		Ok(Items { span, expressions })
 	}
 
 	///  * _matrix_ -> `[` _items_ { (`||` | `|`) _items_ }* `]` `m`?
-	fn matrix<I>(stream: &mut Peekable<I>, source: &[Vec<char>]) -> Result<Self>
-	where I: Iterator<Item = Token>
+	fn _matrix<I>(
+		_stream: &mut Peekable<I>,
+		_source: &[Vec<char>],
+	) -> Result<Self>
+	where
+		I: Iterator<Item = Token>,
 	{
 		todo!()
 	}
@@ -249,34 +308,38 @@ impl Expression
 	where
 		I: Iterator<Item = Token>,
 	{
-		let token = stream.next().expect("Token");
+		let token = stream.peek().expect("Token");
 
 		let expression = match token.kind
 		{
 			Identifier(_) =>
 			{
+				let token = stream.next().expect("Token");
 				let span = token.span;
 				let kind = Kind::Identifier(token);
 
 				Self { span, kind }
 			}
 
-			Number(_) | String(_) | Bool(_) =>
+			Number(_) | String(_) | Boolean(_) =>
 			{
+				let token = stream.next().expect("Token");
 				let span = token.span;
 				let kind = Kind::Literal(token);
 
 				Self { span, kind }
 			}
 
-			Parenthesis(true) =>
+			ParenthesisLeft =>
 			{
+				let token = stream.next().expect("Token");
 				let expression = Box::new(Self::try_from_stream(stream, source)?);
 
 				let start = token.span.start;
+
 				let end = match stream.next()
 				{
-					Some(token) if (token.kind == Parenthesis(false)) => token.span.end,
+					Some(token) if (token.kind == ParenthesisRight) => token.span.end,
 					_ => bail!(source.error(token.span, error::PARENTHESIS)),
 				};
 
@@ -285,6 +348,7 @@ impl Expression
 
 				Self { span, kind }
 			}
+			BracketLeft => Self::list(stream, source)?,
 
 			_ => bail!(source.error(token.span, error::EXPRESSION)),
 		};
@@ -348,5 +412,25 @@ impl Token
 	pub fn is_prefix_operator(&self) -> bool
 	{
 		self.kind == Plus || self.kind == Minus || self.kind == Not
+	}
+
+	/// Checks whether the token is a matrix closing parenthesis.
+	///
+	/// ### Returns
+	/// * `true` if the token is a matrix closing parenthesis.
+	/// * `false` otherwise.
+	pub fn is_matrix_closing(&self) -> bool
+	{
+		self.kind == BracketRight || self.kind == BracketRightWithM
+	}
+
+	/// Checks whether the token is a matrix closing parenthesis.
+	///
+	/// ### Returns
+	/// * `true` if the token is a matrix closing parenthesis.
+	/// * `false` otherwise.
+	pub fn is_list_closing(&self) -> bool
+	{
+		self.kind == BracketRight || self.kind == BracketRightWithA
 	}
 }
