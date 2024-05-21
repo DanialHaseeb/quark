@@ -45,7 +45,7 @@ pub enum Kind
 	///
 	/// ### Rule
 	/// * _list_ -> `[` _items_ `]` `l`?
-	List(Items),
+	List(Option<Items>),
 
 	/// A matrix expression.
 	///

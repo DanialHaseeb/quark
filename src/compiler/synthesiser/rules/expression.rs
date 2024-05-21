@@ -29,16 +29,20 @@ impl Synthesis for Expression
 				format!("({inner})")
 			}
 
-			Kind::List(items) =>
+			Kind::List(items) => match items
 			{
-				let items = items
-					.expressions
-					.into_iter()
-					.map(|expr| expr.synthesise())
-					.collect::<Vec<_>>()
-					.join(", ");
-				format!("[{items}]")
-			}
+				Some(items) =>
+				{
+					let items = items
+						.expressions
+						.into_iter()
+						.map(|expr| expr.synthesise())
+						.collect::<Vec<_>>()
+						.join(", ");
+					format!("[{items}]")
+				}
+				None => "[]".to_string(),
+			},
 
 			Kind::Matrix(items_list) =>
 			{
@@ -53,7 +57,8 @@ impl Synthesis for Expression
 					}
 					output.push(']');
 				}
-				output.push(']'); // Add this to close the outer array
+				output.push(']');
+				output.push(')');
 
 				output
 			}

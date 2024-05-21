@@ -37,7 +37,7 @@ let x = [1, 2, 3];
 	}
 
 	#[test]
-	fn testing_empty_array_expression()
+	fn testing_default_array_expression()
 	{
 		let input = "
 let x = [];
@@ -46,6 +46,30 @@ let x = [];
 
 		let output = input.compile().unwrap();
 		assert_eq!(output, "x = []\n".to_string());
+	}
+
+	#[test]
+	fn testing_empty_array_expression()
+	{
+		let input = "
+let x = []a;
+"
+		.to_string();
+
+		let output = input.compile().unwrap();
+		assert_eq!(output, "x = []\n".to_string());
+	}
+
+	#[test]
+	fn testing_empty_matrix_expression()
+	{
+		let input = "
+let x = []m;
+"
+		.to_string();
+
+		let output = input.compile().unwrap();
+		assert_eq!(output, "x = np.array([])\n".to_string());
 	}
 
 	#[test]

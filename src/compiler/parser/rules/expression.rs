@@ -228,6 +228,53 @@ impl Expression
 		}
 	}
 
+	fn empty_list<I>(
+		stream: &mut Peekable<I>,
+		source: &[Vec<char>],
+	) -> Result<Self>
+	where
+		I: Iterator<Item = Token>,
+	{
+		let opening = match stream.next()
+		{
+			Some(token) => token,
+			None => unreachable!(),
+		};
+
+		let start = opening.span.start;
+
+		let closing = stream.next();
+
+		match closing
+		{
+			Some(token) if token.is_list_closing() =>
+			{
+				let span = Span {
+					start,
+					end: token.span.end,
+				};
+
+				Ok(Self {
+					span,
+					kind: Kind::List(None),
+				})
+			}
+
+			Some(token) if token.kind == BracketRightWithM =>
+			{
+				let span = Span {
+					start,
+					end: token.span.end,
+				};
+				Ok(Self {
+					span,
+					kind: Kind::Matrix(vec![]),
+				})
+			}
+			_ => bail!(source.error(opening.span, error::BRACKET)),
+		}
+	}
+
 	/// * _list_ -> `[` _items_ `]` `a`?
 	fn list<I>(stream: &mut Peekable<I>, source: &[Vec<char>]) -> Result<Self>
 	where I: Iterator<Item = Token>
@@ -254,7 +301,7 @@ impl Expression
 
 				Ok(Self {
 					span,
-					kind: Kind::List(items),
+					kind: Kind::List(Some(items)),
 				})
 			}
 			_ => bail!(source.error(opening.span, error::BRACKET)),
@@ -348,7 +395,17 @@ impl Expression
 
 				Self { span, kind }
 			}
-			BracketLeft => Self::list(stream, source)?,
+			BracketLeft =>
+			{
+				if let Ok(expression) = Self::list(stream, source)
+				{
+					expression
+				}
+				else
+				{
+					Self::empty_list(stream, source)?
+				}
+			}
 
 			_ => bail!(source.error(token.span, error::EXPRESSION)),
 		};
