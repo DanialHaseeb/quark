@@ -12,6 +12,6 @@ impl Synthesis for Programme
 			result.push_str(&statement.synthesise());
 		}
 
-		dbg!(result)
+		result
 	}
 }
