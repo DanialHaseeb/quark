@@ -5,7 +5,7 @@ use anyhow::{bail, Result};
 use super::*;
 use crate::compiler::Error;
 use crate::language::grammar::statement::{Kind, Statement};
-use crate::language::grammar::{Declaration, Expression};
+use crate::language::grammar::{controlflow::*, Declaration, Expression};
 use crate::language::lexicon::token::{Kind::*, Token};
 use crate::language::utils::Span;
 
@@ -30,40 +30,89 @@ impl Statement
 	where
 		I: Iterator<Item = Token>,
 	{
-		let token = match stream.peek()
+		let start;
+		let end;
+
+		let kind = match stream.peek()
 		{
-			Some(token) => &token.kind,
+			Some(token) =>
+			{
+				start = token.span.start;
+				&token.kind
+			}
 			None => return Ok(None),
 		};
 
-		let kind = match token
+		let kind = match kind
 		{
+			While =>
+			{
+				let while_ = WhileStmt::try_from_stream(stream, source)?;
+				end = while_.span.end;
+				Kind::While(while_)
+			}
+
+			If =>
+			{
+				let if_ = IfStmt::try_from_stream(stream, source)?;
+				end = if_.span.end;
+				Kind::If(if_)
+			}
+
+			Continue =>
+			{
+				let span = stream.next().expect("Token").span;
+				end = match stream.next()
+				{
+					Some(Token {
+						span,
+						kind: Semicolon,
+					}) => span.end,
+					_ => bail!(source.error(span, error::SEMICOLON)),
+				};
+				Kind::Continue(ContinueStmt { span })
+			}
+
+			Break =>
+			{
+				let span = stream.next().expect("Token").span;
+				end = match stream.next()
+				{
+					Some(Token {
+						span,
+						kind: Semicolon,
+					}) => span.end,
+					_ => bail!(source.error(span, error::SEMICOLON)),
+				};
+				Kind::Break(BreakStmt { span })
+			}
+
 			Constant | Variable =>
 			{
 				let declaration = Declaration::try_from_stream(stream, source)?;
+				end = match stream.next()
+				{
+					Some(Token {
+						span,
+						kind: Semicolon,
+					}) => span.end,
+					_ => bail!(source.error(declaration.span, error::SEMICOLON)),
+				};
 				Kind::Declaration(declaration)
 			}
-
 			_ =>
 			{
 				let expression = Expression::try_from_stream(stream, source)?;
+				end = match stream.next()
+				{
+					Some(Token {
+						span,
+						kind: Semicolon,
+					}) => span.end,
+					_ => bail!(source.error(expression.span, error::SEMICOLON)),
+				};
 				Kind::Expression(expression)
 			}
-		};
-
-		let start = match &kind
-		{
-			Kind::Declaration(declaration) => declaration.span.start,
-			Kind::Expression(expression) => expression.span.start,
-		};
-
-		let end = match stream.next()
-		{
-			Some(Token {
-				span,
-				kind: Semicolon,
-			}) => span.end,
-			_ => bail!(source.error(kind.span(), error::SEMICOLON)),
 		};
 
 		let span = Span { start, end };

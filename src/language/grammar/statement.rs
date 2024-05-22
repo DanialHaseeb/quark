@@ -23,20 +23,16 @@ pub enum Kind
 
 	/// An expression statement.
 	Expression(super::Expression),
-}
 
-impl Kind
-{
-	/// Determines the span of the underlying kind of statement.
-	///
-	/// ### Returns
-	/// * The span of the underlying kind of statement.
-	pub fn span(&self) -> Span
-	{
-		match self
-		{
-			Self::Declaration(declaration) => declaration.span,
-			Self::Expression(expression) => expression.span,
-		}
-	}
+	/// A `If` Conditional statemtn
+	If(super::IfStmt),
+
+	/// A `While` Conditional statemtent
+	While(super::WhileStmt),
+
+	/// A break statement
+	Break(super::BreakStmt),
+
+	/// A break statement
+	Continue(super::ContinueStmt),
 }

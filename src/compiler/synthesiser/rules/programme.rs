@@ -10,9 +10,8 @@ impl Synthesis for Programme
 		for statement in self.statements
 		{
 			result.push_str(&statement.synthesise());
-			result.push('\n');
 		}
 
-		result
+		dbg!(result)
 	}
 }
