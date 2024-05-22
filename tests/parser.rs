@@ -4,6 +4,37 @@ use quark::compiler::Compile;
 mod tests
 {
 	use super::*;
+	const HEADER: &str = "import numpy as np\n";
+
+	#[test]
+	fn comments_work()
+	{
+		let input1 = "
+let y = 1;
+
+// let y = [1, 2|
+/*       |1, 2];
+ let x = [1, 2| 1, 2]; */
+let answer = x + y;
+let answer = [1, 2];
+let monkey = 1 + 2 / 2 / 2;
+//print(answer);
+"
+		.to_string();
+
+		let input2 = "
+let y = 1;
+
+let answer = x + y;
+let answer = [1, 2];
+let monkey = 1 + 2 / 2 / 2;
+"
+		.to_string();
+
+		let output1 = input1.compile().unwrap();
+		let output2 = input2.compile().unwrap();
+		assert_eq!(output2, output1);
+	}
 
 	#[test]
 	fn it_works()
@@ -21,17 +52,15 @@ let monkey = 1 + 2 / 2 / 2;
 "
 		.to_string();
 
-		let output = input.compile().unwrap();
-		assert_eq!(
-			output,
-			"y = 1
+		let expected = "y = 1
 answer = x + y
 answer = [1, 2]
-monkey = 1 + 2 / 2 / 2
-"
-			.to_string()
-		);
+monkey = 1 + 2 / 2 / 2";
+
+		let output = input.compile().unwrap();
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
+
 	#[test]
 	fn testing_new_array_expression()
 	{
@@ -40,8 +69,10 @@ let x = [1, 2, 3]a;
 "
 		.to_string();
 
+		let expected = "x = [1, 2, 3]".to_string();
+
 		let output = input.compile().unwrap();
-		assert_eq!(output, "x = [1, 2, 3]\n".to_string());
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
 
 	#[test]
@@ -52,8 +83,10 @@ let x = [1, 2, 3];
 "
 		.to_string();
 
+		let expected = "x = [1, 2, 3]".to_string();
+
 		let output = input.compile().unwrap();
-		assert_eq!(output, "x = [1, 2, 3]\n".to_string());
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
 
 	#[test]
@@ -64,8 +97,10 @@ let x = [];
 "
 		.to_string();
 
+		let expected = "x = []".to_string();
+
 		let output = input.compile().unwrap();
-		assert_eq!(output, "x = []\n".to_string());
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
 
 	#[test]
@@ -76,8 +111,10 @@ let x = []a;
 "
 		.to_string();
 
+		let expected = "x = []".to_string();
+
 		let output = input.compile().unwrap();
-		assert_eq!(output, "x = []\n".to_string());
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
 
 	#[test]
@@ -88,8 +125,10 @@ let x = []m;
 "
 		.to_string();
 
+		let expected = "x = np.array([[],])".to_string();
+
 		let output = input.compile().unwrap();
-		assert_eq!(output, "x = np.array([[],])\n".to_string());
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
 
 	#[test]
@@ -100,8 +139,10 @@ let x = [1, 2, 3]m;
 "
 		.to_string();
 
+		let expected = "x = np.array([[1, 2, 3],])".to_string();
+
 		let output = input.compile().unwrap();
-		assert_eq!(output, "x = np.array([[1, 2, 3],])\n".to_string());
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
 
 	#[test]
@@ -111,33 +152,29 @@ let x = [1, 2, 3]m;
 let x = [1, 2, 3 | 1, 2, 3 || 1, 2, 3];
 "
 		.to_string();
+		let expected = "x = np.array([[1, 2, 3],[1, 2, 3],[1, 2, 3],])".to_string();
 
 		let output = input.compile().unwrap();
-		assert_eq!(
-			output,
-			"x = np.array([[1, 2, 3],[1, 2, 3],[1, 2, 3],])\n".to_string()
-		);
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
 
 	#[test]
 	fn testing_while_loop()
 	{
-		let input = "
-while 1 {
+		let input = "while 1 {
     let x = 1;
     let y = 2;
 }
 "
 		.to_string();
 
-		let output = input.compile().unwrap();
-		assert_eq!(
-			output,
-			"while 1:
+		let expected = "while 1:
     x = 1
-    y = 2\n"
-				.to_string()
-		);
+    y = 2"
+			.to_string();
+
+		let output = input.compile().unwrap();
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
 
 	#[test]
@@ -151,14 +188,13 @@ fn hello(name: Int) {
 "
 		.to_string();
 
-		let output = input.compile().unwrap();
-		assert_eq!(
-			output,
-			"def hello(name):
+		let expected = "def hello(name):
     x = 1
-    y = 2\n"
-				.to_string()
-		);
+    y = 2"
+			.to_string();
+
+		let output = input.compile().unwrap();
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
 	#[test]
 	fn testing_function_with_return_type()
@@ -172,14 +208,12 @@ fn hello(name: Int) -> Int {
 "
 		.to_string();
 
-		let output = input.compile().unwrap();
-		assert_eq!(
-			output,
-			"def hello(name):
+		let expected = "def hello(name):
     x = 1
     y = 2
-    return x\n"
-				.to_string()
-		);
+    return x"
+			.to_string();
+		let output = input.compile().unwrap();
+		assert_eq!(output, format!("{}{}", HEADER, expected));
 	}
 }
