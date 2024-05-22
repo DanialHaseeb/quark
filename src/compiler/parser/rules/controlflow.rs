@@ -23,20 +23,46 @@ impl IfStmt
 	where
 		I: Iterator<Item = Token>,
 	{
-		let span = stream.next().expect("If").span;
-		let condition = Expression::try_from_stream(stream, source)?;
-		let body = block(stream, source)?;
+		let Span { start, mut end } = stream.next().expect("while").span;
 
-		let span = Span {
-			start: span.start,
-			end: body.span.end,
+		let result = Expression::try_from_stream(stream, source);
+
+		let condition = match result
+		{
+			Ok(condition) => condition,
+			Err(_) =>
+			{
+				bail!(source.error(
+					Span { start, end },
+					format!("{} {}", error::CONDITION_AFTER, "if keyboard").as_str()
+				))
+			}
 		};
 
-		Ok(Self {
-			span,
-			condition,
-			body,
-		})
+		end = condition.span.end;
+		match stream.peek()
+		{
+			Some(Token {
+				kind: BraceLeft, ..
+			}) =>
+			{
+				let body = block(stream, source)?;
+				let span = Span {
+					start,
+					end: body.span.end,
+				};
+				Ok(Self {
+					span,
+					condition,
+					body,
+				})
+			}
+
+			_ => bail!(source.error(
+				Span { start, end },
+				format!("{} {}", error::BLOCK_AFTER, "if condition").as_str()
+			)),
+		}
 	}
 }
 impl WhileStmt
@@ -48,9 +74,23 @@ impl WhileStmt
 	where
 		I: Iterator<Item = Token>,
 	{
-		let span = stream.next().expect("while").span;
-		let condition = Expression::try_from_stream(stream, source)?;
+		let Span { start, mut end } = stream.next().expect("while").span;
 
+		let result = Expression::try_from_stream(stream, source);
+
+		let condition = match result
+		{
+			Ok(condition) => condition,
+			Err(_) =>
+			{
+				bail!(source.error(
+					Span { start, end },
+					format!("{} {}", error::CONDITION_AFTER, "while keyboard").as_str()
+				))
+			}
+		};
+
+		end = condition.span.end;
 		match stream.peek()
 		{
 			Some(Token {
@@ -59,7 +99,7 @@ impl WhileStmt
 			{
 				let body = block(stream, source)?;
 				let span = Span {
-					start: span.start,
+					start,
 					end: body.span.end,
 				};
 				Ok(Self {
@@ -69,7 +109,10 @@ impl WhileStmt
 				})
 			}
 
-			_ => bail!(source.error(condition.span, error::BLOCK)),
+			_ => bail!(source.error(
+				Span { start, end },
+				format!("{} {}", error::BLOCK_AFTER, "while condition").as_str()
+			)),
 		}
 	}
 }

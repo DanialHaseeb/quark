@@ -235,7 +235,14 @@ impl Expression
 	where
 		I: Iterator<Item = Token>,
 	{
-		let token = stream.next().expect("Token");
+		let token = match stream.next()
+		{
+			Some(token) => token,
+			None =>
+			{
+				bail!("Expected Expression (If you see this, something went wrong while parsing)")
+			}
+		};
 
 		let expression = match token.kind
 		{
@@ -285,9 +292,9 @@ impl Expression
 				}
 
 				let closing = stream.next();
-				let saw_a_bar = structure.len() > 1;
+				let seen_bar = structure.len() > 1;
 
-				if saw_a_bar
+				if seen_bar
 				{
 					return match closing
 					{

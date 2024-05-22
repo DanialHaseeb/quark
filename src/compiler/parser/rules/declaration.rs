@@ -1,6 +1,6 @@
 use std::iter::Peekable;
 
-use anyhow::{bail, ensure, Result};
+use anyhow::{bail, Result};
 
 use super::*;
 use crate::compiler::Error;
@@ -67,16 +67,33 @@ impl Declaration
 
 		let is_mutable = (declarator.kind == Variable);
 
+		let start = declarator.span.start;
+		let mut end = declarator.span.end;
+
 		let identifier = match stream.next()
 		{
 			Some(token) if matches!(token.kind, Identifier(_)) => token,
-			_ => bail!(source.error(declarator.span, error::IDENTIFIER)),
+			_ => bail!(source.error(
+				Span { start, end },
+				format!("{} {}", error::IDENTIFIER_AFTER, "declaration").as_str()
+			)),
 		};
 
-		ensure!(
-			stream.next().map(|token| token.kind) == Some(Equal),
-			source.error(identifier.span, error::EQUAL)
-		);
+		end = identifier.span.end;
+
+		let equals = match stream.next()
+		{
+			Some(token) if token.kind == Equal => token,
+			_ =>
+			{
+				bail!(source.error(
+					Span { start, end },
+					format!("{} {}", error::EQUALS_AFTER, "for assignment").as_str()
+				))
+			}
+		};
+
+		end = equals.span.end;
 
 		let name = match identifier.kind
 		{
@@ -84,7 +101,19 @@ impl Declaration
 			_ => unreachable!(),
 		};
 
-		let value = Expression::try_from_stream(stream, source)?;
+		let result = Expression::try_from_stream(stream, source);
+
+		let value = match result
+		{
+			Ok(value) => value,
+			Err(_) =>
+			{
+				bail!(source.error(
+					Span { start, end },
+					format!("{} {}", error::EXPRESSION_AFTER, "declaration",).as_str()
+				))
+			}
+		};
 
 		let span = Span {
 			start: declarator.span.start,
