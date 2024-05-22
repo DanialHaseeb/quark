@@ -29,20 +29,30 @@ impl Synthesis for Expression
 				format!("({inner})")
 			}
 
-			Kind::List(items) => match items
+			Kind::List(mut structure) =>
 			{
-				Some(items) =>
+				assert_eq!(structure.len(), 1);
+				let items = match structure.pop()
 				{
-					let items = items
-						.expressions
-						.into_iter()
-						.map(|expr| expr.synthesise())
-						.collect::<Vec<_>>()
-						.join(", ");
-					format!("[{items}]")
+					Some(items) => items,
+					None => unreachable!(),
+				};
+
+				match items
+				{
+					Some(items) =>
+					{
+						let items = items
+							.expressions
+							.into_iter()
+							.map(|expr| expr.synthesise())
+							.collect::<Vec<_>>()
+							.join(", ");
+						format!("[{items}]")
+					}
+					None => "[]".to_string(),
 				}
-				None => "[]".to_string(),
-			},
+			}
 
 			Kind::Matrix(items_list) =>
 			{
@@ -62,6 +72,7 @@ impl Synthesis for Expression
 						output.pop();
 					}
 					output.push(']');
+					output.push(',');
 				}
 				output.push(']');
 				output.push(')');

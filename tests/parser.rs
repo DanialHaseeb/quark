@@ -89,7 +89,7 @@ let x = []m;
 		.to_string();
 
 		let output = input.compile().unwrap();
-		assert_eq!(output, "x = np.array([[]])\n".to_string());
+		assert_eq!(output, "x = np.array([[],])\n".to_string());
 	}
 
 	#[test]
@@ -101,19 +101,22 @@ let x = [1, 2, 3]m;
 		.to_string();
 
 		let output = input.compile().unwrap();
-		assert_eq!(output, "x = np.array([[1, 2, 3]])\n".to_string());
+		assert_eq!(output, "x = np.array([[1, 2, 3],])\n".to_string());
 	}
 
 	#[test]
 	fn testing_new_matrix_expression_without_annotation()
 	{
 		let input = "
-let x = [1, 2, 3 | 1, 2, 3];
+let x = [1, 2, 3 | 1, 2, 3 || 1, 2, 3];
 "
 		.to_string();
 
 		let output = input.compile().unwrap();
-		assert_eq!(output, "x = np.array([[1, 2, 3][1, 2, 3]])\n".to_string());
+		assert_eq!(
+			output,
+			"x = np.array([[1, 2, 3],[1, 2, 3],[1, 2, 3],])\n".to_string()
+		);
 	}
 
 	#[test]
