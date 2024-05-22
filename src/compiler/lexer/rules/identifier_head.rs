@@ -20,16 +20,16 @@ impl Token
 	{
 		let Symbol {
 			position: start,
-			value,
+			character,
 		} = stream.next()?;
 
 		let mut end = start;
 
-		let mut lexeme = String::from(value);
+		let mut lexeme = String::from(character);
 
 		while let Some(symbol) = stream.next_if(Symbol::continues_identifier)
 		{
-			lexeme.push(symbol.value);
+			lexeme.push(symbol.character);
 			end = symbol.position;
 		}
 
@@ -50,9 +50,9 @@ impl Symbol
 	/// * `false` otherwise.
 	pub fn continues_identifier(&self) -> bool
 	{
-		self.value.is_alphabetic()
-			|| self.value.is_ascii_digit()
-			|| self.value == '_'
+		self.character.is_alphabetic()
+			|| self.character.is_ascii_digit()
+			|| self.character == '_'
 	}
 }
 
@@ -75,7 +75,7 @@ impl token::Kind
 			"false" => Boolean(false),
 			"let" => Constant,
 			"var" => Variable,
-			"func" => Function,
+			"fn" => Function,
 			"proc" => Procedure,
 			"if" => If,
 			"else" => Else,

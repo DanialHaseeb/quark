@@ -25,7 +25,7 @@ impl Token
 	{
 		let Symbol {
 			position: start,
-			value,
+			character: value,
 		} = stream.next()?;
 
 		let mut end = start;
@@ -42,14 +42,17 @@ impl Token
 
 		let mut lexeme = String::from(value);
 
-		while let Some(&Symbol { position, value }) = stream.peek()
+		while let Some(&Symbol {
+			position,
+			character,
+		}) = stream.peek()
 		{
 			let next = source[position.line][position.column + 1];
-			match value
+			match character
 			{
-				_ if value.is_ascii_digit() =>
+				_ if character.is_ascii_digit() =>
 				{
-					lexeme.push(value);
+					lexeme.push(character);
 					end = position;
 					stream.next();
 				}
@@ -57,7 +60,7 @@ impl Token
 				'.' if !seen_dot && next.is_ascii_digit() =>
 				{
 					seen_dot = true;
-					lexeme.push(value);
+					lexeme.push(character);
 					stream.next();
 				}
 
@@ -65,7 +68,7 @@ impl Token
 			}
 		}
 
-		if let Some(symbol) = stream.next_if(|&symbol| symbol.value == 'i')
+		if let Some(symbol) = stream.next_if(|&symbol| symbol.character == 'i')
 		{
 			lexeme.push('j');
 			end = symbol.position;
@@ -88,6 +91,6 @@ impl Symbol
 	/// * `false` otherwise.
 	pub fn is_digit(&self) -> bool
 	{
-		self.value.is_ascii_digit()
+		self.character.is_ascii_digit()
 	}
 }

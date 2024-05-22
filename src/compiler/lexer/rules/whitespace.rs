@@ -41,6 +41,6 @@ impl Symbol
 	/// * `false` otherwise.
 	pub fn is_whitespace(&self) -> bool
 	{
-		self.value.is_whitespace()
+		self.character.is_whitespace()
 	}
 }

@@ -127,6 +127,9 @@ pub enum Kind
 	/// The `=` operator.
 	Equal,
 
+	/// The `->` operator.
+	ArrowRight,
+
 	/// The `+=` operator.
 	PlusEqual,
 

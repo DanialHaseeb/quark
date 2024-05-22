@@ -42,12 +42,12 @@ impl Token
 			end: position,
 		};
 
-		match stream.peek().map(|&symbol| symbol.value)
+		match stream.peek().map(|&symbol| symbol.character)
 		{
 			// If the next symbol is a slash, then this is an end-of-line comment.
 			Some('/') =>
 			{
-				while stream.next_if(|symbol| symbol.value != '\n').is_some()
+				while stream.next_if(|symbol| symbol.character != '\n').is_some()
 				{}
 				Self::try_from_stream(stream, source)
 			}
@@ -57,11 +57,13 @@ impl Token
 			{
 				stream.next();
 
-				while let Some(Symbol { value, .. }) = stream.next()
+				while let Some(Symbol {
+					character: value, ..
+				}) = stream.next()
 				{
 					if value == '*'
 					{
-						match stream.next().map(|symbol| symbol.value)
+						match stream.next().map(|symbol| symbol.character)
 						{
 							Some('/') =>
 							{

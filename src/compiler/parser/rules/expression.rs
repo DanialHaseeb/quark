@@ -235,6 +235,7 @@ impl Expression
 	where
 		I: Iterator<Item = Token>,
 	{
+		// TODO: I don't like this
 		if stream.peek().is_some_and(|token| token.is_closing())
 		{
 			Ok(None)
@@ -310,20 +311,21 @@ impl Expression
 			BracketLeft =>
 			{
 				let start = token.span.start;
-
 				let items = Self::items(stream, source)?;
+				let mut structure: Vec<Option<Items>> = vec![items];
 
-				if stream.peek().is_some_and(|token| token.kind == Bar)
+				while stream.next_if(|token| token.kind == Bar).is_some()
 				{
-					// 2D matrix
-					let mut matrix = vec![items];
-					stream.next();
 					stream.next_if(|token| token.kind == Bar);
-					matrix.push(Self::items(stream, source)?);
+					structure.push(Self::items(stream, source)?);
+				}
 
-					let closing = stream.next();
+				let closing = stream.next();
+				let saw_a_bar = structure.len() > 1;
 
-					match closing
+				if saw_a_bar
+				{
+					return match closing
 					{
 						Some(token) if token.is_matrix_closing() =>
 						{
@@ -332,18 +334,16 @@ impl Expression
 								end: token.span.end,
 							};
 
-							Self {
+							Ok(Self {
 								span,
-								kind: Kind::Matrix(matrix),
-							}
+								kind: Kind::Matrix(structure),
+							})
 						}
 						_ => bail!(source.error(token.span, error::MATRIX_BRACKET)),
-					}
+					};
 				}
 				else
 				{
-					let closing = stream.next();
-
 					match closing
 					{
 						Some(Token {
@@ -358,7 +358,7 @@ impl Expression
 
 							Self {
 								span,
-								kind: Kind::List(items),
+								kind: Kind::List(structure),
 							}
 						}
 						Some(Token {
@@ -373,7 +373,7 @@ impl Expression
 
 							Self {
 								span,
-								kind: Kind::Matrix(vec![items]),
+								kind: Kind::Matrix(structure),
 							}
 						}
 						_ => bail!(source.error(token.span, error::BRACKET)),
