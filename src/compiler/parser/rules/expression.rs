@@ -228,42 +228,6 @@ impl Expression
 		}
 	}
 
-	pub fn items<I>(
-		stream: &mut std::iter::Peekable<I>,
-		source: &[Vec<char>],
-	) -> Result<Option<Items>>
-	where
-		I: Iterator<Item = Token>,
-	{
-		// TODO: I don't like this
-		if stream.peek().is_some_and(|token| token.is_closing())
-		{
-			Ok(None)
-		}
-		else
-		{
-			let mut expressions = Vec::new();
-
-			let expression = Self::try_from_stream(stream, source)?;
-
-			let start = expression.span.start;
-			let mut end = expression.span.end;
-
-			expressions.push(expression);
-
-			while stream.next_if(|token| token.kind == Comma).is_some()
-			{
-				let expression = Self::try_from_stream(stream, source)?;
-				end = expression.span.end;
-				expressions.push(expression);
-			}
-
-			let span = Span { start, end };
-
-			Ok(Some(Items { span, expressions }))
-		}
-	}
-
 	fn primary<I>(
 		stream: &mut Peekable<I>,
 		source: &[Vec<char>],
@@ -311,13 +275,13 @@ impl Expression
 			BracketLeft =>
 			{
 				let start = token.span.start;
-				let items = Self::items(stream, source)?;
+				let items = utils::items(stream, source)?;
 				let mut structure: Vec<Option<Items>> = vec![items];
 
 				while stream.next_if(|token| token.kind == Bar).is_some()
 				{
 					stream.next_if(|token| token.kind == Bar);
-					structure.push(Self::items(stream, source)?);
+					structure.push(utils::items(stream, source)?);
 				}
 
 				let closing = stream.next();
@@ -455,10 +419,10 @@ impl Token
 		self.kind == BracketRight || self.kind == BracketRightWithM
 	}
 
-	/// Checks whether the token is a matrix closing parenthesis.
+	/// Checks whether the token is a closing parenthesis or Bracket.
 	///
 	/// ### Returns
-	/// * `true` if the token is a matrix closing parenthesis.
+	/// * `true` if the token is a closing parenthesis or Bracket.
 	/// * `false` otherwise.
 	pub fn is_list_closing(&self) -> bool
 	{
