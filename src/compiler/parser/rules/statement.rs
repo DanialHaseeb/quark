@@ -61,28 +61,36 @@ impl Statement
 
 			Continue =>
 			{
-				let span = stream.next().expect("Token").span;
+				let span = stream.next().expect("Continue Token").span;
 				end = match stream.next()
 				{
 					Some(Token {
 						span,
 						kind: Semicolon,
 					}) => span.end,
-					_ => bail!(source.error(span, error::SEMICOLON)),
+					_ => bail!(source.error(
+						span,
+						format!("{} {}", error::SEMICOLON_AFTER, "continue statement")
+							.as_str()
+					)),
 				};
 				Kind::Continue(ContinueStmt { span })
 			}
 
 			Break =>
 			{
-				let span = stream.next().expect("Token").span;
+				let span = stream.next().expect("Break Token").span;
 				end = match stream.next()
 				{
 					Some(Token {
 						span,
 						kind: Semicolon,
 					}) => span.end,
-					_ => bail!(source.error(span, error::SEMICOLON)),
+					_ => bail!(source.error(
+						span,
+						format!("{} {}", error::SEMICOLON_AFTER, "break statement")
+							.as_str()
+					)),
 				};
 				Kind::Break(BreakStmt { span })
 			}
@@ -96,7 +104,11 @@ impl Statement
 						span,
 						kind: Semicolon,
 					}) => span.end,
-					_ => bail!(source.error(declaration.span, error::SEMICOLON)),
+					_ => bail!(source.error(
+						declaration.span,
+						format!("{} {}", error::SEMICOLON_AFTER, "declaration statement")
+							.as_str()
+					)),
 				};
 				Kind::Declaration(declaration)
 			}
@@ -109,7 +121,11 @@ impl Statement
 						span,
 						kind: Semicolon,
 					}) => span.end,
-					_ => bail!(source.error(expression.span, error::SEMICOLON)),
+					_ => bail!(source.error(
+						expression.span,
+						format!("{} {}", error::SEMICOLON_AFTER, "expression statment")
+							.as_str(),
+					)),
 				};
 				Kind::Expression(expression)
 			}
