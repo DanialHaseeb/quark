@@ -20,16 +20,27 @@ impl Token
 	{
 		let Symbol {
 			position: start,
-			value,
+			character,
 		} = stream.next()?;
 
 		let mut end = start;
 
-		let mut lexeme = String::from(value);
+		let mut lexeme = String::from(character);
 
-		if let Some(symbol) = stream.next_if(|&symbol| symbol.value == '=')
+		if let Some(symbol) = stream.next_if(|&symbol| {
+			let lexeme = format!("{}{}", character, symbol.character);
+			matches!(
+				lexeme.as_str(),
+				"->"
+					| "-=" | "*="
+					| "/=" | "%="
+					| "^=" | "=="
+					| "!=" | ">="
+					| "<=" | "+="
+			)
+		})
 		{
-			lexeme.push(symbol.value);
+			lexeme.push(symbol.character);
 			end = symbol.position;
 		}
 
@@ -64,6 +75,7 @@ impl token::Kind
 			"%" => Percent,
 			"^" => Caret,
 			"=" => Equal,
+			"->" => ArrowRight,
 			"+=" => PlusEqual,
 			"-=" => MinusEqual,
 			"*=" => AsteriskEqual,

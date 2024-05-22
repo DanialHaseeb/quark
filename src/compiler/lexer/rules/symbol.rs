@@ -30,7 +30,10 @@ impl Token
 	where
 		I: Iterator<Item = Symbol>,
 	{
-		let Symbol { position, value } = match stream.next()
+		let Symbol {
+			position,
+			character,
+		} = match stream.next()
 		{
 			Some(symbol) => symbol,
 			None => return Ok(None),
@@ -41,7 +44,7 @@ impl Token
 			end: position,
 		};
 
-		let kind = match value
+		let kind = match character
 		{
 			',' => Comma,
 			':' => Colon,

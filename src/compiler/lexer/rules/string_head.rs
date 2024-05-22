@@ -45,20 +45,20 @@ impl Token
 		{
 			match stream.next()
 			{
-				Some(symbol) if symbol.value == '"' =>
+				Some(symbol) if symbol.character == '"' =>
 				{
 					end = symbol.position;
 					break;
 				}
 
-				Some(symbol) if symbol.value == '\n' =>
+				Some(symbol) if symbol.character == '\n' =>
 				{
 					lexeme.push_str("\\n");
 				}
 
 				Some(symbol) =>
 				{
-					lexeme.push(symbol.value);
+					lexeme.push(symbol.character);
 				}
 
 				None => bail!(source.error(Span { start, end }, error::QUOTE)),

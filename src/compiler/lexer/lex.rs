@@ -61,26 +61,35 @@ impl Token
 	where
 		I: Iterator<Item = Symbol>,
 	{
-		let value = match stream.peek()
+		let starting_symbol = match stream.peek()
 		{
-			Some(symbol) => symbol.value,
+			Some(symbol) => symbol.character,
 			None => return Ok(None),
 		};
 
-		let token = match value
+		let token = match starting_symbol
 		{
 			// If the next symbol is whitespace.
-			_ if value.is_whitespace() => Self::try_from_whitespace(stream, source)?,
+			_ if starting_symbol.is_whitespace() =>
+			{
+				Self::try_from_whitespace(stream, source)?
+			}
 
 			// If the next symbol potentially starts a comment.
 			'/' => Self::try_from_comment_head(stream, source)?,
 
 			// If the next symbol potentially starts an identifier.
-			_ if value.is_alphabetic() => Token::from_identifier_head(stream),
+			_ if starting_symbol.is_alphabetic() =>
+			{
+				Token::from_identifier_head(stream)
+			}
 			'_' => Self::from_identifier_head(stream),
 
 			// If the next symbol potentially starts a number.
-			_ if value.is_ascii_digit() => Self::from_number_head(stream, source),
+			_ if starting_symbol.is_ascii_digit() =>
+			{
+				Self::from_number_head(stream, source)
+			}
 			'.' => Self::from_number_head(stream, source),
 
 			// If the next symbol potentially starts a string.

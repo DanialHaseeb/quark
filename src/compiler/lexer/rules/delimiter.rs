@@ -20,7 +20,7 @@ impl Token
 	{
 		let Symbol {
 			position: start,
-			value,
+			character: value,
 		} = stream.next()?;
 
 		let mut end = start;
@@ -30,14 +30,15 @@ impl Token
 			'[' => BracketLeft,
 			']' =>
 			{
-				let option =
-					stream.next_if(|&symbol| symbol.value == 'a' || symbol.value == 'm');
+				let option = stream.next_if(|&symbol| {
+					symbol.character == 'a' || symbol.character == 'm'
+				});
 
 				match option
 				{
 					Some(Symbol {
 						position,
-						value: 'a',
+						character: 'a',
 					}) =>
 					{
 						end = position;
@@ -45,7 +46,7 @@ impl Token
 					}
 					Some(Symbol {
 						position,
-						value: 'm',
+						character: 'm',
 					}) =>
 					{
 						end = position;

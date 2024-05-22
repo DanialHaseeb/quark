@@ -115,4 +115,68 @@ let x = [1, 2, 3 | 1, 2, 3];
 		let output = input.compile().unwrap();
 		assert_eq!(output, "x = np.array([[1, 2, 3][1, 2, 3]])\n".to_string());
 	}
+
+	#[test]
+	fn testing_while_loop()
+	{
+		let input = "
+while 1 {
+    let x = 1;
+    let y = 2;
+}
+"
+		.to_string();
+
+		let output = input.compile().unwrap();
+		assert_eq!(
+			output,
+			"while 1:
+    x = 1
+    y = 2\n"
+				.to_string()
+		);
+	}
+
+	#[test]
+	fn testing_function()
+	{
+		let input = "
+fn hello(name: Int) {
+    let x = 1;
+    var y = 2;
+}
+"
+		.to_string();
+
+		let output = input.compile().unwrap();
+		assert_eq!(
+			output,
+			"def hello(name):
+    x = 1
+    y = 2\n"
+				.to_string()
+		);
+	}
+	#[test]
+	fn testing_function_with_return_type()
+	{
+		let input = "
+fn hello(name: Int) -> Int {
+    let x = 1;
+    var y = 2;
+    return x + y
+}
+"
+		.to_string();
+
+		let output = input.compile().unwrap();
+		assert_eq!(
+			output,
+			"def hello(name):
+    x = 1
+    y = 2
+    return x\n"
+				.to_string()
+		);
+	}
 }
