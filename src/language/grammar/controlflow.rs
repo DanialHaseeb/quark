@@ -14,6 +14,9 @@ pub struct IfStmt
 	pub condition: Expression,
 	/// The body of the if statement
 	pub body: Block,
+
+	/// The else of the if statement
+	pub else_body: Option<Block>,
 }
 
 /// A While statement in a Quark programme.

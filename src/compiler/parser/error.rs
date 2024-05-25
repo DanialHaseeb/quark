@@ -36,5 +36,4 @@ pub const BRACKET: &str = "This bracket is unmatched. Try `]`, `]a`, or `]m`";
 pub const MATRIX_BRACKET: &str =
 	"This matrix bracket is unmatched. Try `]`, `]m`";
 
-pub const EQUAL_OR_PARAMS_AFTER: &str =
-	"Expected an `=` or function params`(` after this";
+pub const PARAMS_AFTER: &str = "Expected function params`(` after this";

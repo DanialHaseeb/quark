@@ -1,7 +1,8 @@
-fn hello(name) {
-    let x = "1";
-    var y = "2";
-    y = 1;
-    echo name, " ", x + y
+fn fibonacci(n) {
+    if n < 1 {
+        return n;
+    } else {
+    let x = x(3, 3) + 3;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+  } 
 }
-hello("Hi");

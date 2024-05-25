@@ -143,7 +143,6 @@ impl Statement
 			{
 				let identifier = stream.next().expect("Identifier Token");
 				let start = identifier.span.start;
-				end = identifier.span.end;
 				let peek = stream.peek();
 
 				let name = match identifier.kind
@@ -184,22 +183,8 @@ impl Statement
 						..
 					}) =>
 					{
-						let span_left = match stream.next()
-						{
-							Some(token) if matches!(token.kind, ParenthesisLeft) =>
-							{
-								token.span
-							}
-							_ =>
-							{
-								bail!(
-									source.error(Span { start, end }, error::EXPECT_PARENTHESIS)
-								)
-							}
-						};
-
+						let span_left = stream.next().expect("Parenthesis Token").span;
 						let arguments = utils::items(stream, source)?;
-
 						let span_right = match stream.next()
 						{
 							Some(token) if matches!(token.kind, ParenthesisRight) =>
@@ -221,7 +206,7 @@ impl Statement
 					}
 					_ =>
 					{
-						bail!(source.error(identifier.span, error::EQUAL_OR_PARAMS_AFTER))
+						bail!(source.error(identifier.span, error::PARAMS_AFTER))
 					}
 				};
 

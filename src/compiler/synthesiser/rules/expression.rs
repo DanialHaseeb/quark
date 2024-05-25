@@ -54,6 +54,8 @@ impl Synthesis for Expression
 				}
 			}
 
+			Kind::FunctionCall(function_call) => function_call.synthesise(),
+
 			Kind::Matrix(items_list) =>
 			{
 				let mut output = "np.array([".to_string();

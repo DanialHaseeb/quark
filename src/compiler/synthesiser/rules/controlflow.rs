@@ -25,6 +25,13 @@ impl Synthesis for IfStmt
 		output.push_str(":{");
 		output.push_str(self.body.synthesise().as_str());
 		output.push('}');
+
+		if let Some(else_body) = self.else_body
+		{
+			output.push_str("else:{");
+			output.push_str(else_body.synthesise().as_str());
+			output.push('}');
+		}
 		output
 	}
 }
