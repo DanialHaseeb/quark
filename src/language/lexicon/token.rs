@@ -64,11 +64,14 @@ pub enum Kind
 	/// The `var` declarator token.
 	Variable,
 
-	/// The `func` declarator token.
+	/// The `fn` declarator token.
 	Function,
 
+	/// The `echo` declarator token.
+	Echo,
+
 	/// The `proc` declarator token.
-	Procedure,
+	// Procedure,
 
 	/// The lexical token for the `if` keyword.
 	If,

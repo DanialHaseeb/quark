@@ -5,6 +5,7 @@ use anyhow::{bail, Result};
 use super::*;
 use crate::compiler::Error;
 use crate::language::grammar::expression::{Expression, Items, Kind};
+use crate::language::grammar::FunctionCall;
 use crate::language::lexicon::token::{Kind::*, Token};
 use crate::language::utils::Span;
 
@@ -246,12 +247,54 @@ impl Expression
 
 		let expression = match token.kind
 		{
-			Identifier(_) =>
+			Identifier(name) =>
 			{
-				let span = token.span;
-				let kind = Kind::Identifier(token);
+				let peek = stream.peek();
+				let start = token.span.start;
+				let mut end = token.span.end;
+				let kind = match peek
+				{
+					Some(Token {
+						kind: ParenthesisLeft,
+						..
+					}) =>
+					{
+						let span_left = stream.next().expect("Expected Parenthesis").span;
+						let arguments = utils::items(stream, source)?;
+						let span_right = match stream.next()
+						{
+							Some(token) if matches!(token.kind, ParenthesisRight) =>
+							{
+								token.span
+							}
+							_ => bail!(source.error(span_left, error::PARENTHESIS)),
+						};
 
-				Self { span, kind }
+						end = span_right.end;
+
+						let span = Span { start, end };
+
+						Kind::FunctionCall(FunctionCall {
+							name,
+							span,
+							arguments,
+						})
+					}
+
+					_ =>
+					{
+						Kind::Identifier(Token {
+							span: Span { start, end },
+							kind: Identifier(name),
+						})
+						// bail!(source.error(token.span, error::PARAMS_AFTER))
+					}
+				};
+
+				Self {
+					span: Span { start, end },
+					kind,
+				}
 			}
 
 			Number(_) | String(_) | Boolean(_) =>
@@ -281,7 +324,8 @@ impl Expression
 			}
 			BracketLeft =>
 			{
-				let start = token.span.start;
+				let open = token.span;
+				let start = open.start;
 				let items = utils::items(stream, source)?;
 				let mut structure: Vec<Option<Items>> = vec![items];
 
@@ -310,7 +354,7 @@ impl Expression
 								kind: Kind::Matrix(structure),
 							})
 						}
-						_ => bail!(source.error(token.span, error::MATRIX_BRACKET)),
+						_ => bail!(source.error(open, error::MATRIX_BRACKET)),
 					};
 				}
 				else
@@ -347,7 +391,7 @@ impl Expression
 								kind: Kind::Matrix(structure),
 							}
 						}
-						_ => bail!(source.error(token.span, error::BRACKET)),
+						_ => bail!(source.error(open, error::BRACKET)),
 					}
 				}
 			}

@@ -1,4 +1,4 @@
-use super::Expression;
+use super::{Expression, FunctionDclr};
 use crate::language::utils::Span;
 
 /// A declaration in a Quark programme.
@@ -20,8 +20,7 @@ pub struct Declaration
 pub enum Kind
 {
 	/// A function declaration.
-	Function,
-
+	Function(FunctionDclr),
 	/// A variable declaration.
 	///
 	/// ### Rule

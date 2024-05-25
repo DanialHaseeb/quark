@@ -17,7 +17,7 @@ impl Synthesis for Expression
 			Kind::Literal(token) => match token.kind
 			{
 				Number(value) => value,
-				String(value) => format!("\"{value}\""),
+				String(value) => format!("'{value}'"),
 				Boolean(true) => "True".to_string(),
 				Boolean(false) => "False".to_string(),
 				_ => unreachable!(),
@@ -53,6 +53,8 @@ impl Synthesis for Expression
 					None => "[]".to_string(),
 				}
 			}
+
+			Kind::FunctionCall(function_call) => function_call.synthesise(),
 
 			Kind::Matrix(items_list) =>
 			{

@@ -32,37 +32,53 @@ impl IfStmt
 			Ok(condition) => condition,
 			Err(_) =>
 			{
-				bail!(source.error(
-					Span { start, end },
-					format!("{} {}", error::CONDITION_AFTER, "if keyboard").as_str()
-				))
+				bail!(source.error(Span { start, end }, error::CONDITION_AFTER))
 			}
 		};
 
 		end = condition.span.end;
-		match stream.peek()
+
+		let body = match stream.peek()
 		{
 			Some(Token {
 				kind: BraceLeft, ..
 			}) =>
 			{
 				let body = block(stream, source)?;
-				let span = Span {
-					start,
-					end: body.span.end,
-				};
-				Ok(Self {
-					span,
-					condition,
-					body,
-				})
+				end = body.span.end;
+				body
 			}
 
-			_ => bail!(source.error(
-				Span { start, end },
-				format!("{} {}", error::BLOCK_AFTER, "if condition").as_str()
-			)),
-		}
+			_ => bail!(source.error(Span { start, end }, error::BLOCK_AFTER)),
+		};
+
+		let else_body = match stream.peek()
+		{
+			Some(Token { kind: Else, .. }) =>
+			{
+				end = stream.next().expect("else Token").span.end;
+				match stream.peek()
+				{
+					Some(Token {
+						kind: BraceLeft, ..
+					}) =>
+					{
+						let body = block(stream, source)?;
+						end = body.span.end;
+						Some(body)
+					}
+					_ => bail!(source.error(Span { start, end }, error::BLOCK_AFTER)),
+				}
+			}
+			_ => None,
+		};
+
+		Ok(Self {
+			span: Span { start, end },
+			condition,
+			else_body,
+			body,
+		})
 	}
 }
 impl WhileStmt
@@ -83,14 +99,12 @@ impl WhileStmt
 			Ok(condition) => condition,
 			Err(_) =>
 			{
-				bail!(source.error(
-					Span { start, end },
-					format!("{} {}", error::CONDITION_AFTER, "while keyboard").as_str()
-				))
+				bail!(source.error(Span { start, end }, error::CONDITION_AFTER))
 			}
 		};
 
 		end = condition.span.end;
+
 		match stream.peek()
 		{
 			Some(Token {
@@ -109,10 +123,7 @@ impl WhileStmt
 				})
 			}
 
-			_ => bail!(source.error(
-				Span { start, end },
-				format!("{} {}", error::BLOCK_AFTER, "while condition").as_str()
-			)),
+			_ => bail!(source.error(Span { start, end }, error::BLOCK_AFTER)),
 		}
 	}
 }

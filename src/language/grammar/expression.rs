@@ -78,6 +78,8 @@ pub enum Kind
 		/// The right operand of the infix expression.
 		right: Box<Expression>,
 	},
+
+	FunctionCall(super::FunctionCall),
 }
 
 #[derive(Debug, PartialEq, Clone)]

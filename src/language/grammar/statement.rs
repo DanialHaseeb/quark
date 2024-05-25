@@ -1,5 +1,7 @@
 use crate::language::utils::Span;
 
+use super::Expression;
+
 /// A statement in a Quark programme.
 ///
 /// ### Rule
@@ -35,4 +37,25 @@ pub enum Kind
 
 	/// A break statement
 	Continue(super::ContinueStmt),
+
+	Return(super::ReturnStmt),
+
+	Assignment(super::AssignmentStmt),
+
+	Echo(EchoStmt),
+
+	FunctionCall(super::FunctionCall),
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct Block
+{
+	pub span: Span,
+	pub statements: Vec<Option<Statement>>,
+}
+#[derive(Debug, PartialEq, Clone)]
+pub struct EchoStmt
+{
+	pub span: Span,
+	pub arguments: Vec<Expression>,
 }
