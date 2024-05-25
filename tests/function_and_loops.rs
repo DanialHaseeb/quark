@@ -66,3 +66,28 @@ fn hello(name) {
 	let output = input.compile().unwrap();
 	assert_eq!(output, format!("{}{}", HEADER, expected));
 }
+
+#[test]
+fn nasty_fibonacci()
+{
+	let input = "fn fibonacci(n) {
+    if n < 1 {
+        return n;
+    } else {
+    let x = x(3, 3) + 3;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+  }
+}"
+	.to_string();
+
+	let expected = "def fibonacci(n):
+    if n < 1:
+        return n
+        
+    else:
+        x = x(3, 3) + 3
+        return fibonacci(n - 1) + fibonacci(n - 2)"
+		.to_string();
+	let output = input.compile().unwrap();
+	assert_eq!(output, format!("{}{}", HEADER, expected));
+}

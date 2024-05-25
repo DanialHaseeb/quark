@@ -4,5 +4,5 @@ fn fibonacci(n) {
     } else {
     let x = x(3, 3) + 3;
     return fibonacci(n - 1) + fibonacci(n - 2);
-  } 
+  }
 }
