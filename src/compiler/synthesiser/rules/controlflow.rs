@@ -10,15 +10,7 @@ impl Synthesis for WhileStmt
 		let mut output = String::from("while ");
 		output.push_str(self.condition.synthesise().as_str());
 		output.push_str(":{");
-		for statement in self.body.statements
-		{
-			match statement
-			{
-				Some(statement) => output.push_str(statement.synthesise().as_str()),
-				None => continue,
-			}
-		}
-
+		output.push_str(self.body.synthesise().as_str());
 		output.push('}');
 		output
 	}
@@ -31,16 +23,7 @@ impl Synthesis for IfStmt
 		let mut output = String::from("if ");
 		output.push_str(self.condition.synthesise().as_str());
 		output.push_str(":{");
-
-		for statement in self.body.statements
-		{
-			match statement
-			{
-				Some(statement) => output.push_str(statement.synthesise().as_str()),
-				None => continue,
-			}
-		}
-
+		output.push_str(self.body.synthesise().as_str());
 		output.push('}');
 		output
 	}

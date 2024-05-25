@@ -5,13 +5,11 @@ impl Synthesis for Programme
 {
 	fn synthesise(self) -> String
 	{
-		let mut result = String::new();
-
-		for statement in self.statements
-		{
-			result.push_str(&statement.synthesise());
-		}
-
-		result
+		self
+			.statements
+			.into_iter()
+			.map(|statement| statement.synthesise())
+			.collect::<Vec<_>>()
+			.join("")
 	}
 }

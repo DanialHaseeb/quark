@@ -22,7 +22,7 @@ impl Synthesis for Tree
 	fn synthesise(self) -> String
 	{
 		let Tree(programme) = self;
-		python(programme.synthesise())
+		python(dbg!(programme.synthesise()))
 	}
 }
 

@@ -281,7 +281,8 @@ impl Expression
 			}
 			BracketLeft =>
 			{
-				let start = token.span.start;
+				let open = token.span;
+				let start = open.start;
 				let items = utils::items(stream, source)?;
 				let mut structure: Vec<Option<Items>> = vec![items];
 
@@ -310,7 +311,7 @@ impl Expression
 								kind: Kind::Matrix(structure),
 							})
 						}
-						_ => bail!(source.error(token.span, error::MATRIX_BRACKET)),
+						_ => bail!(source.error(open, error::MATRIX_BRACKET)),
 					};
 				}
 				else
@@ -347,7 +348,7 @@ impl Expression
 								kind: Kind::Matrix(structure),
 							}
 						}
-						_ => bail!(source.error(token.span, error::BRACKET)),
+						_ => bail!(source.error(open, error::BRACKET)),
 					}
 				}
 			}

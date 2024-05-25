@@ -1,4 +1,4 @@
-use super::{Expression, Statement};
+use super::{Block, Expression};
 use crate::language::utils::Span;
 
 /// A If statement in a Quark programme.
@@ -14,13 +14,6 @@ pub struct IfStmt
 	pub condition: Expression,
 	/// The body of the if statement
 	pub body: Block,
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct Block
-{
-	pub span: Span,
-	pub statements: Vec<Option<Statement>>,
 }
 
 /// A While statement in a Quark programme.

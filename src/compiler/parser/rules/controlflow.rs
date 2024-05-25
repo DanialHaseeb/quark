@@ -32,10 +32,7 @@ impl IfStmt
 			Ok(condition) => condition,
 			Err(_) =>
 			{
-				bail!(source.error(
-					Span { start, end },
-					format!("{} {}", error::CONDITION_AFTER, "if keyboard").as_str()
-				))
+				bail!(source.error(Span { start, end }, error::CONDITION_AFTER))
 			}
 		};
 
@@ -58,10 +55,7 @@ impl IfStmt
 				})
 			}
 
-			_ => bail!(source.error(
-				Span { start, end },
-				format!("{} {}", error::BLOCK_AFTER, "if condition").as_str()
-			)),
+			_ => bail!(source.error(Span { start, end }, error::BLOCK_AFTER)),
 		}
 	}
 }
@@ -83,14 +77,12 @@ impl WhileStmt
 			Ok(condition) => condition,
 			Err(_) =>
 			{
-				bail!(source.error(
-					Span { start, end },
-					format!("{} {}", error::CONDITION_AFTER, "while keyboard").as_str()
-				))
+				bail!(source.error(Span { start, end }, error::CONDITION_AFTER))
 			}
 		};
 
 		end = condition.span.end;
+
 		match stream.peek()
 		{
 			Some(Token {
@@ -109,10 +101,7 @@ impl WhileStmt
 				})
 			}
 
-			_ => bail!(source.error(
-				Span { start, end },
-				format!("{} {}", error::BLOCK_AFTER, "while condition").as_str()
-			)),
+			_ => bail!(source.error(Span { start, end }, error::BLOCK_AFTER)),
 		}
 	}
 }

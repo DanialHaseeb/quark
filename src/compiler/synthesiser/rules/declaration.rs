@@ -11,10 +11,10 @@ impl Synthesis for Declaration
 			{
 				let value = value.synthesise();
 
-				format!("{name} = {value}")
+				format!("{name} = {value};")
 			}
 
-			Kind::Function => unreachable!(),
+			Kind::Function(function) => function.synthesise(),
 		}
 	}
 }
