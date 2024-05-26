@@ -24,7 +24,7 @@ fn testing_while_loop()
 fn testing_function()
 {
 	let input = "
-fn hello(name) {
+func hello(name) {
     let x = \"1\";
     var y = \"2\";
     y = 1;
@@ -51,7 +51,7 @@ hello('Hi')"
 fn testing_function_with_return_type()
 {
 	let input = "
-fn hello(name) {
+func hello(name) {
     let x = 1;
     var y = 2;
     return x + y;
@@ -70,7 +70,7 @@ fn hello(name) {
 #[test]
 fn nasty_fibonacci()
 {
-	let input = "fn fibonacci(n) {
+	let input = "func fibonacci(n) {
     if n < 1 {
         return n;
     } else {
