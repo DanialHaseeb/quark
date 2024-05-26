@@ -10,10 +10,9 @@ fn fibonacci(n) {
 echo fibonacci(3);
 
 // Adding matrices
-let a = [1, 2|
-				|3, 5];
+let a = [1 2, 3, 5];
         
-let b = [1, 2 | 3, 5];
+let b = [1, 2 | 2, 3];
 
 echo a + b;
 

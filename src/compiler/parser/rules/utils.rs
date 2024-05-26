@@ -20,7 +20,7 @@ where
 {
 	match stream.peek()
 	{
-		Some(token) if token.is_closing() => Ok(None),
+		Some(token) if token.is_item_closing() => Ok(None),
 		None => Ok(None),
 		Some(_) =>
 		{
@@ -33,11 +33,30 @@ where
 
 			expressions.push(expression);
 
-			while stream.next_if(|token| token.kind == Comma).is_some()
+			loop
 			{
-				let expression = Expression::try_from_stream(stream, source)?;
-				end = expression.span.end;
-				expressions.push(expression);
+				match stream.peek()
+				{
+					Some(Token { kind: Comma, .. }) =>
+					{
+						stream.next().expect("Comma");
+						let expression = Expression::try_from_stream(stream, source)?;
+						end = expression.span.end;
+						expressions.push(expression);
+					}
+					Some(token) if token.is_item_closing() =>
+					{
+						break;
+					}
+					Some(token) =>
+					{
+						bail!(source.error(token.span, error::COMMA));
+					}
+					None =>
+					{
+						break;
+					}
+				}
 			}
 
 			let span = Span { start, end };
@@ -137,5 +156,17 @@ where
 			name,
 		}),
 		_ => bail!(source.error(token.span, error::IDENTIFIER)),
+	}
+}
+
+impl Token
+{
+	pub fn is_item_closing(&self) -> bool
+	{
+		self.kind == BracketRight
+			|| self.kind == ParenthesisRight
+			|| self.kind == BracketRightWithA
+			|| self.kind == BracketRightWithM
+			|| self.kind == Bar
 	}
 }
