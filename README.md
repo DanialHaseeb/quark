@@ -49,7 +49,7 @@ def fibonacci(n):
         
     
 print(fibonacci(3))
-a = [1, 2, 3, 5]
+a = np.array([[1, 2],[3, 5],])
 b = np.array([[1, 0],[0, 1],])
 print(a + b)
 count = 0
