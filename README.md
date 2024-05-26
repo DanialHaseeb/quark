@@ -4,7 +4,7 @@ A programming language designed from the ground-up for quantum computing.
 
 ## Example
 
-Quark focuses on short and concise code:
+Quark focuses on expressive and elegant code:
 ```nim
 //# a simple recursive function
 func fibonacci(n) {
