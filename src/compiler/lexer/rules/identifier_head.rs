@@ -75,7 +75,7 @@ impl token::Kind
 			"false" => Boolean(false),
 			"let" => Constant,
 			"var" => Variable,
-			"fn" => Function,
+			"func" => Function,
 			// "proc" => Procedure,
 			"if" => If,
 			"else" => Else,
