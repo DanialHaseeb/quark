@@ -1,4 +1,4 @@
-// a simple recursive function
+//# a simple recursive function
 func fibonacci(n) {
     if n < 1 {
         return n;
@@ -9,7 +9,7 @@ func fibonacci(n) {
 }
 echo fibonacci(3);
 
-// Adding matrices
+//# Adding matrices
 
 let a = [1, 2|
 	|3, 5];
@@ -18,7 +18,7 @@ let b = [1, 2 | 2, 3];
 
 echo a + b;
 
-// Simple while loop
+//# Simple while loop
 let count = 0;
 while true
 {
