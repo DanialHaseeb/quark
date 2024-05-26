@@ -1,16 +1,32 @@
+// a simple recursive function
 fn fibonacci(n) {
-  if n < 1 {
-    return n;
-  } else {
+    if n < 1 {
+        return n;
+    } else {
+    
     return fibonacci(n - 1) + fibonacci(n - 2);
   }
 }
+echo fibonacci(3);
 
+// Adding matrices
 let a = [1, 2|
 				|3, 5];
+        
+let b = [1, 2 | 3, 5];
 
+echo a + b;
+
+// Simple while loop
+let count = 0;
 while true
 {
-	break;
-	continue;
+  a = a + b;
+  count = count + 1;
+  if count > 10 {
+    break;
+  }
 }
+
+echo a;
+
