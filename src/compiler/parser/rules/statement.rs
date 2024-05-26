@@ -114,7 +114,17 @@ impl Statement
 			Echo =>
 			{
 				let echo = EchoStmt::try_from_stream(stream, source)?;
-				end = echo.span.end;
+				let span = echo.span;
+
+				end = match stream.next()
+				{
+					Some(Token {
+						span,
+						kind: Semicolon,
+					}) => span.end,
+					_ => bail!(source.error(span, error::SEMICOLON_AFTER)),
+				};
+
 				Kind::Echo(echo)
 			}
 
@@ -250,8 +260,9 @@ impl EchoStmt
 	where
 		I: Iterator<Item = Token>,
 	{
-		let start = stream.next().expect("Echo Token").span.start;
-		let mut end = start;
+		let span = stream.next().expect("Echo Token").span;
+		let start = span.start;
+		let mut end = span.end;
 
 		let mut arguments = Vec::new();
 		let expression = Expression::try_from_stream(stream, source);
