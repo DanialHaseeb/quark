@@ -4,6 +4,8 @@ pub const SEMICOLON_AFTER: &str = "Expected `;` after this";
 /// An error message indicating a missing identifier.
 pub const IDENTIFIER_AFTER: &str = "Expected an identifier after this";
 
+pub const EXPECTED_RETURN_TYPE: &str = "Expected a return type after this";
+
 /// An error message indicating a wrong token.
 pub const IDENTIFIER: &str = "Expected an identifier here";
 
@@ -36,6 +38,6 @@ pub const BRACKET: &str = "This bracket is unmatched. Try `]`, `]a`, or `]m`";
 pub const MATRIX_BRACKET: &str =
 	"This matrix bracket is unmatched. Try `]`, `]m`";
 
-pub const PARAMS_AFTER: &str = "Expected function params`(` after this";
+pub const PARAMS_AFTER: &str = "Expected function params `(` after this";
 
 pub const COMMA: &str = "Expected `,` here";

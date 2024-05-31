@@ -1,5 +1,5 @@
 //# a simple recursive function
-func fibonacci(n) {
+func fibonacci(n) -> Unit {
     if n < 1 {
         return n;
     } else {

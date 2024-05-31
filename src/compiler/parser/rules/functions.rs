@@ -3,6 +3,7 @@ use std::iter::Peekable;
 
 use super::*;
 use crate::compiler::Error;
+use crate::language::grammar::functions::ReturnType;
 use crate::language::lexicon::token::Kind::*;
 
 use crate::language::{grammar::FunctionDclr, lexicon::Token, utils::Span};
@@ -53,6 +54,39 @@ impl FunctionDclr
 			_ => bail!(source.error(span_left, error::PARENTHESIS)),
 		};
 
+		let type_string = match stream.peek()
+		{
+			Some(Token {
+				kind: ArrowRight, ..
+			}) =>
+			{
+				let span = stream.next().expect("ArrowRight Token").span;
+				match stream.next()
+				{
+					Some(Token {
+						kind: Identifier(name),
+						span,
+					}) =>
+					{
+						end = span.end;
+						Some(name)
+					}
+					_ => bail!(source.error(span, error::EXPECTED_RETURN_TYPE)),
+				}
+			}
+			_ => None,
+		};
+
+		let return_type = match type_string.as_deref()
+		{
+			Some("Number") => ReturnType::Number,
+			Some("String") => ReturnType::String,
+			Some("Bool") => ReturnType::Bool,
+			Some("Unit") => ReturnType::Unit,
+			Some(other) => ReturnType::Other(other.to_string()),
+			None => ReturnType::Unit,
+		};
+
 		match stream.peek()
 		{
 			Some(Token {
@@ -67,6 +101,7 @@ impl FunctionDclr
 				Ok(Self {
 					span,
 					name,
+					return_type,
 					parameters,
 					body,
 				})
