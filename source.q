@@ -1,4 +1,4 @@
-fn fibonacci(n) {
+fn fibonacci(n) -> Unit {
     if n < 1 {
         return n;
     } else {

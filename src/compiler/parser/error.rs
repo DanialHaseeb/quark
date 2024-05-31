@@ -4,6 +4,8 @@ pub const SEMICOLON_AFTER: &str = "Expected `;` after this";
 /// An error message indicating a missing identifier.
 pub const IDENTIFIER_AFTER: &str = "Expected an identifier after this";
 
+pub const EXPECTED_RETURN_TYPE: &str = "Expected a return type after this";
+
 /// An error message indicating a wrong token.
 pub const IDENTIFIER: &str = "Expected an identifier here";
 
