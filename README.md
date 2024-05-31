@@ -7,7 +7,7 @@ A programming language designed from the ground-up for quantum computing.
 Quark focuses on expressive and elegant code:
 ```nim
 //# a simple recursive function
-func fibonacci(n) {
+func fibonacci(n) -> Number {
     if n < 1 {
         return n;
     } else {
