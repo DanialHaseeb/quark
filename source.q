@@ -1,8 +1,33 @@
+//# a simple recursive function
 fn fibonacci(n) -> Unit {
     if n < 1 {
         return n;
     } else {
-    let x = x(3, 3) + 3;
+    
     return fibonacci(n - 1) + fibonacci(n - 2);
   }
 }
+echo fibonacci(3);
+
+//# Adding matrices
+
+let a = [1, 2|
+	|3, 5];
+        
+let b = [1, 2 | 2, 3];
+
+echo a + b;
+
+//# Simple while loop
+let count = 0;
+while true
+{
+  a = a + b;
+  count = count + 1;
+  if count > 10 {
+    break;
+  }
+}
+
+echo a;
+

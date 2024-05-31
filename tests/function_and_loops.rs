@@ -28,7 +28,7 @@ fn hello(name) -> String {
     let x = \"1\";
     var y = \"2\";
     y = 1;
-    echo name, \" \", x + y
+    echo name, \" \", x + y;
     return x + y;
 }
 hello(\"Hi\");"

@@ -65,7 +65,7 @@ impl Declaration
 
 				end = identifier.span.end;
 
-				let equals = match stream.next()
+				match stream.next()
 				{
 					Some(token) if token.kind == Equal => token,
 					_ =>
@@ -74,24 +74,13 @@ impl Declaration
 					}
 				};
 
-				end = equals.span.end;
-
 				let name = match identifier.kind
 				{
 					Identifier(name) => name,
 					_ => unreachable!(),
 				};
 
-				let result = Expression::try_from_stream(stream, source);
-
-				let value = match result
-				{
-					Ok(value) => value,
-					Err(_) =>
-					{
-						bail!(source.error(Span { start, end }, error::EXPRESSION_AFTER))
-					}
-				};
+				let value = Expression::try_from_stream(stream, source)?;
 
 				let span = Span {
 					start: declarator.span.start,

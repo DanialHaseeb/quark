@@ -479,12 +479,4 @@ impl Token
 	{
 		self.kind == BracketRight || self.kind == BracketRightWithA
 	}
-
-	pub fn is_closing(&self) -> bool
-	{
-		self.kind == BracketRight
-			|| self.kind == ParenthesisRight
-			|| self.kind == BracketRightWithA
-			|| self.kind == BracketRightWithM
-	}
 }

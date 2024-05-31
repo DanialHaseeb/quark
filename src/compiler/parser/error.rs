@@ -39,3 +39,5 @@ pub const MATRIX_BRACKET: &str =
 	"This matrix bracket is unmatched. Try `]`, `]m`";
 
 pub const PARAMS_AFTER: &str = "Expected function params`(` after this";
+
+pub const COMMA: &str = "Expected `,` here";
