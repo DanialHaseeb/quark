@@ -54,7 +54,7 @@ impl FunctionDclr
 			_ => bail!(source.error(span_left, error::PARENTHESIS)),
 		};
 
-		let return_type_str = match stream.peek()
+		let type_string = match stream.peek()
 		{
 			Some(Token {
 				kind: ArrowRight, ..
@@ -77,7 +77,7 @@ impl FunctionDclr
 			_ => None,
 		};
 
-		let return_type = match return_type_str.as_deref()
+		let return_type = match type_string.as_deref()
 		{
 			Some("Number") => ReturnType::Number,
 			Some("String") => ReturnType::String,
