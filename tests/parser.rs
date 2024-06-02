@@ -20,7 +20,6 @@ let monkey = 1 + 2 / 2 / 2;
 	let input2 = "
 let y = 1;
 
-let answer = x + y;
 let answer = [1, 2];
 let monkey = 1 + 2 / 2 / 2;
 "

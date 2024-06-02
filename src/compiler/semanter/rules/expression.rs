@@ -1,6 +1,6 @@
 use anyhow::{ensure, Result};
 
-use crate::language::lexicon::token::Kind::{And, Minus, Not, Or, Plus, Xor};
+use crate::language::lexicon::token::Kind::{And, Minus, Asterisk, Slash, Not, Or, Plus, Xor};
 use crate::{
 	compiler::semanter::table::Table,
 	language::{
@@ -58,7 +58,7 @@ impl Expression
 						left == Type::Number || left == Type::String,
 						"Invalid left operand"
 					),
-					Minus => ensure!(left == Type::Number, "Invalid left operand"),
+					Minus | Asterisk | Slash => ensure!(left == Type::Number, "Invalid left operand"),
 					And | Or | Xor =>
 					{
 						ensure!(left == Type::Boolean, "Invalid left operand")
