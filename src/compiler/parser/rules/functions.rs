@@ -3,9 +3,9 @@ use std::iter::Peekable;
 
 use super::*;
 use crate::compiler::Error;
-use crate::language::grammar::functions::ReturnType;
 use crate::language::lexicon::token::Kind::*;
 
+use crate::language::semantics::r#type::Type;
 use crate::language::{grammar::FunctionDclr, lexicon::Token, utils::Span};
 
 impl FunctionDclr
@@ -79,12 +79,12 @@ impl FunctionDclr
 
 		let return_type = match type_string.as_deref()
 		{
-			Some("Number") => ReturnType::Number,
-			Some("String") => ReturnType::String,
-			Some("Bool") => ReturnType::Bool,
-			Some("Unit") => ReturnType::Unit,
-			Some(other) => ReturnType::Other(other.to_string()),
-			None => ReturnType::Unit,
+			Some("Number") => Type::Number,
+			Some("String") => Type::String,
+			Some("Bool") => Type::Boolean,
+			Some("Unit") => Type::Unit,
+			None => Type::Unit,
+			_ => unreachable!(),
 		};
 
 		match stream.peek()

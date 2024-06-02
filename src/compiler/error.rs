@@ -20,7 +20,7 @@ impl Error for &[Vec<char>]
 		let Position { line, column } = start;
 
 		let header = format!("--> {start:?}--{end:?}");
-		let prefix = format!("{} | ", line+1);
+		let prefix = format!("{} | ", line + 1);
 		let source = self[line].iter().collect::<String>();
 		let indent = " ".repeat(prefix.len() + column);
 		let length = end.column - start.column + 1;

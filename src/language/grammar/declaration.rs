@@ -21,6 +21,7 @@ pub enum Kind
 {
 	/// A function declaration.
 	Function(FunctionDclr),
+
 	/// A variable declaration.
 	///
 	/// ### Rule

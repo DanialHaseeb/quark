@@ -3,17 +3,16 @@ func fibonacci(n) -> Unit {
     if n < 1 {
         return n;
     } else {
-    
+
     return fibonacci(n - 1) + fibonacci(n - 2);
   }
 }
 echo fibonacci(3);
 
 //# Adding matrices
-
 let a = [1, 2|
-	|3, 5];
-        
+	      |3, 5];
+
 let b = [1, 2 | 2, 3];
 
 echo a + b;
@@ -30,4 +29,3 @@ while true
 }
 
 echo a;
-

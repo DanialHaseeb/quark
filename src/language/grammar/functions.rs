@@ -1,6 +1,6 @@
 use crate::language::utils::Span;
 
-use super::{Block, Expression};
+use super::{semantics::r#type::Type, Block, Expression};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ReturnStmt
@@ -15,18 +15,8 @@ pub struct FunctionDclr
 	pub span: Span,
 	pub name: String,
 	pub body: Block,
-	pub return_type: ReturnType,
+	pub return_type: Type,
 	pub parameters: Option<Params>,
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum ReturnType
-{
-	Number,
-	String,
-	Bool,
-	Unit,
-	Other(String),
 }
 
 #[derive(Debug, PartialEq, Clone)]

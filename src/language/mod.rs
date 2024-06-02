@@ -8,4 +8,5 @@
 
 pub mod grammar;
 pub mod lexicon;
+pub mod semantics;
 pub mod utils;

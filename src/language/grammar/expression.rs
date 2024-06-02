@@ -82,11 +82,11 @@ pub enum Kind
 	FunctionCall(super::FunctionCall),
 }
 
-#[derive(Debug, PartialEq, Clone)]
 /// An list of items in a Quark programme.
 ///
 /// ### Rule
 /// * _items_ -> _expression_ { `,` _expression_ }*
+#[derive(Debug, PartialEq, Clone)]
 pub struct Items
 {
 	/// The span of the expression.
