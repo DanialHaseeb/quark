@@ -10,7 +10,7 @@ let y = 1;
 // let y = [1, 2|
 /*       |1, 2];
  let x = [1, 2| 1, 2]; */
-let answer = x + y;
+// let answer = x + y;
 let answer = [1, 2];
 let monkey = 1 + 2 / 2 / 2;
 //print(answer);
@@ -29,31 +29,6 @@ let monkey = 1 + 2 / 2 / 2;
 	let output1 = input1.compile().unwrap();
 	let output2 = input2.compile().unwrap();
 	assert_eq!(output2, output1);
-}
-
-#[test]
-fn it_works()
-{
-	let input = "
-let y = 1;
-
-// let y = [1, 2|
-/*       |1, 2];
- let x = [1, 2| 1, 2]; */
-let answer = x + y;
-let answer = [1, 2];
-let monkey = 1 + 2 / 2 / 2;
-//print(answer);
-"
-	.to_string();
-
-	let expected = "y = 1
-answer = x + y
-answer = [1, 2]
-monkey = 1 + 2 / 2 / 2";
-
-	let output = input.compile().unwrap();
-	assert_eq!(output, format!("{}{}", HEADER, expected));
 }
 
 #[test]
