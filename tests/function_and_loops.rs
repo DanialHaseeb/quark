@@ -4,14 +4,14 @@ const HEADER: &str = "import numpy as np\n";
 #[test]
 fn testing_while_loop()
 {
-	let input = "while 1 {
+	let input = "while true {
     let x = 1;
     let y = 2;
 }
 "
 	.to_string();
 
-	let expected = "while 1:
+	let expected = "while True:
     x = 1
     y = 2"
 		.to_string();
