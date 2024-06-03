@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "quark"
+version = "0.1.0"
+description = ""
+authors = ["Danial <76565771+DanialHaseeb@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^1.26.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

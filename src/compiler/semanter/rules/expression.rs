@@ -55,10 +55,10 @@ impl Expression
 				match operator.kind
 				{
 					Plus => ensure!(
-						left == Type::Number || left == Type::String,
+						left == Type::Number || left == Type::String || left == Type::Unit,
 						"Invalid left operand"
 					),
-					Minus | Asterisk | Slash | Greater | GreaterEqual | Less | LessEqual | EqualEqual | ExclaimEqual => ensure!(left == Type::Number, "Invalid left operand"),
+					Minus | Asterisk | Slash | Greater | GreaterEqual | Less | LessEqual | EqualEqual | ExclaimEqual => ensure!(left == Type::Number || left == Type::Unit, "Invalid left operand"),
 					And | Or | Xor =>
 					{
 						ensure!(left == Type::Boolean, "Invalid left operand")

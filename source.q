@@ -9,13 +9,10 @@ func fibonacci(n) -> Unit {
 }
 echo fibonacci(3);
 
-//# Adding matrices
-let a = [1, 2|
-	      |3, 5];
+var z = 3;
 
-let b = [1, 2 | 2, 3];
 
-echo a + b;
+/* let b = [1, 2 | 2, 3]; */
 
 //# Simple while loop
 let count = 0;
@@ -25,7 +22,7 @@ while true
   count = count + 1;
   if count > 10 {
     break;
-  }
+
 }
 
 echo a;
