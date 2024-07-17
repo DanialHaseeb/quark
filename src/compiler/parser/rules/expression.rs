@@ -297,7 +297,7 @@ impl Expression
 				}
 			}
 
-			Number(_) | StringQ(_) | Boolean(_) =>
+			Number(_) | String(_) | Boolean(_) =>
 			{
 				let span = token.span;
 				let kind = Kind::Literal(token);

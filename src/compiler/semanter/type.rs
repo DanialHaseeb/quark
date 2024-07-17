@@ -38,7 +38,7 @@ impl Expression
 			{
 				token::Kind::Boolean(_) => Ok(Type::Boolean),
 				token::Kind::Number(_) => Ok(Type::Number),
-				token::Kind::StringQ(_) => Ok(Type::String),
+				token::Kind::String(_) => Ok(Type::String),
 				_ => unreachable!(),
 			},
 

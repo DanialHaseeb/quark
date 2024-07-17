@@ -44,7 +44,7 @@ pub enum Kind
 	///
 	/// ### Rule
 	/// * _string_ -> `"` { Σ \ `"` }* `"`
-	StringQ(String),
+	String(String),
 
 	/// A number literal token.
 	///
