@@ -17,7 +17,7 @@ impl Synthesis for Expression
 			Kind::Literal(token) => match token.kind
 			{
 				Number(value) => value,
-				StringQ(value) => format!("'{value}'"),
+				String(value) => format!("'{value}'"),
 				Boolean(true) => "True".to_string(),
 				Boolean(false) => "False".to_string(),
 				_ => unreachable!(),

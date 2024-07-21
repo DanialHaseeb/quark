@@ -67,7 +67,7 @@ impl Token
 
 		let token = Self {
 			span: Span { start, end },
-			kind: token::Kind::StringQ(lexeme),
+			kind: token::Kind::String(lexeme),
 		};
 
 		Ok(Some(token))
